@@ -14,6 +14,7 @@ struct LoginFeature {
     struct State: Equatable { }
     enum Action {
         case appleLoginTapped
+        case kakaoLoginTapped
         case loginResponse(Result<String, Error>)
     }
     
@@ -29,6 +30,13 @@ struct LoginFeature {
                     }))
                 }
                 
+            case .kakaoLoginTapped:
+                return .run { send in
+                    await send(.loginResponse(Result {
+                        try await authentication.kakaoLogin()
+                    }))
+                }
+
             case let .loginResponse(.success(token)):
                 print("토큰: \(token)")
                 return .none
