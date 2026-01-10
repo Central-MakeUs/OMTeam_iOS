@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C236D3442F12BAEB0020B9F5 /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C236D3432F12BAEB0020B9F5 /* KakaoSDKAuth */; };
+		C236D3462F12BAEB0020B9F5 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = C236D3452F12BAEB0020B9F5 /* KakaoSDKCommon */; };
+		C236D3482F12BAEB0020B9F5 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = C236D3472F12BAEB0020B9F5 /* KakaoSDKUser */; };
 		C239394C2F12AB6600CFE870 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = C239394B2F12AB6600CFE870 /* ComposableArchitecture */; };
 /* End PBXBuildFile section */
 
@@ -40,7 +43,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C236D3482F12BAEB0020B9F5 /* KakaoSDKUser in Frameworks */,
 				C239394C2F12AB6600CFE870 /* ComposableArchitecture in Frameworks */,
+				C236D3462F12BAEB0020B9F5 /* KakaoSDKCommon in Frameworks */,
+				C236D3442F12BAEB0020B9F5 /* KakaoSDKAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +90,9 @@
 			name = OMT;
 			packageProductDependencies = (
 				C239394B2F12AB6600CFE870 /* ComposableArchitecture */,
+				C236D3432F12BAEB0020B9F5 /* KakaoSDKAuth */,
+				C236D3452F12BAEB0020B9F5 /* KakaoSDKCommon */,
+				C236D3472F12BAEB0020B9F5 /* KakaoSDKUser */,
 			);
 			productName = OMT;
 			productReference = C2F67B4F2EFECBAA00EB6CE0 /* OMT.app */;
@@ -115,6 +124,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C239394A2F12AB6600CFE870 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				C236D3422F12BAEB0020B9F5 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C2F67B502EFECBAA00EB6CE0 /* Products */;
@@ -364,6 +374,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		C236D3422F12BAEB0020B9F5 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.27.1;
+			};
+		};
 		C239394A2F12AB6600CFE870 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
@@ -375,6 +393,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C236D3432F12BAEB0020B9F5 /* KakaoSDKAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C236D3422F12BAEB0020B9F5 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKAuth;
+		};
+		C236D3452F12BAEB0020B9F5 /* KakaoSDKCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C236D3422F12BAEB0020B9F5 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKCommon;
+		};
+		C236D3472F12BAEB0020B9F5 /* KakaoSDKUser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C236D3422F12BAEB0020B9F5 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDKUser;
+		};
 		C239394B2F12AB6600CFE870 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C239394A2F12AB6600CFE870 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
