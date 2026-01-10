@@ -149,6 +149,8 @@
 /* Begin XCBuildConfiguration section */
 		C2F67B582EFECBAD00EB6CE0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C2F67B512EFECBAA00EB6CE0 /* OMT */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
