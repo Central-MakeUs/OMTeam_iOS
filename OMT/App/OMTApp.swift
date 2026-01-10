@@ -24,6 +24,11 @@ struct OMTApp: App {
     var body: some Scene {
         WindowGroup {
             AppView(store: OMTApp.store)
+                .onOpenURL { url in
+                    if AuthApi.isKakaoTalkLoginUrl(url) {
+                        _ = AuthController.handleOpenUrl(url: url)
+                    }
+                }
         }
     }
 }
