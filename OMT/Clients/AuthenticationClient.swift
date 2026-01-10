@@ -7,12 +7,11 @@
 
 import Foundation
 import ComposableArchitecture
-import KakaoSDKUser
-import KakaoSDKAuth
 
 struct AuthenticationClient {
     var appleLogin: @Sendable () async throws -> String
     var kakaoLogin: @Sendable () async throws -> String
+    var googleLogin: @Sendable () async throws -> String
 }
 
 extension AuthenticationClient: DependencyKey {
@@ -22,7 +21,10 @@ extension AuthenticationClient: DependencyKey {
             return try await controller.signIn()
         },
         kakaoLogin: {
-            return try await KakaoLoginHelper.login()
+            return try await LoginHelper.kakaoLogin()
+        },
+        googleLogin: {
+            return try await LoginHelper.googleLogin()
         }
     )
 }
