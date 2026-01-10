@@ -24,6 +24,12 @@ struct LoginView: View {
             } label: {
                 Text("카카오 로그인")
             }
+            
+            Button {
+                store.send(.googleLoginTapped)
+            } label: {
+                Text("구글 로그인")
+            }
         }
     }
 }

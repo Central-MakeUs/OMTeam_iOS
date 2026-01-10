@@ -15,6 +15,7 @@ struct LoginFeature {
     enum Action {
         case appleLoginTapped
         case kakaoLoginTapped
+        case googleLoginTapped
         case loginResponse(Result<String, Error>)
     }
     
@@ -34,6 +35,13 @@ struct LoginFeature {
                 return .run { send in
                     await send(.loginResponse(Result {
                         try await authentication.kakaoLogin()
+                    }))
+                }
+                
+            case .googleLoginTapped:
+                return .run { send in
+                    await send(.loginResponse(Result {
+                        try await authentication.googleLogin()
                     }))
                 }
 

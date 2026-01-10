@@ -12,7 +12,17 @@
 				<string>kakao${NATIVE_APP_KEY}</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.469947079316-cvirnl35gruqspd26j3f6u6o5ck9qrc8</string>
+			</array>
+		</dict>
 	</array>
+	<key>GIDClientID</key>
+	<string>469947079316-cvirnl35gruqspd26j3f6u6o5ck9qrc8.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>kakaokompassauth</string>
