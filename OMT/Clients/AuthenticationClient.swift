@@ -9,7 +9,7 @@ import Foundation
 import ComposableArchitecture
 
 struct AuthenticationClient {
-    var appleLogin: @Sendable () async throws -> String
+    var appleLogin: @Sendable () async throws -> AppleLoginRequestDTO
     var kakaoLogin: @Sendable () async throws -> String
     var googleLogin: @Sendable () async throws -> String
 }

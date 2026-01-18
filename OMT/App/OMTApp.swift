@@ -12,7 +12,7 @@ import KakaoSDKAuth
 
 @main
 struct OMTApp: App {
-    static let store = Store(initialState: AppFeature.State.login(LoginFeature.State())) {
+    static let store = Store(initialState: AppFeature.State(login: LoginFeature.State())) {
         AppFeature()
     }
     
