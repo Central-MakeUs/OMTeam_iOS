@@ -38,5 +38,30 @@ struct OnboardingFeature {
             }
         }
     }
+    
+    enum Action {
+        case optionTapped(String)
+        case textInputChanged(String)
+        
+        // 직접 입력
+        case customInputButtonTapped
+        case customInputSheetPresentedChanged(Bool)
+        case customInputTextChanged(String)
+        case customInputConfirmed
+        case customInputCanceled
+        
+        // 버튼
+        case nextTapped
+        case previousTapped
+        case completeTapped
+        
+        case submitToServer
+        case submitResponse
+        case delegate(Delegate)
+        
+        enum Delegate {
+            case onboardingCompleted
+        }
+    }
 }
 
