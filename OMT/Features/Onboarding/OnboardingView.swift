@@ -50,6 +50,7 @@ struct OnboardingView: View {
     }
 }
 
+// MARK: - 닉네임 Input
 extension OnboardingView {
     private var textInputView: some View {
         VStack(alignment: .leading) {
@@ -75,5 +76,42 @@ extension OnboardingView {
                 }
             }
         }
+    }
+}
+
+// MARK: - 선택지 Buttons
+extension OnboardingView {
+    private var optionButtons: some View {
+        VStack {
+            ForEach(store.currentStepData.options, id: \.self) { option in
+                if option == "직접 입력하기" {
+                    customInputButton
+                } else {
+                    OptionButton(
+                        title: option,
+                        selected: store.answers[store.currentStep] == option,
+                        action: { store.send(.optionTapped(option)) }
+                    )
+                }
+            }
+        }
+    }
+    
+    private var customInputButton: some View {
+        let currentAnswer = store.answers[store.currentStep]
+        let isCustomAnswer = currentAnswer != nil && !store.currentStepData.options.dropLast().contains(currentAnswer!)
+        let displayText = isCustomAnswer ? currentAnswer! : "직접 입력하기"
+        
+        return OptionButton(
+            title: displayText,
+            selected: isCustomAnswer,
+            action: {
+                if isCustomAnswer {
+                    store.send(.customInputButtonTapped)
+                } else {
+                    store.send(.optionTapped("직접 입력하기"))
+                }
+            }
+        )
     }
 }
