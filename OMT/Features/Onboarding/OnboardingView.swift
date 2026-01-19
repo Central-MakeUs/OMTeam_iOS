@@ -30,7 +30,7 @@ struct OnboardingView: View {
         .padding(.horizontal, 16)
         .sheet(isPresented: $store.customInputSheetPresented.sending(\.customInputSheetPresentedChanged)) {
             customInputSheet
-                .presentationDetents([.medium])
+                .presentationDetents([.height(260)])
         }
     }
     
