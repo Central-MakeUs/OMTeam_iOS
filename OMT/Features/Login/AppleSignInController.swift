@@ -9,9 +9,9 @@ import AuthenticationServices
 
 final class AppleSignInController: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
 
-    private var continuation: CheckedContinuation<AppleLoginRequestDTO, Error>?
+    private var continuation: CheckedContinuation<String, Error>?
     
-    func signIn() async throws -> AppleLoginRequestDTO {
+    func signIn() async throws -> String {
         return try await withCheckedThrowingContinuation { continuation in
             self.continuation = continuation
             
@@ -28,12 +28,10 @@ final class AppleSignInController: NSObject, ASAuthorizationControllerDelegate, 
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
-           let authCodeData = appleIDCredential.authorizationCode,
-           let authCode = String(data: authCodeData, encoding: .utf8),
            let identityToken = appleIDCredential.identityToken,
            let tokenString = String(data: identityToken, encoding: .utf8) {
         
-            continuation?.resume(returning: AppleLoginRequestDTO(authorizationCode: authCode, idToken: tokenString))
+            continuation?.resume(returning: tokenString)
         } else {
             continuation?.resume(throwing: NSError(domain: "AppleSignIn", code: -1, userInfo: [NSLocalizedDescriptionKey: "토큰을 찾을 수 없습니다."]))
         }

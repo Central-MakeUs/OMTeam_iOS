@@ -9,8 +9,9 @@ import Foundation
 import Alamofire
 
 enum AuthRouter: TargetType {
+    
     /// Apple Login From -> Feature
-    case appleLogin(AppleLoginRequestDTO)
+    case appleLogin(LoginRequestDTO)
     case kakaoLogin(LoginRequestDTO)
     case googleLogin(LoginRequestDTO)
 }
@@ -26,11 +27,11 @@ extension AuthRouter {
     var path: String {
         switch self {
         case .appleLogin:
-            return "auth/oauth/apple"
+            return "/auth/oauth/apple"
         case .kakaoLogin:
-            return "auth/oauth/kakao"
+            return "/auth/oauth/kakao"
         case .googleLogin:
-            return "auth/oauth/google"
+            return "/auth/oauth/google"
         }
     }
     
@@ -50,12 +51,19 @@ extension AuthRouter {
         var encoder = JSONEncoder()
         
         switch self {
-        case .appleLogin(let appleLoginRequestDTO):
-            return try? encoder.encode(appleLoginRequestDTO)
+        case .appleLogin(let LoginRequestDTO):
+            return try? encoder.encode(LoginRequestDTO)
         case .kakaoLogin(let loginRequestDTO):
             return try? encoder.encode(loginRequestDTO)
         case .googleLogin(let loginRequestDTO):
             return try? encoder.encode(loginRequestDTO)
+        }
+    }
+    
+    var encodingType: EncodingType {
+        switch self {
+        case .appleLogin, .kakaoLogin, .googleLogin:
+            return .json
         }
     }
 }

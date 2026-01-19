@@ -18,7 +18,6 @@ struct LoginFeature {
         case kakaoLoginTapped
         case googleLoginTapped
         
-        case sendAppleLoginInfoToServer(authCode: String, idToken: String)
         case sendLoginInfoToServer(type: SocialType, idToken: String)
         
         // 부모 피쳐
@@ -30,6 +29,7 @@ struct LoginFeature {
     }
     
     enum SocialType {
+        case apple
         case kakao
         case google
     }
@@ -44,9 +44,9 @@ struct LoginFeature {
             switch action {
             case .appleLoginTapped:
                 return .run { send in
-                    let result = try await authentication.appleLogin()
+                    let idToken = try await authentication.appleLogin()
                     
-                    await send(.sendAppleLoginInfoToServer(authCode: result.authorizationCode, idToken: result.idToken))
+                    await send(.sendLoginInfoToServer(type: .apple, idToken: idToken))
                 }
                 
             case .kakaoLoginTapped:
@@ -65,28 +65,25 @@ struct LoginFeature {
 
             case .sendLoginInfoToServer(let type, let idToken):
                 return .run { send in
+                    let router: AuthRouter = switch type {
+                    case .apple:
+                            .appleLogin(LoginRequestDTO(idToken: idToken))
+                    case .kakao:
+                            .kakaoLogin(LoginRequestDTO(idToken: idToken))
+                    case .google:
+                            .googleLogin(LoginRequestDTO(idToken: idToken))
+                    }
+                    
                     let response = try await networkManager.requestNetwork(
                         dto: LoginResponseDTO.self,
-                        router: type == .kakao
-                        ? AuthRouter.kakaoLogin(LoginRequestDTO(idToken: idToken))
-                        : AuthRouter.googleLogin(LoginRequestDTO(idToken: idToken))
+                        router: router
                     )
                     
                     if let data = response.data, data.onboardingCompleted {
                         await send(.delegate(.moveToOnBoarding))
                     }
-                }
-                
-            case .sendAppleLoginInfoToServer(let authCode, let idToken):
-                return .run { send in
-                    let response = try await networkManager.requestNetwork(dto: LoginResponseDTO.self, router: AuthRouter.appleLogin(
-                        AppleLoginRequestDTO(authorizationCode: authCode, idToken: idToken)
-                    ))
-                    
-                    if let data = response.data, data.onboardingCompleted {
-                        print(data)
-                        await send(.delegate(.moveToOnBoarding))
-                    }
+                } catch: { error, send in
+                    print(error, send)
                 }
                 
             default:
