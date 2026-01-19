@@ -12,8 +12,8 @@ import KakaoSDKAuth
 
 @main
 struct OMTApp: App {
-    static let store = Store(initialState: AppFeature.State(login: LoginFeature.State())) {
-        AppFeature()
+    static let store = Store(initialState: RootContainer.State(login: LoginFeature.State())) {
+        RootContainer()
     }
     
     init() {
@@ -23,7 +23,7 @@ struct OMTApp: App {
     
     var body: some Scene {
         WindowGroup {
-            AppView(store: OMTApp.store)
+            RootView(store: OMTApp.store)
                 .onOpenURL { url in
                     if AuthApi.isKakaoTalkLoginUrl(url) {
                         _ = AuthController.handleOpenUrl(url: url)
