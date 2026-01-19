@@ -30,7 +30,7 @@ struct OnboardingFeature {
             switch currentStepData.type {
             case .textInput:
                 let text = answers[currentStep] ?? ""
-                let hasSpecialChar = text.range(of: "[^가-힣a-zA-Z0-9]", options: .regularExpression) != nil
+                let hasSpecialChar = text.range(of: "[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]", options: .regularExpression) != nil
                 
                 return text.count > 0 && text.count <= 8 && !hasSpecialChar
             case .choice:

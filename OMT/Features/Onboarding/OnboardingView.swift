@@ -117,7 +117,7 @@ extension OnboardingView {
             .autocorrectionDisabled()
             
             let text = store.answers[store.currentStep] ?? ""
-            let hasSpecialChar = text.range(of: "[^가-힣a-zA-Z0-9]", options: .regularExpression) != nil
+            let hasSpecialChar = text.range(of: "[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]", options: .regularExpression) != nil
             
             if !text.isEmpty {
                 if text.count > 8 {
