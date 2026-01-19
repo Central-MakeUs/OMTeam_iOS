@@ -50,3 +50,30 @@ struct OnboardingView: View {
     }
 }
 
+extension OnboardingView {
+    private var textInputView: some View {
+        VStack(alignment: .leading) {
+            TextField("닉네임을 입력해주세요. (최대 8글자)", text: Binding(
+                get: { store.answers[store.currentStep] ?? "" },
+                set: { store.send(.textInputChanged($0)) }
+            ))
+            .padding()
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(12)
+            .autocorrectionDisabled()
+            
+            let text = store.answers[store.currentStep] ?? ""
+            let hasSpecialChar = text.range(of: "[^가-힣a-zA-Z0-9]", options: .regularExpression) != nil
+            
+            if !text.isEmpty {
+                if text.count > 8 {
+                    Text("글자수를 초과했어요!")
+                        .foregroundStyle(.red)
+                } else if hasSpecialChar {
+                    Text("특수문자는 입력할 수 없습니다.")
+                        .foregroundStyle(.red)
+                }
+            }
+        }
+    }
+}
