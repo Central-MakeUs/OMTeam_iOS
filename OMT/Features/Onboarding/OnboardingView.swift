@@ -23,8 +23,15 @@ struct OnboardingView: View {
             }
             
             Spacer()
+            
+            navigationButtons
+                .padding(.bottom)
         }
         .padding(.horizontal, 16)
+        .sheet(isPresented: $store.customInputSheetPresented.sending(\.customInputSheetPresentedChanged)) {
+            customInputSheet
+                .presentationDetents([.medium])
+        }
     }
     
     private var progressView: some View {
@@ -46,6 +53,52 @@ struct OnboardingView: View {
             textInputView
         case .choice:
             optionButtons
+        }
+    }
+    
+    private var navigationButtons: some View {
+        HStack(spacing: 16) {
+            if store.currentStep > 0 {
+                Button {
+                    store.send(.previousTapped)
+                } label: {
+                    Text("이전")
+                        .font(.body)
+                        .foregroundColor(.gray)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(12)
+                }
+                
+                Button {
+                    store.send(.nextTapped)
+                } label: {
+                    Text("다음")
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(store.canProceed ? Color.blue : Color.gray.opacity(0.3))
+                        .cornerRadius(12)
+                }
+                .disabled(!store.canProceed)
+            } else {
+                Button {
+                    store.send(.nextTapped)
+                } label: {
+                    Text("다음")
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(store.canProceed ? Color.blue : Color.gray.opacity(0.3))
+                        .cornerRadius(12)
+                }
+                .disabled(!store.canProceed)
+            }
         }
     }
 }
@@ -113,5 +166,57 @@ extension OnboardingView {
                 }
             }
         )
+    }
+}
+
+// MARK: - 직접 입력 모달시트
+extension OnboardingView {
+    private var customInputSheet: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            TextField(
+                store.currentStepData.subtitle ?? "",
+                text: $store.customInputText.sending(
+                    \.customInputTextChanged
+                )
+            )
+            .padding()
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(12)
+            .autocorrectionDisabled()
+            .keyboardType(store.currentStepData.customInputKeyboardType)
+            
+            
+            let text = store.customInputText
+            let isNumberPad = store.currentStepData.customInputKeyboardType == .numberPad
+            let inputTextToInt = Int(text) ?? 0
+            
+            let exceedLimit = isNumberPad && inputTextToInt > 30
+            
+            if exceedLimit {
+                Text("30이하 숫자를 입력해주세요.")
+                    .foregroundStyle(.red)
+            }
+            
+            let isDisabled = text.isEmpty || exceedLimit
+            
+            Spacer()
+            
+            Button {
+                store.send(.customInputConfirmed)
+            } label: {
+                Text("확인")
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .background(isDisabled ? Color.gray : Color.blue)
+                    .cornerRadius(12)
+            }
+            .disabled(isDisabled)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 30)
+        .padding(.bottom, 20)
     }
 }
