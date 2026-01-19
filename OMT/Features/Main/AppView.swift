@@ -11,12 +11,17 @@ import ComposableArchitecture
 struct AppView: View {
     let store: StoreOf<AppFeature>
     
+    @State private var currentView: AppFeature.ViewStatus = .login
+    
     var body: some View {
-        switch store.state {
+        switch currentView {
         case .login:
-            if let loginStore = store.scope(state: \.login, action: \.login) {
-                LoginView(store: loginStore)
-            }
+            LoginView(store: store.scope(
+                state: \.login,
+                action: \.login)
+            )
+        case .mainTab:
+            EmptyView()
         }
     }
 }

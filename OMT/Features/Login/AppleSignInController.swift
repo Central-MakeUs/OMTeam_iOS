@@ -30,7 +30,7 @@ final class AppleSignInController: NSObject, ASAuthorizationControllerDelegate, 
         if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
            let identityToken = appleIDCredential.identityToken,
            let tokenString = String(data: identityToken, encoding: .utf8) {
-            
+        
             continuation?.resume(returning: tokenString)
         } else {
             continuation?.resume(throwing: NSError(domain: "AppleSignIn", code: -1, userInfo: [NSLocalizedDescriptionKey: "토큰을 찾을 수 없습니다."]))
