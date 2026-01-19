@@ -1,0 +1,42 @@
+//
+//  OnboardingFeature.swift
+//  OMT
+//
+//  Created by 이인호 on 1/19/26.
+//
+
+import Foundation
+import ComposableArchitecture
+import SwiftUI
+
+@Reducer
+struct OnboardingFeature {
+    @ObservableState
+    struct State: Equatable {
+        var currentStep = 0
+        var totalSteps = 7
+        var answers: [Int: String] = [:]
+        
+        var customInputSheetPresented = false
+        var customInputText = ""
+        var customInputStepIndex: Int?
+        
+        var steps: [OnboardingStep] = OnboardingStep.steps
+        var currentStepData: OnboardingStep {
+            steps[currentStep]
+        }
+        
+        var canProceed: Bool {
+            switch currentStepData.type {
+            case .textInput:
+                let text = answers[currentStep] ?? ""
+                let hasSpecialChar = text.range(of: "[^가-힣a-zA-Z0-9]", options: .regularExpression) != nil
+                
+                return text.count > 0 && text.count <= 8 && !hasSpecialChar
+            case .choice:
+                return answers[currentStep] != nil
+            }
+        }
+    }
+}
+
