@@ -69,6 +69,42 @@ struct OnboardingFeature {
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case let .optionTapped(option):
+                if option == "직접 입력하기" {
+                    state.customInputStepIndex = state.currentStep
+                    state.customInputText = ""
+                    state.customInputSheetPresented = true
+                } else {
+                    state.answers[state.currentStep] = option
+                }
+            case let .textInputChanged(text):
+                state.answers[state.currentStep] = text
+                
+            case .customInputButtonTapped:
+                state.customInputStepIndex = state.currentStep
+                state.customInputText = state.answers[state.currentStep] ?? ""
+                state.customInputSheetPresented = true
+                
+            case .customInputConfirmed:
+                if let stepIndex = state.customInputStepIndex,
+                   !state.customInputText.isEmpty {                    
+                    state.answers[stepIndex] = state.customInputText
+                }
+                state.customInputSheetPresented = false
+                state.customInputText = ""
+                state.customInputStepIndex = nil
+                
+            case .customInputCanceled:
+                state.customInputSheetPresented = false
+                state.customInputText = ""
+                state.customInputStepIndex = nil
+                
+            case let .customInputSheetPresentedChanged(isPresented):
+                state.customInputSheetPresented = isPresented
+                
+            case let .customInputTextChanged(text):
+                state.customInputText = text
+                
             case .nextTapped:
                 guard state.canProceed else { return .none }
                 
