@@ -63,5 +63,37 @@ struct OnboardingFeature {
             case onboardingCompleted
         }
     }
+    
+    @Dependency(\.networkManager) var networkManager
+    
+    var body: some ReducerOf<Self> {
+        Reduce { state, action in
+            switch action {
+            case .nextTapped:
+                guard state.canProceed else { return .none }
+                
+                if state.currentStep < state.totalSteps - 1 {
+                    state.currentStep += 1
+                } else {
+                    return .send(.completeTapped)
+                }
+                
+            case .previousTapped:
+                if state.currentStep > 0 {
+                    state.currentStep -= 1
+                }
+                
+            case .completeTapped:
+                print(state.answers) // 온보딩 선택 결과 확인
+                return .send(.submitToServer)
+                
+            default:
+                break
+            }
+            
+            return .none
+                
+        }
+    }
 }
 
