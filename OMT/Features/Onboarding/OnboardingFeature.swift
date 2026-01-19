@@ -82,13 +82,28 @@ struct OnboardingFeature {
                 
             case .customInputButtonTapped:
                 state.customInputStepIndex = state.currentStep
-                state.customInputText = state.answers[state.currentStep] ?? ""
+                
+                let savedAnswer = state.answers[state.currentStep] ?? ""
+                
+                if state.currentStepData.customInputKeyboardType == .numberPad {
+                    state.customInputText = savedAnswer.replacingOccurrences(of: "분", with: "")
+                } else {
+                    state.customInputText = savedAnswer
+                }
                 state.customInputSheetPresented = true
                 
             case .customInputConfirmed:
                 if let stepIndex = state.customInputStepIndex,
-                   !state.customInputText.isEmpty {                    
-                    state.answers[stepIndex] = state.customInputText
+                   !state.customInputText.isEmpty {
+                    var textToSave = state.customInputText
+                    
+                    if state.currentStepData.customInputKeyboardType == .numberPad {
+                        if !textToSave.hasSuffix("분") {
+                            textToSave += "분"
+                        }
+                    }
+                    
+                    state.answers[stepIndex] = textToSave
                 }
                 state.customInputSheetPresented = false
                 state.customInputText = ""
