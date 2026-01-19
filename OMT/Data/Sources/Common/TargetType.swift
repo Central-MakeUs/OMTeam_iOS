@@ -22,6 +22,7 @@ public protocol TargetType {
     var headers: HTTPHeaders { get } // 다 합쳐진 헤더
     var parameters: Parameters? { get }
     var body: Data? { get }
+    var encodingType: EncodingType { get }
 }
 
 extension TargetType {
@@ -33,11 +34,29 @@ extension TargetType {
         let url = try baseURLToURL()
         var urlRequest = try URLRequest(url: url.appending(path: path), method: method, headers: headers)
         
-        do {
-            urlRequest = try URLEncoding.queryString.encode(urlRequest, with: parameters)
-            return urlRequest
-        } catch {
-            throw AFError.invalidURL(url: url)
+        switch encodingType {
+        case .url, .multipartForm:
+            do {
+                urlRequest = try URLEncoding.queryString.encode(urlRequest, with: parameters)
+                return urlRequest
+            } catch {
+                throw AFError.invalidURL(url: url)
+            }
+        case .json:
+            do {
+                if let body {
+                    urlRequest.httpBody = body
+                    if urlRequest.allHTTPHeaderFields?["Content-Type"] == nil {
+                        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+                    }
+                } else {
+                    let request = try JSONEncoding.default.encode(urlRequest, withJSONObject: parameters)
+                    urlRequest = request
+                }
+                return urlRequest
+            } catch {
+                throw AFError.invalidURL(url: url)
+            }
         }
     }
     
