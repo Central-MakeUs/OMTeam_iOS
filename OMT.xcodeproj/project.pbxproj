@@ -296,6 +296,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = OMT/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "걸음 수, 이동 거리, 소모 칼로리 데이터를 분석하여 맞춤 운동을 추천합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -331,6 +332,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = OMT/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "걸음 수, 이동 거리, 소모 칼로리 데이터를 분석하여 맞춤 운동을 추천합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
