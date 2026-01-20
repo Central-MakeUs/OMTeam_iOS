@@ -79,7 +79,7 @@ struct LoginFeature {
                         router: router
                     )
                     
-                    if let data = response.data, data.onboardingCompleted {
+                    if let data = response.data, !data.onboardingCompleted {
                         await send(.delegate(.moveToOnBoarding))
                     }
                 } catch: { error, send in
