@@ -13,20 +13,27 @@ struct RootContainer {
     @ObservableState
     struct State: Equatable {
         var currentView: ViewStatus = .login
+        var selectedTab: Tab = .home
         
-        var login: LoginFeature.State
+        var login = LoginFeature.State()
         var onboarding: OnboardingFeature.State?
+        var home = HomeFeature.State()
     }
     
     enum Action {
         case login(LoginFeature.Action)
         case onboarding(OnboardingFeature.Action)
+        case home(HomeFeature.Action)
     }
     
     enum ViewStatus: Hashable {
         case login
         case onboarding
-        case mainTab
+        case home
+    }
+    
+    enum Tab {
+        case home, chat, analysis, myPage
     }
     
     var body: some ReducerOf<Self> {
@@ -41,8 +48,14 @@ struct RootContainer {
                 state.onboarding = OnboardingFeature.State()
                 
             case .onboarding(.delegate(.onboardingCompleted)):
-                state.currentView = .mainTab
+                state.currentView = .home
                 state.onboarding = nil
+                
+            case .home(.delegate(.switchToChatTab)):
+                state.selectedTab = .chat
+                
+            case .home(.delegate(.switchToAnalysisTab)):
+                state.selectedTab = .analysis
                 
             default:
                 break
