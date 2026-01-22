@@ -57,6 +57,11 @@ struct ChatView: View {
                     }
                     isAtBottom = true
                 }
+                .onChange(of: keyboard.currentHeight) { oldHeight, newHeight in
+                    if newHeight > oldHeight && isAtBottom {
+                        proxy.scrollTo(store.messages.last?.id, anchor: .bottom)
+                    }
+                }
             }
             
             messageInput
