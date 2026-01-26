@@ -29,8 +29,11 @@ struct RootView: View {
                     store: onboardingStore
                 )
             }
-        case .mainTab:
-            EmptyView()
+        case .home:
+            HomeView(store: store.scope(
+                state: \.home,
+                action: \.home)
+            )
         }
     }
 }
