@@ -30,10 +30,7 @@ struct RootView: View {
                 )
             }
         case .home:
-            HomeView(store: store.scope(
-                state: \.home,
-                action: \.home)
-            )
+            CustomTabView(store: store)
         }
     }
 }
