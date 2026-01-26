@@ -57,5 +57,7 @@
 		<string>Paperlogy-8ExtraBold.ttf</string>
 		<string>Paperlogy-9Black.ttf</string>
 	</array>
+	<key>UIDesignRequiresCompatibility</key>
+	<true/>
 </dict>
 </plist>
