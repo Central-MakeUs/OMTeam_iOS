@@ -18,12 +18,17 @@ struct RootContainer {
         var login = LoginFeature.State()
         var onboarding: OnboardingFeature.State?
         var home = HomeFeature.State()
+        var chat = ChatFeature.State()
+        var report = ReportFeature.State()
     }
     
     enum Action {
         case login(LoginFeature.Action)
         case onboarding(OnboardingFeature.Action)
         case home(HomeFeature.Action)
+        case chat(ChatFeature.Action)
+        case report(ReportFeature.Action)
+        case tabSelected(Tab)
     }
     
     enum ViewStatus: Hashable {
@@ -41,6 +46,18 @@ struct RootContainer {
             LoginFeature()
         }
         
+        Scope(state: \.home, action: \.home) {
+            HomeFeature()
+        }
+        
+        Scope(state: \.chat, action: \.chat) {
+            ChatFeature()
+        }
+        
+        Scope(state: \.report, action: \.report) {
+            ReportFeature()
+        }
+        
         Reduce { state, action in
             switch action {
             case .login(.delegate(.moveToOnBoarding)):
@@ -50,6 +67,9 @@ struct RootContainer {
             case .onboarding(.delegate(.onboardingCompleted)):
                 state.currentView = .home
                 state.onboarding = nil
+                
+            case let .tabSelected(tab):
+                state.selectedTab = tab
                 
             case .home(.delegate(.switchToChatTab)):
                 state.selectedTab = .chat
