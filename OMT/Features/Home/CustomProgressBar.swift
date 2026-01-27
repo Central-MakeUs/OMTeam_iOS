@@ -9,26 +9,29 @@ import SwiftUI
 
 struct CustomProgressBar: View {
     let progress: Double  // 0.0 ~ 1.0
-    let height: CGFloat = 16
+    let width: CGFloat = 270
+    let height: CGFloat = 20
     
     var body: some View {
         HStack {
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: height / 2)
-                        .fill(Color.gray.opacity(0.2))
+                        .fill(.gray2)
                         .frame(height: height)
 
                     RoundedRectangle(cornerRadius: height / 2)
-                        .fill(Color.blue)
+                        .fill(.primary5)
                         .frame(width: geometry.size.width * progress, height: height)
                 }
             }
-            .frame(height: height)
+            .frame(width: width, height: height)
+            
+            Spacer()
             
             Text("\(Int(progress * 100))%")
-                .typography(.h1)
-                .foregroundColor(.primary)
+                .typography(.sub_btn3_enabled)
+                .foregroundColor(.gray13)
         }
     }
 }
@@ -36,17 +39,17 @@ struct CustomProgressBar: View {
 
 struct CircularProgressBar: View {
     let progress: Double
-    let lineWidth: CGFloat = 16
+    let lineWidth: CGFloat = 15.3
     
     var body: some View {
         ZStack {
             Circle()
-                .stroke(Color.gray.opacity(0.2), lineWidth: lineWidth)
+                .stroke(.gray2, lineWidth: lineWidth)
 
             Circle()
                 .trim(from: 0, to: progress)
                 .stroke(
-                    Color.blue,
+                    .primary6,
                     style: StrokeStyle(
                         lineWidth: lineWidth,
                         lineCap: .round
@@ -56,10 +59,9 @@ struct CircularProgressBar: View {
             
             // 중앙 텍스트
             Text("\(Int(progress * 100))%")
-                .typography(.h3)
-                .foregroundColor(.primary)
+                .typography(.b2)
+                .foregroundColor(.primary9)
         }
-        .frame(width: 100, height: 100)
+        .frame(width: 82.7, height: 82.7)
     }
 }
-
