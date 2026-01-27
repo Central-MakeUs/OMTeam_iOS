@@ -12,40 +12,91 @@ struct OnboardingView: View {
     @Bindable var store: StoreOf<OnboardingFeature>
     
     var body: some View {
-        VStack(spacing: 32) {
-            progressView
-                .padding(.top)
+        VStack(spacing: 0) {
+            headerView
             
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 20) {
                 Text(store.currentStepData.title)
+                    .typography(.h2_1)
+                    .foregroundStyle(.gray11)
+                    .lineLimit(nil)
                 
                 stepContent
             }
+            .padding(.horizontal, 20)
             
             Spacer()
             
             navigationButtons
-                .padding(.bottom)
         }
-        .padding(.horizontal, 16)
         .sheet(isPresented: $store.customInputSheetPresented.sending(\.customInputSheetPresentedChanged)) {
             customInputSheet
                 .presentationDetents([.height(260)])
         }
     }
+}
+
+extension OnboardingView {
+    private var headerView: some View {
+        VStack(alignment: .trailing, spacing: 28) {
+            skipButton
+            progressView
+        }
+        .padding(.top, 12)
+        .padding(.bottom, 36)
+    }
+    
+    private var skipButton: some View {
+        VStack {
+            Button {
+                
+            } label: {
+                Text("SKIP")
+                    .typography(.sub_b3_1)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 7)
+                    .foregroundColor(.greenGray6)
+                    .background(
+                        Capsule()
+                            .fill(.greenGray2)
+                    )
+                    .overlay(
+                        Capsule()
+                            .stroke(.greenGray5, lineWidth: 1)
+                    )
+            }
+        }
+        .padding(.trailing, 20)
+    }
     
     private var progressView: some View {
-        VStack {
-            HStack {
-                ForEach(0..<store.totalSteps, id: \.self) { index in
+        HStack(spacing: 0) {
+            Rectangle()
+                .fill(.greenGray4)
+                .frame(height: 1)
+                .frame(maxWidth: .infinity)
+            
+            ForEach(0..<store.totalSteps, id: \.self) { index in
+                ZStack {
                     Circle()
-                        .fill(index == store.currentStep ? .blue : .gray)
-                        .frame(width: 8, height: 8)
+                        .fill(index == store.currentStep ? .primary6 : .greenGray4)
+                        .frame(width: 32, height: 32)
+                    
+                    Text("0\(index + 1)")
+                        .typography(index == store.currentStep ? .sub_btn3_enabled : .sub_btn3_disabled)
+                        .foregroundStyle(index == store.currentStep ? .gray0 : .greenGray1)
                 }
+                
+                Rectangle()
+                    .fill(.greenGray4)
+                    .frame(height: 1)
+                    .frame(maxWidth: .infinity)
             }
         }
     }
-    
+}
+
+extension OnboardingView {
     @ViewBuilder
     private var stepContent: some View {
         switch store.currentStepData.type {
@@ -57,49 +108,51 @@ struct OnboardingView: View {
     }
     
     private var navigationButtons: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 9) {
             if store.currentStep > 0 {
                 Button {
                     store.send(.previousTapped)
                 } label: {
                     Text("이전")
-                        .font(.body)
-                        .foregroundColor(.gray)
                         .frame(maxWidth: .infinity)
                         .frame(height: 56)
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(12)
+                        .typography( .btn2_disabled)
+                        .foregroundColor(.gray7)
+                        .background(.gray3)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
+                .frame(width: 126)
                 
                 Button {
                     store.send(.nextTapped)
                 } label: {
                     Text("다음")
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 56)
-                        .background(store.canProceed ? Color.blue : Color.gray.opacity(0.3))
-                        .cornerRadius(12)
+                        .typography(store.canProceed ? .btn2_enabled : .btn2_disabled)
+                        .foregroundColor(store.canProceed ? .gray12 : .gray9)
+                        .background(store.canProceed ? .primary7 : .primary4)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
+                .frame(maxWidth: .infinity)
                 .disabled(!store.canProceed)
             } else {
                 Button {
                     store.send(.nextTapped)
                 } label: {
                     Text("다음")
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 56)
-                        .background(store.canProceed ? Color.blue : Color.gray.opacity(0.3))
-                        .cornerRadius(12)
+                        .typography(store.canProceed ? .btn2_enabled : .btn2_disabled)
+                        .foregroundColor(store.canProceed ? .gray12 : .gray9)
+                        .background(store.canProceed ? .primary7 : .primary4)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .disabled(!store.canProceed)
             }
         }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 20)
     }
 }
 
@@ -107,13 +160,25 @@ struct OnboardingView: View {
 extension OnboardingView {
     private var textInputView: some View {
         VStack(alignment: .leading) {
-            TextField("닉네임을 입력해주세요. (최대 8글자)", text: Binding(
-                get: { store.answers[store.currentStep] ?? "" },
-                set: { store.send(.textInputChanged($0)) }
-            ))
+            TextField(
+                "",
+                text: Binding(
+                    get: { store.answers[store.currentStep] ?? "" },
+                    set: { store.send(.textInputChanged($0)) }
+                ),
+                prompt: Text("닉네임을 입력해주세요. (최대 8글자)")
+                    .typography(.sub_btn3_disabled)
+                    .foregroundStyle(.gray6)
+            )
             .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(12)
+            .typography(.sub_btn2_enabled)
+            .foregroundStyle(.gray10)
+            .background(.greenGray2)
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(.greenGray4, lineWidth: 1)
+            )
             .autocorrectionDisabled()
             
             let text = store.answers[store.currentStep] ?? ""
@@ -122,10 +187,12 @@ extension OnboardingView {
             if !text.isEmpty {
                 if text.count > 8 {
                     Text("글자수를 초과했어요!")
-                        .foregroundStyle(.red)
+                        .typography(.sub_btn2_enabled)
+                        .foregroundStyle(.error)
                 } else if hasSpecialChar {
                     Text("특수문자는 입력할 수 없습니다.")
-                        .foregroundStyle(.red)
+                        .typography(.sub_btn2_enabled)
+                        .foregroundStyle(.error)
                 }
             }
         }
@@ -135,7 +202,7 @@ extension OnboardingView {
 // MARK: - 선택지 Buttons
 extension OnboardingView {
     private var optionButtons: some View {
-        VStack {
+        VStack(spacing: 12) {
             ForEach(store.currentStepData.options, id: \.self) { option in
                 if option == "직접 입력하기" {
                     customInputButton
@@ -174,30 +241,34 @@ extension OnboardingView {
     private var customInputSheet: some View {
         VStack(alignment: .leading, spacing: 0) {
             TextField(
-                store.currentStepData.subtitle ?? "",
+                "",
                 text: $store.customInputText.sending(
                     \.customInputTextChanged
-                )
+                ),
+                prompt: Text(store.currentStepData.subtitle ?? "")
+                    .typography(.sub_btn3_disabled)
+                    .foregroundStyle(.gray6)
             )
             .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(12)
+            .typography(.sub_btn2_enabled)
+            .foregroundStyle(.gray10)
+            .background(.greenGray2)
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(.greenGray4, lineWidth: 1)
+            )
             .autocorrectionDisabled()
             .keyboardType(store.currentStepData.customInputKeyboardType)
-            
-            
-            let text = store.customInputText
-            let isNumberPad = store.currentStepData.customInputKeyboardType == .numberPad
-            let inputTextToInt = Int(text) ?? 0
-            
-            let exceedLimit = isNumberPad && inputTextToInt > 30
-            
-            if exceedLimit {
-                Text("30이하 숫자를 입력해주세요.")
-                    .foregroundStyle(.red)
+            .onChange(of: store.customInputText) { oldValue, newValue in
+                if store.currentStepData.customInputKeyboardType == .numberPad {
+                    if let number = Int(newValue), number < 1 || number > 30 {
+                        store.send(.customInputTextChanged(oldValue))
+                    }
+                }
             }
             
-            let isDisabled = text.isEmpty || exceedLimit
+            let isDisabled = store.customInputText.isEmpty
             
             Spacer()
             
@@ -205,18 +276,17 @@ extension OnboardingView {
                 store.send(.customInputConfirmed)
             } label: {
                 Text("확인")
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
-                    .background(isDisabled ? Color.gray : Color.blue)
+                    .typography(isDisabled ? .btn2_disabled : .btn2_enabled)
+                    .foregroundColor(isDisabled ? .gray9 : .gray12)
+                    .background(isDisabled ? .primary4 : .primary7)
                     .cornerRadius(12)
             }
             .disabled(isDisabled)
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 30)
+        .padding(.horizontal, 20)
+        .padding(.top, 24)
         .padding(.bottom, 20)
     }
 }
