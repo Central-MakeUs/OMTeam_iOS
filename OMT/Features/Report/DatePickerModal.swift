@@ -32,20 +32,26 @@ struct DatePickerModal: View {
                 Text("시작 날짜")
                 
                 HStack {
-                    TextField("1-12를 입력해주세요", text: $store.monthInput.sending(\.monthInputChanged))
+                    TextField("1-12를 입력하세요", text: $store.monthInput.sending(\.monthInputChanged))
                         .keyboardType(.numberPad)
                         .textFieldStyle(.roundedBorder)
                         .onChange(of: store.monthInput) { oldValue, newValue in
-                            if let month = Int(newValue), month > 12 {
-                                    store.send(.monthInputChanged("12"))
-                                }
+                            if let month = Int(newValue), month < 1 || month > 12 {
+                                store.send(.monthInputChanged(oldValue))
+                            }
                         }
                         
                     Text("월")
                     
-                    TextField("1-5를 입력해주세요", text: $store.weekInput.sending(\.weekInputChanged))
+                    TextField("1-5를 입력하세요", text: $store.weekInput.sending(\.weekInputChanged))
                         .keyboardType(.numberPad)
                         .textFieldStyle(.roundedBorder)
+                        .onChange(of: store.weekInput) { oldValue, newValue in
+                            if let week = Int(newValue), week < 1 || week > 5 {
+                                store.send(.weekInputChanged(oldValue))
+                            }
+                        }
+                    
                     Text("주")
                 }
                 
