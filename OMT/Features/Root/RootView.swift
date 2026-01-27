@@ -11,8 +11,6 @@ import ComposableArchitecture
 struct RootView: View {
     let store: StoreOf<RootContainer>
     
-    @State private var currentView: RootContainer.ViewStatus = .login
-    
     var body: some View {
         switch store.currentView {
         case .login:
