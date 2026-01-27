@@ -58,8 +58,8 @@ enum Typography {
             
         case .sub_btn1_enabled: return .pretendardSemiBold(size: 18)
         case .sub_btn1_disabled: return .pretendardMedium(size: 18)
-        case .sub_btn2_enabled: return .pretendardSemiBold(size: 18)
-        case .sub_btn2_disabled: return .pretendardSemiBold(size: 16)
+        case .sub_btn2_enabled: return .pretendardSemiBold(size: 16)
+        case .sub_btn2_disabled: return .pretendardMedium(size: 16)
         case .sub_btn3_enabled: return .pretendardSemiBold(size: 14)
         case .sub_btn3_disabled: return .pretendardRegular(size: 14)
         }
