@@ -71,25 +71,43 @@ struct ChatView: View {
 
 extension ChatView {
     private var messageInput: some View {
-        HStack(spacing: 12) {
-            TextField("메시지를 입력하세요", text: $store.inputText)
-                .textFieldStyle(.roundedBorder)
+        HStack(spacing: 8) {
+            TextField(
+                "",
+                text: $store.inputText,
+                prompt: Text("메시지를 입력해주세요.")
+                    .typography(.sub_b3_1)
+                    .foregroundStyle(.gray7)
+            )
                 .focused($isInputFocused)
                 .submitLabel(.send)
                 .onSubmit {
                     store.send(.sendButtonTapped)
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 15)
+                .typography(.sub_btn2_enabled)
+                .foregroundStyle(.gray10)
+                .background(.gray0)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(.greenGray3, lineWidth: 1)
+                )
+                .autocorrectionDisabled()
             
             Button {
                 store.send(.sendButtonTapped)
             } label: {
-                Image(systemName: "arrow.up.circle.fill")
-                    .font(.system(size: 32))
-                    .foregroundColor(store.inputText.isEmpty ? .gray : .blue)
+                Image("arrow_up")
             }
+            .frame(width: 48, height: 48)
+            .background(.primary7)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .disabled(store.inputText.isEmpty)
         }
-        .padding()
-        .background(Color(.systemBackground))
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
+        .background(.greenGray1)
     }
 }
