@@ -33,7 +33,6 @@ struct HomeView: View {
                     
                     analysisSummary
                 }
-                .padding(.horizontal, 20)
                 .padding(.top, 16)
             }
         }
@@ -42,11 +41,22 @@ struct HomeView: View {
 
 extension HomeView {
     private var topCalendar: some View {
-        HStack {
-            ForEach(0..<7, id: \.self) { index in
-                Circle()
+        HStack(spacing: 18) {
+            ForEach(store.weeklyMissions.indices, id: \.self) { index in
+                VStack {
+                    let mission = store.weeklyMissions[index]
+                    
+                    Image(mission.status.imageName)
+                    Text(dayString(from: store.weekDates[index]))
+                        .typography(mission.status.font)
+                        .foregroundStyle(mission.status.textColor)
+                }
             }
         }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .background(.gray1)
     }
     
     private var progressSection: some View {
@@ -69,14 +79,24 @@ extension HomeView {
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
         }
+        .padding(.horizontal, 20)
+    }
+    
+    private func dayString(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d"
+        return formatter.string(from: date)
     }
 }
 
 extension HomeView {
     private var todayMission: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("오늘의 미션")
-                .typography(.h2_1)
+            HStack(spacing: 8) {
+                Image("icon_dart")
+                Text("오늘의 미션")
+                    .typography(.h2_1)
+            }
             
             if store.user?.hasPersonalSetting == true {
                 missionCard
@@ -85,6 +105,7 @@ extension HomeView {
                 missionCard
             }
         }
+        .padding(.horizontal, 20)
     }
     
     private var missionCard: some View {
@@ -160,17 +181,20 @@ extension HomeView {
 extension HomeView {
     private var analysisSummary: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("분석 요약")
-                .typography(.h2_1)
+            HStack(spacing: 8) {
+                Image("icon_note")
+                Text("분석 요약")
+                    .typography(.h2_1)
+            }
             
             if let analysis = store.analysisData {
                 analysisCard
             } else {
 //                emptyAnalysis
-                analysisGraph
-                analysisDetailButton
+                analysisCard
             }
         }
+        .padding(.horizontal, 20)
     }
     
     private var analysisCard: some View {
