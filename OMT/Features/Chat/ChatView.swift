@@ -108,6 +108,6 @@ extension ChatView {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
-        .background(.greenGray1)
+        .background(.greenGray2)
     }
 }

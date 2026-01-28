@@ -28,7 +28,7 @@ struct CustomTabView: View {
             .font: UIFont(name: "Pretendard-Medium", size: 11) ?? .systemFont(ofSize: 10)
         ]
         
-        appearance.shadowColor = UIColor.separator
+        appearance.shadowColor = .clear
         appearance.shadowImage = nil
         
         UITabBar.appearance().standardAppearance = appearance
@@ -45,6 +45,7 @@ struct CustomTabView: View {
                 image: store.selectedTab == .home ? "home_enabled" : "home_disabled",
                 value: RootContainer.Tab.home) {
                 HomeView(store: store.scope(state: \.home, action: \.home))
+                    .tabBarDivider()
             }
             
             Tab("CHAT",
@@ -57,12 +58,14 @@ struct CustomTabView: View {
                 image: store.selectedTab == .analysis ? "chart_enabled" : "chart_disabled",
                 value: RootContainer.Tab.analysis) {
                 ReportView(store: store.scope(state: \.report, action: \.report))
+                    .tabBarDivider()
             }
             
             Tab("MY PAGE",
                 image: store.selectedTab == .myPage ? "my_enabled" : "my_disabled",
                 value: RootContainer.Tab.myPage) {
                 Text("마이")
+                    .tabBarDivider()
             }
         }
     }
