@@ -183,14 +183,17 @@ extension OnboardingView {
             
             let text = store.answers[store.currentStep] ?? ""
             let hasSpecialChar = text.range(of: "[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]", options: .regularExpression) != nil
+            var errorMessage: String? {
+                guard !text.isEmpty else { return nil }
+                if text.count > 8 { return "글자수를 초과했어요!" }
+                if hasSpecialChar { return "특수문자는 입력할 수 없습니다." }
+                return nil
+            }
             
-            if !text.isEmpty {
-                if text.count > 8 {
-                    Text("글자수를 초과했어요!")
-                        .typography(.sub_btn2_enabled)
-                        .foregroundStyle(.error)
-                } else if hasSpecialChar {
-                    Text("특수문자는 입력할 수 없습니다.")
+            if let errorMessage = errorMessage {
+                HStack {
+                    Image("error_icon")
+                    Text(errorMessage)
                         .typography(.sub_btn2_enabled)
                         .foregroundStyle(.error)
                 }
