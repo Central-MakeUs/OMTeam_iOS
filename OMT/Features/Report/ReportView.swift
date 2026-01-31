@@ -163,8 +163,8 @@ extension ReportView {
 
 extension ReportView {
     private var analysisDetailButton: some View {
-        Button {
-            
+        NavigationLink {
+            DetailReportView()
         } label: {
             Text("더 자세한 분석 보기")
                 .padding()
@@ -175,7 +175,6 @@ extension ReportView {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(.primary7)
                 )
-                .contentShape(Rectangle())
         }
     }
 }

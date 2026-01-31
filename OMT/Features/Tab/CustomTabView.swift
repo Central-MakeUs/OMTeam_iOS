@@ -36,36 +36,38 @@ struct CustomTabView: View {
     }
     
     var body: some View {
-        TabView(selection: Binding(
+        NavigationStack {
+            TabView(selection: Binding(
                 get: { store.selectedTab },
                 set: { store.send(.tabSelected($0)) }
             )
-        ) {
-            Tab("HOME",
-                image: store.selectedTab == .home ? "home_enabled" : "home_disabled",
-                value: RootContainer.Tab.home) {
-                HomeView(store: store.scope(state: \.home, action: \.home))
-                    .tabBarDivider()
-            }
-            
-            Tab("CHAT",
-                image: store.selectedTab == .chat ? "chat_enabled" : "chat_disabled",
-                value: RootContainer.Tab.chat) {
-                ChatView(store: store.scope(state: \.chat, action: \.chat))
-            }
-            
-            Tab("REPORT",
-                image: store.selectedTab == .analysis ? "chart_enabled" : "chart_disabled",
-                value: RootContainer.Tab.analysis) {
-                ReportView(store: store.scope(state: \.report, action: \.report))
-                    .tabBarDivider()
-            }
-            
-            Tab("MY PAGE",
-                image: store.selectedTab == .myPage ? "my_enabled" : "my_disabled",
-                value: RootContainer.Tab.myPage) {
-                Text("마이")
-                    .tabBarDivider()
+            ) {
+                Tab("HOME",
+                    image: store.selectedTab == .home ? "home_enabled" : "home_disabled",
+                    value: RootContainer.Tab.home) {
+                    HomeView(store: store.scope(state: \.home, action: \.home))
+                    //                    .tabBarDivider()
+                }
+                
+                Tab("CHAT",
+                    image: store.selectedTab == .chat ? "chat_enabled" : "chat_disabled",
+                    value: RootContainer.Tab.chat) {
+                    ChatView(store: store.scope(state: \.chat, action: \.chat))
+                }
+                
+                Tab("REPORT",
+                    image: store.selectedTab == .analysis ? "chart_enabled" : "chart_disabled",
+                    value: RootContainer.Tab.analysis) {
+                    ReportView(store: store.scope(state: \.report, action: \.report))
+                    //                    .tabBarDivider()
+                }
+                
+                Tab("MY PAGE",
+                    image: store.selectedTab == .myPage ? "my_enabled" : "my_disabled",
+                    value: RootContainer.Tab.myPage) {
+                    Text("마이")
+                    //                    .tabBarDivider()
+                }
             }
         }
     }
