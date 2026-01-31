@@ -97,6 +97,8 @@ extension ReportView {
                 }
             }
             .padding(.vertical, 10)
+            .padding(.leading, 7.5)
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             HStack(spacing: 12) {
                 ForEach(weekdays, id: \.self) { day in
@@ -104,14 +106,19 @@ extension ReportView {
                         Text(day)
                             .typography(.sub_b4_3)
                             .foregroundStyle(.gray8)
-                        Circle()
+                        Image("apple_success")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 32, height: 32)
                     }
                 }
             }
             .padding(.vertical, 10)
+            .frame(maxWidth: .infinity)
         }
+        .padding(.top, 4)
+        .padding(.bottom, 8)
         .padding(.horizontal, 12)
-        .frame(maxWidth: .infinity)
         .background(.white)
         .cornerRadius(16)
     }
