@@ -22,6 +22,7 @@ struct ChatFeature {
         case binding(BindingAction<State>)
         case sendButtonTapped
         case sendToServer
+        case optionSelected(String)
         
         case delegate(Delegate)
         
@@ -42,6 +43,13 @@ struct ChatFeature {
                 state.messages.append(message)
                 state.inputText = ""
                 return .send(.sendToServer)
+            case .optionSelected(let option):
+                if let index = state.messages.firstIndex(where: { $0.options != nil && $0.selectedOption == nil}) {
+                    state.messages[index].selectedOption = option
+                }
+                
+                let message = Message(id: UUID().uuidString, content: option, isFromUser: true, timestamp: Date(), type: .text, options: nil)
+                state.messages.append(message)
             default:
                 break
             }

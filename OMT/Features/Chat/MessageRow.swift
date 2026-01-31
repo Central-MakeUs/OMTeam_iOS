@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 struct MessageRow: View {
+    let store: StoreOf<ChatFeature>
     let message: Message
     
     var body: some View {
@@ -66,7 +68,9 @@ struct MessageRow: View {
                                 if let options = message.options {
                                     ForEach(options, id: \.self) { option in
                                         Button {
-                                            print(option)
+                                            if message.selectedOption == nil {  // 선택 안 된 경우만 동작
+                                                store.send(.optionSelected(option))
+                                            }
                                         } label: {
                                             Text(option)
                                                 .padding(.horizontal, 20)
@@ -75,13 +79,15 @@ struct MessageRow: View {
                                                 .foregroundColor(.blue)
                                                 .background(
                                                     Capsule()
-                                                        .fill(.greenGray2)
+                                                        .fill(message.selectedOption == option ?
+                                                            .greenGray5 : .greenGray2)
                                                 )
                                                 .overlay(
                                                     Capsule()
                                                         .stroke(.greenGray5, lineWidth: 1)
                                                 )
                                         }
+                                        .allowsHitTesting(message.selectedOption == nil)
                                     }
                                     .buttonStyle(PlainButtonStyle())
                                 }

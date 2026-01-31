@@ -15,6 +15,7 @@ struct Message: Identifiable, Equatable {
     let timestamp: Date
     let type: MessageType
     let options: [String]? // 선택지 목록
+    var selectedOption: String?
     
     // 텍스트 입력형, 선택지형
     enum MessageType {

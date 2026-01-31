@@ -23,7 +23,7 @@ struct ChatView: View {
             ScrollViewReader { proxy in
                 List {
                     ForEach(store.messages) { message in
-                        MessageRow(message: message)
+                        MessageRow(store: store, message: message)
                             .listRowSeparator(.hidden)
                             .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                             .listRowBackground(Color.clear)
