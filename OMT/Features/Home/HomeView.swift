@@ -12,12 +12,11 @@ struct HomeView: View {
     let store: StoreOf<HomeFeature>
     
     var body: some View {
-        VStack(spacing: 0) {
-            // 고정 텍스트
-            Text("고정 헤더")
-                .typography(.h2_1)
+        VStack(alignment: .leading, spacing: 0) {
+            // 고정 로고
+            Image("logo")
                 .padding(.horizontal, 20)
-                .padding(.top, 16)
+                .padding(.vertical, 12)
             
             // 스크롤 가능한 영역
             ScrollView {
@@ -33,7 +32,6 @@ struct HomeView: View {
                     
                     analysisSummary
                 }
-                .padding(.top, 16)
             }
         }
     }
@@ -60,10 +58,23 @@ extension HomeView {
     }
     
     private var progressSection: some View {
-        VStack {
-            Circle()
-                .frame(width: 100, height: 100)
-                .foregroundStyle(.gray)
+        VStack(spacing: 0) {
+            VStack {
+                Text("오늘의 미션을 성공했어요!!")
+                    .typography(.sub_b4_2)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .foregroundStyle(.gray11)
+                    .background(
+                        Capsule()
+                            .fill(.gray0)
+                    )
+                
+                Image("excited")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 150, height: 133)
+            }
             
             VStack(alignment: .leading) {
                 Text("LEVEL 02")

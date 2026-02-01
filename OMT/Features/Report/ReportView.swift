@@ -14,8 +14,10 @@ struct ReportView: View {
     
     var body: some View {
         ZStack {
-            VStack(spacing: 12) {
-                Text("OMT")
+            VStack(alignment: .leading, spacing: 12) {
+                Image("logo")
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
                 
                 ScrollView {
                     VStack(spacing: 28) {
