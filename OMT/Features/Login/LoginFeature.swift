@@ -25,6 +25,7 @@ struct LoginFeature {
         
         enum Delegate {
             case moveToOnBoarding
+            case moveToHome
         }
     }
     
@@ -79,8 +80,17 @@ struct LoginFeature {
                         router: router
                     )
                     
-                    if let data = response.data, !data.onboardingCompleted {
-                        await send(.delegate(.moveToOnBoarding))
+                    if let data = response.data {
+                        KeychainManager.shared.save(
+                            accessToken: data.accessToken,
+                            refreshToken: data.refreshToken
+                        )
+                        
+                        if data.onboardingCompleted {
+                            await send(.delegate(.moveToHome))
+                        } else {
+                            await send(.delegate(.moveToOnBoarding))
+                        }
                     }
                 } catch: { error, send in
                     print(error, send)

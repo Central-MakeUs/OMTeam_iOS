@@ -11,6 +11,12 @@ import ComposableArchitecture
 
 struct NetworkManager: Sendable {
     
+    private let session: Session = {
+        let configuration = URLSessionConfiguration.default
+        let interceptor = AuthInterceptor()
+        return Session(configuration: configuration, interceptor: interceptor)
+    }()
+    
     func requestNetwork<T: Decodable, R: TargetType>(dto: T.Type, router: R) async throws -> T {
         let request = try router.asURLRequest()
         
@@ -35,30 +41,28 @@ struct NetworkManager: Sendable {
         AFError
     > {
         
-        let requestResponse = await AF.request(request)
+        let requestResponse = await session.request(request)
             .validate(statusCode: 200..<300)
             .serializingDecodable(T.self)
             .response
-    
+        
         return requestResponse
     }
     
     private func getResponse<T:Decodable>(
-         dto: T.Type,
-         router: TargetType,
-         response: DataResponse<T, AFError>,
-         ifRefreshMode: Bool = false
-     ) async throws(AFError) -> T
-     {
-         print(response.response ?? "")
-         
-         switch response.result {
-         case let .success(data):
-             return data
-         case let .failure(AFError):
-             throw AFError
-         }
-     }
+        dto: T.Type,
+        router: TargetType,
+        response: DataResponse<T, AFError>,
+        ifRefreshMode: Bool = false
+    ) async throws(AFError) -> T
+    {
+        switch response.result {
+        case let .success(data):
+            return data
+        case let .failure(AFError):
+            throw AFError
+        }
+    }
 }
 
 extension NetworkManager: DependencyKey {

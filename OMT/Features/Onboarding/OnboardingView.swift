@@ -49,7 +49,7 @@ extension OnboardingView {
     private var skipButton: some View {
         VStack {
             Button {
-                
+                store.send(.skipTapped)
             } label: {
                 Text("SKIP")
                     .typography(.sub_b3_1)

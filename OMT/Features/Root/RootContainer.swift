@@ -12,7 +12,7 @@ import ComposableArchitecture
 struct RootContainer {
     @ObservableState
     struct State: Equatable {
-        var currentView: ViewStatus = .login
+        var currentView: ViewStatus
         var selectedTab: Tab = .home
         
         var login = LoginFeature.State()
@@ -20,6 +20,14 @@ struct RootContainer {
         var home = HomeFeature.State()
         var chat = ChatFeature.State()
         var report = ReportFeature.State()
+        
+        init() {
+            if KeychainManager.shared.refreshToken != nil {
+                self.currentView = .home
+            } else {
+                self.currentView = .login
+            }
+        }
     }
     
     enum Action {
@@ -60,12 +68,18 @@ struct RootContainer {
         
         Reduce { state, action in
             switch action {
+            case .login(.delegate(.moveToHome)):
+                state.currentView = .home
+                state.selectedTab = .home
+                state.onboarding = nil
+                
             case .login(.delegate(.moveToOnBoarding)):
                 state.currentView = .onboarding
                 state.onboarding = OnboardingFeature.State()
                 
             case .onboarding(.delegate(.onboardingCompleted)):
                 state.currentView = .home
+                state.selectedTab = .home
                 state.onboarding = nil
                 
             case let .tabSelected(tab):
