@@ -15,5 +15,17 @@ extension View {
             .lineSpacing(style.lineSpacing)
             .kerning(style.letterSpacing)
     }
+    
+    func tabBarDivider(color: Color = Color(uiColor: .greenGray3)) -> some View {
+        self.overlay(
+            VStack {
+                Spacer()
+                Rectangle()
+                    .fill(color)
+                    .frame(height: 1)
+            }
+            , alignment: .bottom
+        )
+    }
 }
 

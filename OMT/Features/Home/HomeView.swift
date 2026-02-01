@@ -12,72 +12,122 @@ struct HomeView: View {
     let store: StoreOf<HomeFeature>
     
     var body: some View {
-        VStack(spacing: 0) {
-            VStack {
-                topCalendar
-                progressSection
+        VStack(alignment: .leading, spacing: 0) {
+            // 고정 로고
+            Image("logo")
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+            
+            // 스크롤 가능한 영역
+            ScrollView {
+                VStack(spacing: 0) {
+                    VStack {
+                        topCalendar
+                        progressSection
+                    }
+                    .padding(.bottom, 24)
+                    
+                    todayMission
+                        .padding(.bottom, 48)
+                    
+                    analysisSummary
+                }
             }
-            
-            Spacer()
-            
-            todayMission
-            
-            Spacer()
-            
-            analysisSummary
         }
-        .padding(.horizontal)
-        .padding(.top, 16)
-        .padding(.bottom, 32)
     }
 }
 
 extension HomeView {
     private var topCalendar: some View {
-        HStack {
-            ForEach(0..<7, id: \.self) { index in
-                Circle()
+        HStack(spacing: 18) {
+            ForEach(store.weeklyMissions.indices, id: \.self) { index in
+                VStack {
+                    let mission = store.weeklyMissions[index]
+                    
+                    Image(mission.status.imageName)
+                    Text(dayString(from: store.weekDates[index]))
+                        .typography(mission.status.font)
+                        .foregroundStyle(mission.status.textColor)
+                }
             }
         }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .background(.gray1)
     }
     
     private var progressSection: some View {
-        VStack {
-            Circle()
-                .frame(width: 100, height: 100)
-                .foregroundStyle(.gray)
+        VStack(spacing: 0) {
+            VStack {
+                Text("오늘의 미션을 성공했어요!!")
+                    .typography(.sub_b4_2)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .foregroundStyle(.gray11)
+                    .background(
+                        Capsule()
+                            .fill(.gray0)
+                    )
+                
+                Image("excited")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 150, height: 133)
+            }
             
             VStack(alignment: .leading) {
                 Text("LEVEL 02")
-                    .foregroundStyle(.black)
-                    .backgroundStyle(.yellow)
+                    .typography(.sub_b4_1)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 6)
+                    .foregroundStyle(.gray10)
+                    .background(.secondary1)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                
                 CustomProgressBar(progress: 0.6)
             }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
         }
+        .padding(.horizontal, 20)
+    }
+    
+    private func dayString(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d"
+        return formatter.string(from: date)
     }
 }
 
 extension HomeView {
     private var todayMission: some View {
-        VStack(alignment: .leading) {
-            Text("오늘의 미션")
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image("icon_dart")
+                Text("오늘의 미션")
+                    .typography(.h2_1)
+            }
             
             if store.user?.hasPersonalSetting == true {
                 missionCard
             } else {
-                emptyMission
+//                emptyMission
+                missionCard
             }
         }
+        .padding(.horizontal, 20)
     }
     
     private var missionCard: some View {
-        VStack {
+        VStack(spacing: 16) {
             missionInfo
             proposalButton
         }
-        .padding()
-        .background(.gray)
-        .cornerRadius(16)
+        .padding([.horizontal, .top], 12)
+        .padding(.bottom, 14)
+        .background(.greenGray2)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
     
     private var emptyMission: some View {
@@ -94,12 +144,17 @@ extension HomeView {
     
     private var missionInfo: some View {
         HStack {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 10) {
                 Text("미션 01")
-                    .foregroundStyle(.yellow)
-                    .backgroundStyle(.secondary)
+                    .typography(.sub_b4_2)
+                    .padding(4)
+                    .foregroundStyle(.secondary7)
+                    .background(.secondary2)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
                 
                 Text("채팅을 통해 미션을 받아보세요!")
+                    .typography(.sub_btn1_enabled)
+                    .foregroundStyle(.gray8)
             }
             
             Spacer()
@@ -110,9 +165,10 @@ extension HomeView {
                 Image(systemName: "checkmark.circle")
             }
         }
-        .padding()
-        .background(.white)
-        .cornerRadius(16)
+        .padding([.horizontal, .top], 8)
+        .padding(.bottom, 14)
+        .background(.gray0)
+        .cornerRadius(10)
     }
     
     private var proposalButton: some View {
@@ -122,9 +178,11 @@ extension HomeView {
             Text("채팅으로 미션 제안받기")
                 .padding()
                 .frame(maxWidth: .infinity)
+                .typography(.btn2_disabled)
+                .foregroundStyle(.gray9)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.primary5)
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.primary4)
                 )
                 .contentShape(Rectangle())
         }
@@ -133,27 +191,45 @@ extension HomeView {
 
 extension HomeView {
     private var analysisSummary: some View {
-        VStack(alignment: .leading) {
-            Text("분석 요약")
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image("icon_note")
+                Text("분석 요약")
+                    .typography(.h2_1)
+            }
             
             if let analysis = store.analysisData {
-                analysisGraph
-                analysisDetailButton
+                analysisCard
             } else {
-                emptyAnalysis
+//                emptyAnalysis
+                analysisCard
             }
+        }
+        .padding(.horizontal, 20)
+    }
+    
+    private var analysisCard: some View {
+        VStack(spacing: 24) {
+            analysisGraph
+            analysisDetailButton
         }
     }
     
     private var analysisGraph: some View {
-        HStack(alignment: .bottom) {
+        HStack(alignment: .bottom, spacing: 16) {
             CircularProgressBar(progress: 0.6)
             
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("이번주에 미션 n개를 성공했어요!")
+                    .font(.paperlogySemiBold(size: 15))
+                
                 Text("지금처럼 꾸준히 익어가면, 목표에 한 걸음 더 가까워질 거에요.")
+                    .typography(.sub_b3_2)
+                    .lineLimit(nil)
             }
         }
+        .padding(.horizontal, 4)
+        .padding(.vertical, 8)
     }
     
     private var analysisDetailButton: some View {
@@ -163,9 +239,11 @@ extension HomeView {
             Text("더 자세한 분석 보기")
                 .padding()
                 .frame(maxWidth: .infinity)
+                .typography(.btn2_disabled)
+                .foregroundStyle(.gray9)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.primary5)
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.primary4)
                 )
                 .contentShape(Rectangle())
         }

@@ -16,9 +16,19 @@ struct CustomTabView: View {
         
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .systemBackground
+        appearance.backgroundColor = .greenGray2
         
-        appearance.shadowColor = UIColor.separator
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: UIColor(named: "gray11") ?? .black,
+            .font: UIFont(name: "Pretendard-Medium", size: 11) ?? .systemFont(ofSize: 10)
+        ]
+        
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: UIColor(named: "gray9") ?? .gray,
+            .font: UIFont(name: "Pretendard-Medium", size: 11) ?? .systemFont(ofSize: 10)
+        ]
+        
+        appearance.shadowColor = .clear
         appearance.shadowImage = nil
         
         UITabBar.appearance().standardAppearance = appearance
@@ -26,25 +36,38 @@ struct CustomTabView: View {
     }
     
     var body: some View {
-        TabView(selection: Binding(
+        NavigationStack {
+            TabView(selection: Binding(
                 get: { store.selectedTab },
                 set: { store.send(.tabSelected($0)) }
             )
-        ) {
-            Tab("HOME", systemImage: "house", value: RootContainer.Tab.home) {
-                HomeView(store: store.scope(state: \.home, action: \.home))
-            }
-            
-            Tab("CHAT", systemImage: "message", value: RootContainer.Tab.chat) {
-                ChatView(store: store.scope(state: \.chat, action: \.chat))
-            }
-            
-            Tab("REPORT", systemImage: "chart.bar", value: RootContainer.Tab.analysis) {
-                ReportView(store: store.scope(state: \.report, action: \.report))
-            }
-            
-            Tab("MY PAGE", systemImage: "person", value: RootContainer.Tab.myPage) {
-                Text("마이")
+            ) {
+                Tab("HOME",
+                    image: store.selectedTab == .home ? "home_enabled" : "home_disabled",
+                    value: RootContainer.Tab.home) {
+                    HomeView(store: store.scope(state: \.home, action: \.home))
+                    //                    .tabBarDivider()
+                }
+                
+                Tab("CHAT",
+                    image: store.selectedTab == .chat ? "chat_enabled" : "chat_disabled",
+                    value: RootContainer.Tab.chat) {
+                    ChatView(store: store.scope(state: \.chat, action: \.chat))
+                }
+                
+                Tab("REPORT",
+                    image: store.selectedTab == .analysis ? "chart_enabled" : "chart_disabled",
+                    value: RootContainer.Tab.analysis) {
+                    ReportView(store: store.scope(state: \.report, action: \.report))
+                    //                    .tabBarDivider()
+                }
+                
+                Tab("MY PAGE",
+                    image: store.selectedTab == .myPage ? "my_enabled" : "my_disabled",
+                    value: RootContainer.Tab.myPage) {
+                    Text("마이")
+                    //                    .tabBarDivider()
+                }
             }
         }
     }

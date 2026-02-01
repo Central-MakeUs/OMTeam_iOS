@@ -14,12 +14,13 @@ enum AuthRouter: TargetType {
     case appleLogin(LoginRequestDTO)
     case kakaoLogin(LoginRequestDTO)
     case googleLogin(LoginRequestDTO)
+    case refreshToken(RefreshRequestDTO)
 }
 
 extension AuthRouter {
     var method: Alamofire.HTTPMethod {
         switch self {
-        case .appleLogin, .kakaoLogin, .googleLogin:
+        case .appleLogin, .kakaoLogin, .googleLogin, .refreshToken:
             return .post
         }
     }
@@ -32,6 +33,8 @@ extension AuthRouter {
             return "/auth/oauth/kakao"
         case .googleLogin:
             return "/auth/oauth/google"
+        case .refreshToken:
+            return "/auth/refresh"
         }
     }
     
@@ -51,18 +54,20 @@ extension AuthRouter {
         var encoder = JSONEncoder()
         
         switch self {
-        case .appleLogin(let LoginRequestDTO):
-            return try? encoder.encode(LoginRequestDTO)
+        case .appleLogin(let loginRequestDTO):
+            return try? encoder.encode(loginRequestDTO)
         case .kakaoLogin(let loginRequestDTO):
             return try? encoder.encode(loginRequestDTO)
         case .googleLogin(let loginRequestDTO):
             return try? encoder.encode(loginRequestDTO)
+        case .refreshToken(let refreshRequestDTO):
+            return try? encoder.encode(refreshRequestDTO)
         }
     }
     
     var encodingType: EncodingType {
         switch self {
-        case .appleLogin, .kakaoLogin, .googleLogin:
+        case .appleLogin, .kakaoLogin, .googleLogin, .refreshToken:
             return .json
         }
     }

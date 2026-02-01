@@ -55,15 +55,16 @@ extension OnboardingStep {
         ),
         OnboardingStep(
             title: "OMT와 함께 미션 수행에 투자할 수 있는 시간을 알려주세요!",
-            subtitle: "최대 30분까지 입력 가능해요",
+            subtitle: "최대 30분까지 입력 가능해요.",
             type: .choice,
             options: ["05분", "10분", "15분", "직접 입력하기"],
             customInputKeyboardType: .numberPad
         ),
         OnboardingStep(
-            title: "평소 선호하시는 운동을 선택해주세요.(중복 선택 가능)",
+            title: "평소 선호하시는 운동을 선택해주세요.\n(중복 선택 가능)",
+            subtitle: "선호하는 운동을 입력해주세요.",
             type: .choice,
-            options: ["걷기", "스트레칭/요가", "홈 트레이닝(맨몸 운동)", "헬스", "생활 속 운동"]
+            options: ["걷기", "스트레칭/요가", "홈 트레이닝(맨몸 운동)", "헬스", "생활 속 운동", "직접 입력하기"]
         ),
         OnboardingStep(
             title: "최근 한 달 간의 생활패턴과\n가장 유사한 것을 선택해주세요.",
