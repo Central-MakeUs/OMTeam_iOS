@@ -21,7 +21,7 @@ struct HomeView: View {
             // 스크롤 가능한 영역
             ScrollView {
                 VStack(spacing: 0) {
-                    VStack {
+                    VStack(spacing: 0) {
                         topCalendar
                         progressSection
                     }
@@ -58,39 +58,46 @@ extension HomeView {
     }
     
     private var progressSection: some View {
-        VStack(spacing: 0) {
-            VStack {
-                Text("오늘의 미션을 성공했어요!!")
-                    .typography(.sub_b4_2)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .foregroundStyle(.gray11)
-                    .background(
-                        Capsule()
-                            .fill(.gray0)
-                    )
-                
-                Image("excited")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 150, height: 133)
-            }
+        ZStack {
+            Image("background")
+                .resizable()
+                .scaledToFill()
+                .frame(height: 280)
             
-            VStack(alignment: .leading) {
-                Text("LEVEL 02")
-                    .typography(.sub_b4_1)
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 6)
-                    .foregroundStyle(.gray10)
-                    .background(.secondary1)
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
+            VStack(spacing: 0) {
+                VStack {
+                    Text("오늘의 미션을 성공했어요!!")
+                        .typography(.sub_b4_2)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .foregroundStyle(.gray11)
+                        .background(
+                            Capsule()
+                                .fill(.gray0)
+                        )
+                    
+                    Image("basic")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 150, height: 133)
+                }
                 
-                CustomProgressBar(progress: 0.6)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("LEVEL 02")
+                        .typography(.sub_b4_1)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 6)
+                        .foregroundStyle(.gray10)
+                        .background(.secondary1)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                    
+                    CustomProgressBar(progress: 0.6)
+                }
+                .padding(.horizontal, 8)
+                .padding(.top, 24)
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 20)
         }
-        .padding(.horizontal, 20)
     }
     
     private func dayString(from date: Date) -> String {
@@ -107,13 +114,13 @@ extension HomeView {
                 Image("icon_dart")
                 Text("오늘의 미션")
                     .typography(.h2_1)
+                    .foregroundStyle(.gray13)
             }
             
             if store.user?.hasPersonalSetting == true {
                 missionCard
             } else {
-//                emptyMission
-                missionCard
+                emptyMission
             }
         }
         .padding(.horizontal, 20)
@@ -131,15 +138,23 @@ extension HomeView {
     }
     
     private var emptyMission: some View {
-        HStack {
-            Circle()
-                .frame(width: 100, height: 100)
+        HStack(spacing: 16) {
+            Image("emptyMission")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 84, height: 84)
             
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text("아직 미션이 생성되지 않았어요!")
+                    .typography(.b1)
+                    .foregroundStyle(.gray11)
                 Text("개인 설정을 완료하여 미션을 받아보세요.")
+                    .typography(.sub_b4_3)
+                    .foregroundStyle(.gray9)
             }
         }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     private var missionInfo: some View {
@@ -162,11 +177,12 @@ extension HomeView {
             Button {
                 
             } label: {
-                Image(systemName: "checkmark.circle")
+                Image("icon_check")
             }
         }
         .padding([.horizontal, .top], 8)
         .padding(.bottom, 14)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(.gray0)
         .cornerRadius(10)
     }
@@ -178,11 +194,11 @@ extension HomeView {
             Text("채팅으로 미션 제안받기")
                 .padding()
                 .frame(maxWidth: .infinity)
-                .typography(.btn2_disabled)
-                .foregroundStyle(.gray9)
+                .typography(.btn2_enabled)
+                .foregroundStyle(.gray12)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(.primary4)
+                        .fill(.primary7)
                 )
                 .contentShape(Rectangle())
         }
@@ -196,13 +212,13 @@ extension HomeView {
                 Image("icon_note")
                 Text("분석 요약")
                     .typography(.h2_1)
+                    .foregroundStyle(.gray13)
             }
             
             if let analysis = store.analysisData {
                 analysisCard
             } else {
-//                emptyAnalysis
-                analysisCard
+                emptyAnalysis
             }
         }
         .padding(.horizontal, 20)
@@ -223,11 +239,12 @@ extension HomeView {
                 Text("이번주에 미션 n개를 성공했어요!")
                     .font(.paperlogySemiBold(size: 15))
                 
-                Text("지금처럼 꾸준히 익어가면, 목표에 한 걸음 더 가까워질 거에요.")
+                Text("지금처럼 꾸준히 익어가면, 목표에\n한 걸음 더 가까워질 거에요.")
                     .typography(.sub_b3_2)
                     .lineLimit(nil)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 4)
         .padding(.vertical, 8)
     }
@@ -239,26 +256,34 @@ extension HomeView {
             Text("더 자세한 분석 보기")
                 .padding()
                 .frame(maxWidth: .infinity)
-                .typography(.btn2_disabled)
-                .foregroundStyle(.gray9)
+                .typography(.btn2_enabled)
+                .foregroundStyle(.gray12)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(.primary4)
+                        .fill(.primary7)
                 )
                 .contentShape(Rectangle())
         }
     }
     
     private var emptyAnalysis: some View {
-        HStack {
-            Circle()
-                .frame(width: 100, height: 100)
+        HStack(spacing: 16) {
+            Image("emptyAnalysis")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 84, height: 84)
             
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text("아직 분석할 데이터가 없어요!")
+                    .typography(.b1)
+                    .foregroundStyle(.gray11)
                 Text("OMT와 함께 미션을 수행하며 데이터를 쌓아보아요!")
+                    .typography(.sub_b4_3)
+                    .foregroundStyle(.gray9)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
     }
 }
 
