@@ -28,7 +28,7 @@ struct ReportView: View {
                                 Button {
                                     
                                 } label: {
-                                    Image(systemName: "arrow.clockwise.circle")
+                                    Image("refresh")
                                 }
                             }
                             
@@ -36,6 +36,8 @@ struct ReportView: View {
                             topDifficultiesCard
                             recommendCard
                         }
+                        
+                        Spacer()
                         
                         analysisDetailButton
                     }
