@@ -20,6 +20,7 @@ struct RootContainer {
         var home = HomeFeature.State()
         var chat = ChatFeature.State()
         var report = ReportFeature.State()
+        var my = MyFeature.State()
         
         init() {
             if KeychainManager.shared.refreshToken != nil {
@@ -36,6 +37,7 @@ struct RootContainer {
         case home(HomeFeature.Action)
         case chat(ChatFeature.Action)
         case report(ReportFeature.Action)
+        case my(MyFeature.Action)
         case tabSelected(Tab)
     }
     
@@ -64,6 +66,10 @@ struct RootContainer {
         
         Scope(state: \.report, action: \.report) {
             ReportFeature()
+        }
+        
+        Scope(state: \.my, action: \.my) {
+            MyFeature()
         }
         
         Reduce { state, action in
