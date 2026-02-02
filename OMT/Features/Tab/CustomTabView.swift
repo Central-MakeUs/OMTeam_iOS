@@ -46,7 +46,7 @@ struct CustomTabView: View {
                     image: store.selectedTab == .home ? "home_enabled" : "home_disabled",
                     value: RootContainer.Tab.home) {
                     HomeView(store: store.scope(state: \.home, action: \.home))
-                    //                    .tabBarDivider()
+                        .tabBarDivider()
                 }
                 
                 Tab("CHAT",
@@ -59,14 +59,14 @@ struct CustomTabView: View {
                     image: store.selectedTab == .analysis ? "chart_enabled" : "chart_disabled",
                     value: RootContainer.Tab.analysis) {
                     ReportView(store: store.scope(state: \.report, action: \.report))
-                    //                    .tabBarDivider()
+                        .tabBarDivider()
                 }
                 
                 Tab("MY PAGE",
                     image: store.selectedTab == .myPage ? "my_enabled" : "my_disabled",
                     value: RootContainer.Tab.myPage) {
-                    Text("마이")
-                    //                    .tabBarDivider()
+                    MyView(store: store.scope(state: \.my, action: \.my))
+                        .tabBarDivider()
                 }
             }
         }
