@@ -120,11 +120,14 @@ extension HomeView {
                     .foregroundStyle(.gray13)
             }
             
-            if store.user?.hasPersonalSetting == true {
-                missionCard
-            } else {
-                emptyMission
-            }
+            missionCard
+            
+            // 개인 설정을 필수로 받아서 필요시 주석 해제
+//            if store.user?.hasPersonalSetting == true {
+//                missionCard
+//            } else {
+//                emptyMission
+//            }
         }
         .padding(.horizontal, 20)
     }
@@ -218,7 +221,7 @@ extension HomeView {
                     .foregroundStyle(.gray13)
             }
             
-            if let analysis = store.analysisData {
+            if store.totalSuccessCount > 0 {
                 analysisCard
             } else {
                 emptyAnalysis
@@ -236,13 +239,13 @@ extension HomeView {
     
     private var analysisGraph: some View {
         HStack(alignment: .bottom, spacing: 16) {
-            CircularProgressBar(progress: 0.6)
+            CircularProgressBar(progress: store.thisWeekSuccessRate / 100.0)
             
             VStack(alignment: .leading, spacing: 8) {
-                Text("이번주에 미션 n개를 성공했어요!")
+                Text("이번주에 미션 \(store.totalSuccessCount)개를 성공했어요!")
                     .font(.paperlogySemiBold(size: 15))
-                
-                Text("지금처럼 꾸준히 익어가면, 목표에\n한 걸음 더 가까워질 거에요.")
+
+                Text(store.overallFeedback)
                     .typography(.sub_b3_2)
                     .lineLimit(nil)
             }

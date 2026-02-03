@@ -20,7 +20,9 @@ struct HomeFeature {
     struct State: Equatable {
         var user: User? = nil
 //        var todayMission: Mission? = nil // 미션 생성 여부(채팅으로 생성 등)
-        var analysisData: String? = nil
+        var totalSuccessCount: Int = 0
+        var thisWeekSuccessRate: Double = 0.0
+        var overallFeedback: String = ""
 
         var characterLevel: Int = 0
         var experiencePercent: Int = 0
@@ -117,6 +119,9 @@ struct HomeFeature {
                 }
 
                 state.dailyResults = missions
+                state.totalSuccessCount = data.typeSuccessCounts.reduce(0) { $0 + $1.successCount }
+                state.thisWeekSuccessRate = data.thisWeekSuccessRate
+                state.overallFeedback = data.aiFeedback.overallFeedback
 
             case .missionChatTapped:
                 return .send(.delegate(.switchToChatTab))
