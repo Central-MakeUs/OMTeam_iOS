@@ -52,7 +52,7 @@ extension CharacterRouter {
     var encodingType: EncodingType {
         switch self {
         case .fetchCharacter:
-            return .json
+            return .url
         }
     }
 }
