@@ -15,10 +15,26 @@ struct ReportFeature {
         var currentDate: Date = Date()
         var isDatePickerPresented: Bool = false
         
+        var report: [String] = []
+        
         var topDifficulties: [String] = ["야근으로 인한 피로감", "바쁜 약속 일정"]
         
+        var yearInput: String = ""
         var monthInput: String = ""
         var weekInput: String = ""
+        
+        var errorMessage: String? {
+            if let year = Int(yearInput), !yearInput.isEmpty, year < 2026 {
+                return "2026년도 이후의 년도를 입력해주세요."
+            }
+            if let month = Int(monthInput), !monthInput.isEmpty , (month < 1 || month > 12) {
+                return "1-12 사이의 숫자를 입력해주세요. "
+            }
+            if let week = Int(weekInput), !weekInput.isEmpty, (week < 1 || week > 5) {
+                return "1-5 사이의 숫자를 입력해주세요."
+            }
+            return nil
+        }
         
         var displayText: String {
             let calendar = Calendar.current
@@ -30,7 +46,10 @@ struct ReportFeature {
         }
         
         var isConfirmButtonEnabled: Bool {
-            !monthInput.isEmpty && !weekInput.isEmpty
+            !yearInput.isEmpty &&
+            !monthInput.isEmpty &&
+            !weekInput.isEmpty &&
+            errorMessage == nil
         }
     }
     
@@ -39,6 +58,7 @@ struct ReportFeature {
         case nextWeekTapped
         case dateTapped
         case closeDatePicker
+        case yearInputChanged(String)
         case monthInputChanged(String)
         case weekInputChanged(String)
         case confirmDateSelection
@@ -73,6 +93,9 @@ struct ReportFeature {
             case .closeDatePicker:
                 state.isDatePickerPresented = false
                 
+            case let .yearInputChanged(text):
+                state.yearInput = text.filter { $0.isNumber }
+ 
             case let .monthInputChanged(text):
                 state.monthInput = text.filter { $0.isNumber }
                 
@@ -80,8 +103,10 @@ struct ReportFeature {
                 state.weekInput = text.filter { $0.isNumber }
                 
             case .confirmDateSelection:
-                guard let month = Int(state.monthInput),
+                guard let year = Int(state.yearInput),
+                      let month = Int(state.monthInput),
                       let week = Int(state.weekInput),
+                      year >= 2026,
                       month >= 1 && month <= 12,
                       week >= 1 && week <= 5 else {
                     return .none

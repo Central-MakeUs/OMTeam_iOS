@@ -19,32 +19,54 @@ struct ReportView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
                 
-                ScrollView {
-                    VStack(spacing: 28) {
-                        VStack(spacing: 20) {
-                            HStack {
-                                weekNavigationHeader
-                                Spacer()
-                                Button {
-                                    
-                                } label: {
-                                    Image("refresh")
-                                }
+                if store.report.isEmpty {
+                    VStack {
+                        HStack {
+                            weekNavigationHeader
+                            Spacer()
+                            Button {
+                                
+                            } label: {
+                                Image("refresh")
                             }
-                            
-                            successRateCard
-                            topDifficultiesCard
-                            recommendCard
                         }
                         
                         Spacer()
-                        
-                        analysisDetailButton
                     }
                     .padding(.horizontal, 20)
+                } else {
+                    ScrollView {
+                        VStack(spacing: 28) {
+                            VStack(spacing: 20) {
+                                HStack {
+                                    weekNavigationHeader
+                                    Spacer()
+                                    Button {
+                                        
+                                    } label: {
+                                        Image("refresh")
+                                    }
+                                }
+                                
+                                successRateCard
+                                topDifficultiesCard
+                                recommendCard
+                            }
+                            
+                            Spacer()
+                            
+                            analysisDetailButton
+                        }
+                        .padding(.horizontal, 20)
+                    }
                 }
             }
             .background(.gray2)
+            
+            // 데이터 없을 때만 중앙에 표시
+            if store.report.isEmpty {
+                emptyReport
+            }
             
             if store.isDatePickerPresented {
                 DatePickerModal(store: store)
@@ -63,13 +85,15 @@ extension ReportView {
                     Image("arrow_back_02")
                 }
                 
-                HStack(spacing: 4) {
-                    Button {
-                        store.send(.dateTapped)
-                    } label: {
+                Button {
+                    store.send(.dateTapped)
+                } label: {
+                    HStack(spacing: 4) {
                         Text(store.displayText)
                             .typography(.sub_btn2_enabled)
                             .foregroundStyle(.gray11)
+                        
+                        Image("down")
                     }
                 }
                 
@@ -190,3 +214,29 @@ extension ReportView {
     }
 }
 
+
+extension ReportView {
+    private var emptyReport: some View {
+        VStack(spacing: 43) {
+            Image("emptyReport")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 212, height: 186)
+            
+            VStack(spacing: 16) {
+                Text("아직 분석할 데이터가 없어요!")
+                    .typography(.h1)
+                    .foregroundStyle(.gray13)
+                
+                HStack(spacing: 0) {
+                    Text("OMT")
+                        .typography(.sub_b2_1)
+                        .foregroundStyle(.primary8)
+                    Text("와 함께 건강한 습관을 만들어봐요")
+                        .typography(.sub_b2_1)
+                        .foregroundStyle(.gray10)
+                }
+            }
+        }
+    }
+}
