@@ -21,6 +21,10 @@ struct HomeFeature {
         var user: User? = nil
 //        var todayMission: Mission? = nil // 미션 생성 여부(채팅으로 생성 등)
         var analysisData: String? = nil
+
+        var characterLevel: Int = 0
+        var experiencePercent: Int = 0
+        var encouragementMessage: String = ""
         
         var weeklyMissions: [WeeklyMission] = [
             WeeklyMission(status: .success),
@@ -48,11 +52,13 @@ struct HomeFeature {
     }
     
     enum Action {
+        case onAppear
+        case fetchCharacterResponse(CharacterDataDTO)
         case missionChatTapped
         case analysisDetailTapped
-        
+
         case delegate(Delegate)
-        
+
         enum Delegate {
             case switchToChatTab
             case switchToAnalysisTab
@@ -64,16 +70,35 @@ struct HomeFeature {
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .onAppear:
+                return .run { send in
+                    let response = try await networkManager.requestNetwork(
+                        dto: CharacterResponseDTO.self,
+                        router: CharacterRouter.fetchCharacter
+                    )
+
+                    if let data = response.data {
+                        await send(.fetchCharacterResponse(data))
+                    }
+                } catch: { error, send in
+                    print(error)
+                }
+
+            case .fetchCharacterResponse(let data):
+                state.characterLevel = data.level
+                state.experiencePercent = data.experiencePercent
+                state.encouragementMessage = data.encouragementMessage
+
             case .missionChatTapped:
                 return .send(.delegate(.switchToChatTab))
-                
+
             case .analysisDetailTapped:
                 return .send(.delegate(.switchToAnalysisTab))
-                
+
             default:
                  break
             }
-            
+
             return .none
         }
     }

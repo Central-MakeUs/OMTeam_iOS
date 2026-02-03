@@ -34,6 +34,9 @@ struct HomeView: View {
                 }
             }
         }
+        .onAppear {
+            store.send(.onAppear)
+        }
     }
 }
 
@@ -66,7 +69,7 @@ extension HomeView {
             
             VStack(spacing: 0) {
                 VStack {
-                    Text("오늘의 미션을 성공했어요!!")
+                    Text(store.encouragementMessage)
                         .typography(.sub_b4_2)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
@@ -83,15 +86,15 @@ extension HomeView {
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("LEVEL 02")
+                    Text("LEVEL \(String(format: "%02d", store.characterLevel))")
                         .typography(.sub_b4_1)
                         .padding(.horizontal, 7)
                         .padding(.vertical, 6)
                         .foregroundStyle(.gray10)
                         .background(.secondary1)
                         .clipShape(RoundedRectangle(cornerRadius: 4))
-                    
-                    CustomProgressBar(progress: 0.6)
+
+                    CustomProgressBar(progress: Double(store.experiencePercent) / 100.0)
                 }
                 .padding(.horizontal, 8)
                 .padding(.top, 24)
