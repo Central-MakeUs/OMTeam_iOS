@@ -26,34 +26,13 @@ struct HomeFeature {
         var experiencePercent: Int = 0
         var encouragementMessage: String = ""
         
-        var weeklyMissions: [WeeklyMission] = [
-            WeeklyMission(status: .success),
-            WeeklyMission(status: .success),
-            WeeklyMission(status: .fail),
-            WeeklyMission(status: .pending),
-            WeeklyMission(status: .pending),
-            WeeklyMission(status: .pending),
-            WeeklyMission(status: .pending)
-        ]
-        
-        var weekDates: [Date] {
-            let calendar = Calendar.current
-            let today = Date()
-            
-            // 이번 주 일요일
-            guard let sunday = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)) else {
-                return []
-            }
-            
-            return (0..<7).compactMap { day in
-                calendar.date(byAdding: .day, value: day, to: sunday)
-            }
-        }
+        var dailyResults: [DailyMission] = []
     }
     
     enum Action {
         case onAppear
         case fetchCharacterResponse(CharacterDataDTO)
+        case fetchWeeklyReportsResponse(WeeklyReportsDataDTO)
         case missionChatTapped
         case analysisDetailTapped
 
@@ -71,23 +50,73 @@ struct HomeFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                return .run { send in
-                    let response = try await networkManager.requestNetwork(
-                        dto: CharacterResponseDTO.self,
-                        router: CharacterRouter.fetchCharacter
-                    )
+                return .merge(
+                    .run { send in
+                        let response = try await networkManager.requestNetwork(
+                            dto: CharacterResponseDTO.self,
+                            router: CharacterRouter.fetchCharacter
+                        )
 
-                    if let data = response.data {
-                        await send(.fetchCharacterResponse(data))
+                        if let data = response.data {
+                            await send(.fetchCharacterResponse(data))
+                        }
+                    } catch: { error, send in
+                        print(error)
+                    },
+                    .run { [networkManager] send in
+                        let calendar = Calendar.current
+                        let today = Date()
+                        guard let sunday = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)) else { return }
+
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "yyyy-MM-dd"
+                        let weekStartDate = formatter.string(from: sunday)
+
+                        let response = try await networkManager.requestNetwork(
+                            dto: WeeklyReportsResponseDTO.self,
+                            router: ReportRouter.fetchWeeklyReports(weekStartDate: weekStartDate)
+                        )
+
+                        if let data = response.data {
+                            await send(.fetchWeeklyReportsResponse(data))
+                        }
+                    } catch: { error, send in
+                        print(error)
                     }
-                } catch: { error, send in
-                    print(error)
-                }
+                )
 
             case .fetchCharacterResponse(let data):
                 state.characterLevel = data.level
                 state.experiencePercent = data.experiencePercent
                 state.encouragementMessage = data.encouragementMessage
+
+            case .fetchWeeklyReportsResponse(let data):
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+
+                guard let startDate = formatter.date(from: data.weekStartDate),
+                      let endDate = formatter.date(from: data.weekEndDate) else { break }
+
+                let resultsByDate = Dictionary(
+                    uniqueKeysWithValues: data.dailyResults.map { ($0.date, $0) }
+                )
+
+                let calendar = Calendar.current
+                var missions: [DailyMission] = []
+                var current = startDate
+
+                while current <= endDate {
+                    let key = formatter.string(from: current)
+                    if let dto = resultsByDate[key] {
+                        missions.append(DailyMission.from(dto))
+                    } else {
+                        missions.append(DailyMission.notPerformed(date: current))
+                    }
+                    guard let next = calendar.date(byAdding: .day, value: 1, to: current) else { break }
+                    current = next
+                }
+
+                state.dailyResults = missions
 
             case .missionChatTapped:
                 return .send(.delegate(.switchToChatTab))

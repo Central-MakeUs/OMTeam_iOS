@@ -43,14 +43,14 @@ struct HomeView: View {
 extension HomeView {
     private var topCalendar: some View {
         HStack(spacing: 18) {
-            ForEach(store.weeklyMissions.indices, id: \.self) { index in
+            ForEach(store.dailyResults.indices, id: \.self) { index in
                 VStack {
-                    let mission = store.weeklyMissions[index]
-                    
-                    Image(mission.status.imageName)
-                    Text(dayString(from: store.weekDates[index]))
-                        .typography(mission.status.font)
-                        .foregroundStyle(mission.status.textColor)
+                    let mission = store.dailyResults[index]
+
+                    Image(mission.result.imageName)
+                    Text(dayString(from: mission.date))
+                        .typography(mission.result.font)
+                        .foregroundStyle(mission.result.textColor)
                 }
             }
         }
