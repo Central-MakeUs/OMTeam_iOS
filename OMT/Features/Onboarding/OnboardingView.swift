@@ -38,12 +38,12 @@ struct OnboardingView: View {
 
 extension OnboardingView {
     private var headerView: some View {
-        VStack(alignment: .trailing, spacing: 28) {
-            skipButton
+        VStack {
+//            skipButton
             progressView
         }
-        .padding(.top, 12)
-        .padding(.bottom, 36)
+        .padding(.top, 48)
+        .padding(.bottom, 40)
     }
     
     private var skipButton: some View {
