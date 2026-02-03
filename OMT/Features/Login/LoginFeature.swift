@@ -17,13 +17,15 @@ struct LoginFeature {
         case appleLoginTapped
         case kakaoLoginTapped
         case googleLoginTapped
-        
+        case loginSuccessButtonTapped
+
         case sendLoginInfoToServer(type: SocialType, idToken: String)
-        
+
         // 부모 피쳐
         case delegate(Delegate)
-        
+
         enum Delegate {
+            case moveToLoginSuccess
             case moveToOnBoarding
             case moveToHome
         }
@@ -64,6 +66,9 @@ struct LoginFeature {
                     await send(.sendLoginInfoToServer(type: .google, idToken: idToken))
                 }
 
+            case .loginSuccessButtonTapped:
+                return .send(.delegate(.moveToOnBoarding))
+
             case .sendLoginInfoToServer(let type, let idToken):
                 return .run { send in
                     let router: AuthRouter = switch type {
@@ -74,28 +79,28 @@ struct LoginFeature {
                     case .google:
                             .googleLogin(LoginRequestDTO(idToken: idToken))
                     }
-                    
+
                     let response = try await networkManager.requestNetwork(
                         dto: LoginResponseDTO.self,
                         router: router
                     )
-                    
+
                     if let data = response.data {
                         KeychainManager.shared.save(
                             accessToken: data.accessToken,
                             refreshToken: data.refreshToken
                         )
-                        
+
                         if data.onboardingCompleted {
                             await send(.delegate(.moveToHome))
                         } else {
-                            await send(.delegate(.moveToOnBoarding))
+                            await send(.delegate(.moveToLoginSuccess))
                         }
                     }
                 } catch: { error, send in
                     print(error, send)
                 }
-                
+
             default:
                 break
             }

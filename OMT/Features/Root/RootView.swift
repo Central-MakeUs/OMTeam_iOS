@@ -19,6 +19,11 @@ struct RootView: View {
                     state: \.login,
                     action: \.login)
                 )
+            case .loginSuccess:
+                LoginSuccessView(store: store.scope(
+                    state: \.login,
+                    action: \.login)
+                )
             case .onboarding:
                 if let onboardingStore = store.scope(
                     state: \.onboarding,

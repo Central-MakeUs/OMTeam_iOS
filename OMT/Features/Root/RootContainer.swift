@@ -43,6 +43,7 @@ struct RootContainer {
     
     enum ViewStatus: Hashable {
         case login
+        case loginSuccess
         case onboarding
         case home
     }
@@ -78,7 +79,10 @@ struct RootContainer {
                 state.currentView = .home
                 state.selectedTab = .home
                 state.onboarding = nil
-                
+
+            case .login(.delegate(.moveToLoginSuccess)):
+                state.currentView = .loginSuccess
+
             case .login(.delegate(.moveToOnBoarding)):
                 state.currentView = .onboarding
                 state.onboarding = OnboardingFeature.State()

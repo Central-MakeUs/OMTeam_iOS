@@ -37,7 +37,7 @@ struct LoginSuccessView: View {
             Spacer()
             
             Button {
-                
+                store.send(.loginSuccessButtonTapped)
             } label: {
                 Text("OMT 시작하기")
                     .frame(maxWidth: .infinity)
