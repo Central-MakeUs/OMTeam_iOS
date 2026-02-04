@@ -68,15 +68,13 @@ struct HomeFeature {
                     .run { [networkManager] send in
                         let calendar = Calendar.current
                         let today = Date()
-                        guard let sunday = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)) else { return }
-
-                        let formatter = DateFormatter()
-                        formatter.dateFormat = "yyyy-MM-dd"
-                        let weekStartDate = formatter.string(from: sunday)
+                        let year = calendar.component(.year, from: today)
+                        let month = calendar.component(.month, from: today)
+                        let weekOfMonth = calendar.component(.weekOfMonth, from: today)
 
                         let response = try await networkManager.requestNetwork(
                             dto: WeeklyReportsResponseDTO.self,
-                            router: ReportRouter.fetchWeeklyReports(weekStartDate: weekStartDate)
+                            router: ReportRouter.fetchWeeklyReports(year: year, month: month, weekOfMonth: weekOfMonth)
                         )
 
                         if let data = response.data {
@@ -119,7 +117,7 @@ struct HomeFeature {
                 }
 
                 state.dailyResults = missions
-                state.totalSuccessCount = data.typeSuccessCounts.reduce(0) { $0 + $1.successCount }
+                state.totalSuccessCount = data.thisWeekSuccessCount
                 state.thisWeekSuccessRate = data.thisWeekSuccessRate
                 state.overallFeedback = data.aiFeedback.overallFeedback
 

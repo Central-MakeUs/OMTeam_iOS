@@ -10,8 +10,7 @@ import ComposableArchitecture
 
 struct ReportView: View {
     let store: StoreOf<ReportFeature>
-    let weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-    
+
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 12) {
@@ -19,7 +18,7 @@ struct ReportView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
                 
-                if store.report.isEmpty {
+                if !store.hasReport {
                     VStack {
                         HStack {
                             weekNavigationHeader
@@ -35,42 +34,43 @@ struct ReportView: View {
                     }
                     .padding(.horizontal, 20)
                 } else {
-                    ScrollView {
-                        VStack(spacing: 28) {
-                            VStack(spacing: 20) {
-                                HStack {
-                                    weekNavigationHeader
-                                    Spacer()
-                                    Button {
-                                        
-                                    } label: {
-                                        Image("refresh")
-                                    }
+                    VStack(spacing: 28) {
+                        VStack(spacing: 20) {
+                            HStack {
+                                weekNavigationHeader
+                                Spacer()
+                                Button {
+                                    
+                                } label: {
+                                    Image("refresh")
                                 }
-                                
-                                successRateCard
-                                topDifficultiesCard
-                                recommendCard
                             }
                             
-                            Spacer()
-                            
-                            analysisDetailButton
+                            successRateCard
+                            topDifficultiesCard
+                            recommendCard
                         }
-                        .padding(.horizontal, 20)
+                        
+                        Spacer()
+                        
+                        analysisDetailButton
                     }
+                    .padding(.horizontal, 20)
                 }
             }
             .background(.gray2)
             
             // 데이터 없을 때만 중앙에 표시
-            if store.report.isEmpty {
+            if !store.hasReport {
                 emptyReport
             }
             
             if store.isDatePickerPresented {
                 DatePickerModal(store: store)
             }
+        }
+        .onAppear {
+            store.send(.onAppear)
         }
     }
 }
@@ -118,8 +118,8 @@ extension ReportView {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("이번주 미션 성공률")
                         .foregroundStyle(.gray10)
-                    
-                    Text("57%")
+
+                    Text("\(Int(store.thisWeekSuccessRate))%")
                         .typography(.h1)
                         .foregroundStyle(.gray13)
                 }
@@ -129,12 +129,14 @@ extension ReportView {
             .frame(maxWidth: .infinity, alignment: .leading)
             
             HStack(spacing: 12) {
-                ForEach(weekdays, id: \.self) { day in
+                ForEach(store.dailyResults, id: \.date) { mission in
+                    let weekday = Calendar.current.component(.weekday, from: mission.date)
+                    let dayName = Calendar.current.shortWeekdaySymbols[weekday - 1]
                     VStack(spacing: 12) {
-                        Text(day)
-                            .typography(.sub_b4_3)
-                            .foregroundStyle(.gray8)
-                        Image("apple_success")
+                        Text(dayName)
+                            .typography(mission.result.font)
+                            .foregroundStyle(mission.result.textColor)
+                        Image(mission.result.imageName)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 32, height: 32)
@@ -185,7 +187,7 @@ extension ReportView {
                 .typography(.h3)
                 .foregroundStyle(.gray11)
             
-            Text("다음주에는 수요일을 쉬는 날로 두고, 목・금요일에는 간단한 미션을 선택하는 건 어때요?")
+            Text(store.overallFeedback)
                 .typography(.sub_b2_2)
                 .foregroundStyle(.gray10)
         }
@@ -211,6 +213,7 @@ extension ReportView {
                         .fill(.primary7)
                 )
         }
+        .padding(.bottom, 28)
     }
 }
 

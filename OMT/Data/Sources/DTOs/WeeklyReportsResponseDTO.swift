@@ -14,6 +14,7 @@ struct WeeklyReportsDataDTO: Decodable {
     let weekEndDate: String
     let thisWeekSuccessRate: Double
     let lastWeekSuccessRate: Double
+    let thisWeekSuccessCount: Int
     let dailyResults: [DailyResultDTO]
     let typeSuccessCounts: [TypeSuccessCountDTO]
     let topFailureReasons: [FailureReasonDTO]

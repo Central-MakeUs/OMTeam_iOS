@@ -10,7 +10,7 @@ import Alamofire
 
 enum ReportRouter: TargetType {
     
-    case fetchWeeklyReports(weekStartDate: String)
+    case fetchWeeklyReports(year: Int, month: Int, weekOfMonth: Int)
 }
 
 extension ReportRouter {
@@ -38,8 +38,8 @@ extension ReportRouter {
     
     var parameters: Parameters? {
         switch self {
-        case .fetchWeeklyReports(let weekStartDate):
-            return ["weekStartDate": weekStartDate]
+        case .fetchWeeklyReports(let year, let month, let weekOfMonth):
+            return ["year": year, "month": month, "weekOfMonth": weekOfMonth]
         }
     }
     
