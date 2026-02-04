@@ -10,6 +10,7 @@ import Alamofire
 
 enum OnboardingRouter: TargetType {
     case saveOnboarding(OnboardingRequestDTO)
+    case fetchOnboarding
 }
 
 extension OnboardingRouter {
@@ -17,12 +18,14 @@ extension OnboardingRouter {
         switch self {
         case .saveOnboarding:
             return .post
+        case .fetchOnboarding:
+            return .get
         }
     }
     
     var path: String {
         switch self {
-        case .saveOnboarding:
+        case .saveOnboarding, .fetchOnboarding:
             return "/api/onboarding"
         }
     }
@@ -45,6 +48,8 @@ extension OnboardingRouter {
         switch self {
         case .saveOnboarding(let OnboardingRequestDTO):
             return try? encoder.encode(OnboardingRequestDTO)
+        case .fetchOnboarding:
+            return nil
         }
     }
     
@@ -52,6 +57,8 @@ extension OnboardingRouter {
         switch self {
         case .saveOnboarding:
             return .json
+        case .fetchOnboarding:
+            return .url
         }
     }
 }

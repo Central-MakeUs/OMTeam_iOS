@@ -26,6 +26,9 @@ struct MyView: View {
             menuList
         }
         .padding(.horizontal, 20)
+        .onAppear {
+            store.send(.onAppear)
+        }
         .alert("로그아웃", isPresented:  Binding(
             get: { store.showLogoutAlert },
             set: { _ in }
@@ -48,7 +51,7 @@ extension MyView {
                 .scaledToFit()
                 .frame(width: 100, height: 100)
             
-            Text("닉네임")
+            Text(store.nickname)
                 .typography(.h3)
                 .foregroundStyle(.gray13)
         }
@@ -78,7 +81,7 @@ extension MyView {
             
             HStack {
                 Image("icon_exercise")
-                Text("OMT와 함께 운동 습관 형성하기")
+                Text(store.appGoalText)
                     .typography(.h3)
                     .foregroundStyle(.gray11)
             }
