@@ -39,6 +39,7 @@ enum MissionStatus: String, Decodable {
 struct DailyMission: Equatable {
     let date: Date
     let result: MissionStatus
+    let missionType: MissionType?
 }
 
 extension DailyMission {
@@ -53,10 +54,10 @@ extension DailyMission {
         case .notPerformed: .notPerformed
         }
 
-        return DailyMission(date: date, result: result)
+        return DailyMission(date: date, result: result, missionType: dto.missionType)
     }
 
     static func notPerformed(date: Date) -> DailyMission {
-        DailyMission(date: date, result: .notPerformed)
+        DailyMission(date: date, result: .notPerformed, missionType: nil)
     }
 }

@@ -16,10 +16,21 @@ struct ReportFeature {
         var isDatePickerPresented: Bool = false
         
         var hasReport: Bool = false
+        var lastWeekSuccessRate: Double = 0.0
         var thisWeekSuccessRate: Double = 0.0
         var topDifficulties: [String] = []
         var dailyResults: [DailyMission] = []
         var overallFeedback: String = ""
+
+        var exerciseCount: Int {
+            dailyResults.filter { $0.missionType == .exercise }.count
+        }
+        var dietCount: Int {
+            dailyResults.filter { $0.missionType == .diet }.count
+        }
+        var successCount: Int {
+            dailyResults.filter { $0.result == .success }.count
+        }
         
         var yearInput: String = ""
         var monthInput: String = ""
@@ -118,6 +129,7 @@ struct ReportFeature {
             case .fetchWeeklyReportsFailed:
                 state.hasReport = false
                 state.dailyResults = []
+                state.lastWeekSuccessRate = 0.0
                 state.thisWeekSuccessRate = 0.0
                 state.topDifficulties = []
                 state.overallFeedback = ""
@@ -129,6 +141,7 @@ struct ReportFeature {
 
             case .fetchWeeklyReportsResponse(let data):
                 state.hasReport = data.dailyResults.contains { $0.status != .notPerformed }
+                state.lastWeekSuccessRate = data.lastWeekSuccessRate
                 state.thisWeekSuccessRate = data.thisWeekSuccessRate
                 state.topDifficulties = data.topFailureReasons.map { $0.reason }
 

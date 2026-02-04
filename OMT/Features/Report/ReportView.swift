@@ -201,7 +201,7 @@ extension ReportView {
 extension ReportView {
     private var analysisDetailButton: some View {
         NavigationLink {
-            DetailReportView()
+            DetailReportView(store: store)
         } label: {
             Text("더 자세한 분석 보기")
                 .padding()
