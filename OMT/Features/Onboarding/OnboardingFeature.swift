@@ -131,6 +131,16 @@ struct OnboardingFeature {
                     state.customInputStepIndex = state.currentStep
                     state.customInputText = ""
                     state.customInputSheetPresented = true
+                } else if state.currentStepData.maxSelections > 1 {
+                    var selections = (state.answers[state.currentStep] ?? "")
+                        .components(separatedBy: ", ")
+                        .filter { !$0.isEmpty }
+
+                    if !selections.contains(option), selections.count < state.currentStepData.maxSelections {
+                        selections.append(option)
+                    }
+
+                    state.answers[state.currentStep] = selections.joined(separator: ", ")
                 } else {
                     state.answers[state.currentStep] = option
                 }
@@ -139,28 +149,57 @@ struct OnboardingFeature {
                 
             case .customInputButtonTapped:
                 state.customInputStepIndex = state.currentStep
-                
-                let savedAnswer = state.answers[state.currentStep] ?? ""
-                
-                if state.currentStepData.customInputKeyboardType == .numberPad {
-                    state.customInputText = savedAnswer.replacingOccurrences(of: "분", with: "")
+
+                if state.currentStepData.maxSelections > 1 {
+                    let predefinedOptions = Set(state.currentStepData.options.filter { $0 != "직접 입력하기" })
+                    let selections = (state.answers[state.currentStep] ?? "")
+                        .components(separatedBy: ", ")
+                        .filter { !$0.isEmpty }
+                    state.customInputText = selections.first { !predefinedOptions.contains($0) } ?? ""
                 } else {
-                    state.customInputText = savedAnswer
+                    let savedAnswer = state.answers[state.currentStep] ?? ""
+                    if state.currentStepData.customInputKeyboardType == .numberPad {
+                        state.customInputText = savedAnswer.replacingOccurrences(of: "분", with: "")
+                    } else {
+                        state.customInputText = savedAnswer
+                    }
                 }
                 state.customInputSheetPresented = true
                 
             case .customInputConfirmed:
-                if let stepIndex = state.customInputStepIndex,
-                   !state.customInputText.isEmpty {
-                    var textToSave = state.customInputText
-                    
-                    if state.currentStepData.customInputKeyboardType == .numberPad {
-                        if !textToSave.hasSuffix("분") {
-                            textToSave += "분"
+                if let stepIndex = state.customInputStepIndex {
+                    let step = state.steps[stepIndex]
+
+                    if step.maxSelections > 1 {
+                        let predefinedOptions = Set(step.options.filter { $0 != "직접 입력하기" })
+                        var selections = (state.answers[stepIndex] ?? "")
+                            .components(separatedBy: ", ")
+                            .filter { !$0.isEmpty }
+
+                        // Remove previous custom input
+                        selections = selections.filter { predefinedOptions.contains($0) }
+
+                        // Add new custom input if not empty and within limit
+                        if !state.customInputText.isEmpty, selections.count < step.maxSelections {
+                            selections.append(state.customInputText)
                         }
+
+                        if selections.isEmpty {
+                            state.answers.removeValue(forKey: stepIndex)
+                        } else {
+                            state.answers[stepIndex] = selections.joined(separator: ", ")
+                        }
+                    } else if !state.customInputText.isEmpty {
+                        var textToSave = state.customInputText
+
+                        if step.customInputKeyboardType == .numberPad {
+                            if !textToSave.hasSuffix("분") {
+                                textToSave += "분"
+                            }
+                        }
+
+                        state.answers[stepIndex] = textToSave
                     }
-                    
-                    state.answers[stepIndex] = textToSave
                 }
                 state.customInputSheetPresented = false
                 state.customInputText = ""

@@ -14,19 +14,22 @@ struct OnboardingStep: Equatable {
     let type: StepType
     let options: [String]
     let customInputKeyboardType: UIKeyboardType
-    
+    let maxSelections: Int
+
     init(
         title: String,
         subtitle: String? = nil,
         type: StepType,
         options: [String],
-        customInputKeyboardType: UIKeyboardType = .default
+        customInputKeyboardType: UIKeyboardType = .default,
+        maxSelections: Int = 1
     ) {
         self.title = title
         self.subtitle = subtitle
         self.type = type
         self.options = options
         self.customInputKeyboardType = customInputKeyboardType
+        self.maxSelections = maxSelections
     }
     
     enum StepType: Equatable {
@@ -61,10 +64,11 @@ extension OnboardingStep {
             customInputKeyboardType: .numberPad
         ),
         OnboardingStep(
-            title: "평소 선호하시는 운동을 선택해주세요.\n(중복 선택 가능)",
+            title: "평소 선호하시는 운동을 선택해주세요.\n(최대 3개까지 선택 가능)",
             subtitle: "선호하는 운동을 입력해주세요.",
             type: .choice,
-            options: ["걷기", "스트레칭/요가", "홈 트레이닝(맨몸 운동)", "헬스", "생활 속 운동", "직접 입력하기"]
+            options: ["걷기", "스트레칭/요가", "홈 트레이닝(맨몸 운동)", "헬스", "생활 속 운동", "직접 입력하기"],
+            maxSelections: 3
         ),
         OnboardingStep(
             title: "최근 한 달 간의 생활패턴과\n가장 유사한 것을 선택해주세요.",

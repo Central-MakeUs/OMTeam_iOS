@@ -212,30 +212,62 @@ extension OnboardingView {
                 } else {
                     OptionButton(
                         title: option,
-                        selected: store.answers[store.currentStep] == option,
+                        selected: isOptionSelected(option),
                         action: { store.send(.optionTapped(option)) }
                     )
                 }
             }
         }
     }
+
+    private func isOptionSelected(_ option: String) -> Bool {
+        guard let answer = store.answers[store.currentStep] else { return false }
+        if store.currentStepData.maxSelections > 1 {
+            return answer.components(separatedBy: ", ").contains(option)
+        }
+        return answer == option
+    }
     
     private var customInputButton: some View {
-        let currentAnswer = store.answers[store.currentStep]
-        let isCustomAnswer = currentAnswer != nil && !store.currentStepData.options.dropLast().contains(currentAnswer!)
-        let displayText = isCustomAnswer ? currentAnswer! : "직접 입력하기"
-        
-        return OptionButton(
-            title: displayText,
-            selected: isCustomAnswer,
-            action: {
-                if isCustomAnswer {
-                    store.send(.customInputButtonTapped)
-                } else {
-                    store.send(.optionTapped("직접 입력하기"))
-                }
+        VStack {
+            if store.currentStepData.maxSelections > 1 {
+                let predefinedOptions = Set(store.currentStepData.options.filter { $0 != "직접 입력하기" })
+                let selections = (store.answers[store.currentStep] ?? "")
+                    .components(separatedBy: ", ")
+                    .filter { !$0.isEmpty }
+                let customValue = selections.first { !predefinedOptions.contains($0) }
+                let isCustomAnswer = customValue != nil
+                let displayText = customValue ?? "직접 입력하기"
+
+                OptionButton(
+                    title: displayText,
+                    selected: isCustomAnswer,
+                    action: {
+                        if isCustomAnswer {
+                            store.send(.customInputButtonTapped)
+                        } else {
+                            store.send(.optionTapped("직접 입력하기"))
+                        }
+                    }
+                )
+            } else {
+                let currentAnswer = store.answers[store.currentStep]
+                let isCustomAnswer = currentAnswer != nil && !store.currentStepData.options.dropLast().contains(currentAnswer!)
+                let displayText = isCustomAnswer ? currentAnswer! : "직접 입력하기"
+                
+                OptionButton(
+                    title: displayText,
+                    selected: isCustomAnswer,
+                    action: {
+                        if isCustomAnswer {
+                            store.send(.customInputButtonTapped)
+                        } else {
+                            store.send(.optionTapped("직접 입력하기"))
+                        }
+                    }
+                )
             }
-        )
+        }
     }
 }
 
