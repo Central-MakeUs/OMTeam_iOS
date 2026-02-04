@@ -59,6 +59,7 @@ struct ReportFeature {
         case onAppear
         case fetchWeeklyReports
         case fetchWeeklyReportsResponse(WeeklyReportsDataDTO)
+        case fetchDailyFeedbackResponse(DailyFeedbackDataDTO)
         case fetchWeeklyReportsFailed
         case previousWeekTapped
         case nextWeekTapped
@@ -84,18 +85,35 @@ struct ReportFeature {
                 let month = calendar.component(.month, from: state.currentDate)
                 let weekOfMonth = calendar.component(.weekOfMonth, from: state.currentDate)
 
-                return .run { [networkManager] send in
-                    let response = try await networkManager.requestNetwork(
-                        dto: WeeklyReportsResponseDTO.self,
-                        router: ReportRouter.fetchWeeklyReports(year: year, month: month, weekOfMonth: weekOfMonth)
-                    )
-                    if let data = response.data {
-                        await send(.fetchWeeklyReportsResponse(data))
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                let today = formatter.string(from: Date())
+
+                return .merge(
+                    .run { [networkManager] send in
+                        let response = try await networkManager.requestNetwork(
+                            dto: WeeklyReportsResponseDTO.self,
+                            router: ReportRouter.fetchWeeklyReports(year: year, month: month, weekOfMonth: weekOfMonth)
+                        )
+                        if let data = response.data {
+                            await send(.fetchWeeklyReportsResponse(data))
+                        }
+                    } catch: { error, send in
+                        print(error)
+                        await send(.fetchWeeklyReportsFailed)
+                    },
+                    .run { [networkManager] send in
+                        let response = try await networkManager.requestNetwork(
+                            dto: DailyFeedbackResponseDTO.self,
+                            router: ReportRouter.dailyFeedback(today)
+                        )
+                        if let data = response.data {
+                            await send(.fetchDailyFeedbackResponse(data))
+                        }
+                    } catch: { error, send in
+                        print(error)
                     }
-                } catch: { error, send in
-                    print(error)
-                    await send(.fetchWeeklyReportsFailed)
-                }
+                )
 
             case .fetchWeeklyReportsFailed:
                 state.hasReport = false
@@ -105,11 +123,14 @@ struct ReportFeature {
                 state.overallFeedback = ""
                 return .none
 
+            case .fetchDailyFeedbackResponse(let data):
+                state.overallFeedback = data.feedbackText
+                return .none
+
             case .fetchWeeklyReportsResponse(let data):
                 state.hasReport = data.dailyResults.contains { $0.status != .notPerformed }
                 state.thisWeekSuccessRate = data.thisWeekSuccessRate
                 state.topDifficulties = data.topFailureReasons.map { $0.reason }
-                state.overallFeedback = data.aiFeedback.overallFeedback
 
                 let formatter = DateFormatter()
                 formatter.dateFormat = "yyyy-MM-dd"
