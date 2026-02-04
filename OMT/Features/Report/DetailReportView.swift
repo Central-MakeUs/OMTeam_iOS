@@ -12,16 +12,6 @@ import ComposableArchitecture
 struct DetailReportView: View {
     let store: StoreOf<ReportFeature>
 
-    let data = [
-        (label: "월", value: 5),
-        (label: "화", value: 8),
-        (label: "수", value: 12),
-        (label: "목", value: 7),
-        (label: "금", value: 5),
-        (label: "토", value: 8),
-        (label: "일", value: 12),
-    ]
-
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -33,6 +23,9 @@ struct DetailReportView: View {
         }
         .background(.gray2)
         .navigationTitle("상세 분석 보기")
+        .onAppear {
+            store.send(.fetchMonthlyPattern)
+        }
     }
 }
 
@@ -156,7 +149,7 @@ extension DetailReportView {
         VStack(alignment: .leading, spacing: 24) {
             HStack {
                 Image("icon_apple")
-                Text("수요일엔 쉬어가는 건 어때요?")
+                Text(store.monthlySummary)
                     .typography(.h3)
                     .foregroundStyle(.gray13)
             }
@@ -173,10 +166,10 @@ extension DetailReportView {
 
     private var barChart: some View {
         VStack {
-            Chart(data, id: \.label) { item in
+            Chart(store.dayOfWeekStats) { stat in
                 BarMark(
-                    x: .value("Day", item.label),
-                    y: .value("Value", item.value)
+                    x: .value("Day", stat.dayName),
+                    y: .value("Value", stat.successCount)
                 )
                 .foregroundStyle(.gray)
                 .cornerRadius(8)
@@ -199,7 +192,7 @@ extension DetailReportView {
 
     private var chartSummary: some View {
         VStack {
-            Text("지난 한 달을 보면, 수요일엔 쉬어가는 게 좋아요. 수요일은 휴식으로 두고, 목·금요일은가볍게 움직여볼까요?")
+            Text(store.monthlyRecommendation)
                 .typography(.sub_b2_3)
                 .foregroundStyle(.gray11)
                 .frame(maxWidth: .infinity, alignment: .leading)

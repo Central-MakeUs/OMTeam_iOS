@@ -12,12 +12,13 @@ enum ReportRouter: TargetType {
     
     case fetchWeeklyReports(year: Int, month: Int, weekOfMonth: Int)
     case dailyFeedback(String)
+    case monthlyPattern
 }
 
 extension ReportRouter {
     var method: Alamofire.HTTPMethod {
         switch self {
-        case .fetchWeeklyReports, .dailyFeedback:
+        case .fetchWeeklyReports, .dailyFeedback, .monthlyPattern:
             return .get
         }
     }
@@ -28,6 +29,8 @@ extension ReportRouter {
             return "/api/reports/weekly"
         case .dailyFeedback:
             return "/api/reports/daily/feedback"
+        case .monthlyPattern:
+            return "/api/reports/monthly-pattern"
         }
     }
     
@@ -45,6 +48,8 @@ extension ReportRouter {
             return ["year": year, "month": month, "weekOfMonth": weekOfMonth]
         case .dailyFeedback(let date):
             return ["date": date]
+        case .monthlyPattern:
+            return nil
         }
     }
     
@@ -52,14 +57,14 @@ extension ReportRouter {
         var encoder = JSONEncoder()
         
         switch self {
-        case .fetchWeeklyReports, .dailyFeedback:
+        case .fetchWeeklyReports, .dailyFeedback, .monthlyPattern:
             return nil
         }
     }
     
     var encodingType: EncodingType {
         switch self {
-        case .fetchWeeklyReports, .dailyFeedback:
+        case .fetchWeeklyReports, .dailyFeedback, .monthlyPattern:
             return .url
         }
     }

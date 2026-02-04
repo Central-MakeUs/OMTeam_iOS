@@ -8,19 +8,29 @@
 import Foundation
 import ComposableArchitecture
 
+struct DayOfWeekStat: Equatable, Identifiable {
+    let id: String
+    let dayName: String
+    let successCount: Int
+}
+
 @Reducer
 struct ReportFeature {
     @ObservableState
     struct State: Equatable {
         var currentDate: Date = Date()
         var isDatePickerPresented: Bool = false
-        
+
         var hasReport: Bool = false
         var lastWeekSuccessRate: Double = 0.0
         var thisWeekSuccessRate: Double = 0.0
         var topDifficulties: [String] = []
         var dailyResults: [DailyMission] = []
         var overallFeedback: String = ""
+
+        var dayOfWeekStats: [DayOfWeekStat] = []
+        var monthlySummary: String = ""
+        var monthlyRecommendation: String = ""
 
         var exerciseCount: Int {
             dailyResults.filter { $0.missionType == .exercise }.count
@@ -72,6 +82,8 @@ struct ReportFeature {
         case fetchWeeklyReportsResponse(WeeklyReportsDataDTO)
         case fetchDailyFeedbackResponse(DailyFeedbackDataDTO)
         case fetchWeeklyReportsFailed
+        case fetchMonthlyPattern
+        case fetchMonthlyPatternResponse(MonthlyPatternDataDTO)
         case previousWeekTapped
         case nextWeekTapped
         case dateTapped
@@ -133,6 +145,27 @@ struct ReportFeature {
                 state.thisWeekSuccessRate = 0.0
                 state.topDifficulties = []
                 state.overallFeedback = ""
+                return .none
+
+            case .fetchMonthlyPattern:
+                return .run { [networkManager] send in
+                    let response = try await networkManager.requestNetwork(
+                        dto: MonthlyPatternResponseDTO.self,
+                        router: ReportRouter.monthlyPattern
+                    )
+                    if let data = response.data {
+                        await send(.fetchMonthlyPatternResponse(data))
+                    }
+                } catch: { error, send in
+                    print(error)
+                }
+
+            case .fetchMonthlyPatternResponse(let data):
+                state.dayOfWeekStats = data.dayOfWeekStats.map {
+                    DayOfWeekStat(id: $0.dayOfWeek.rawValue, dayName: $0.dayName, successCount: $0.successCount)
+                }
+                state.monthlySummary = data.aiFeedback.summary
+                state.monthlyRecommendation = data.aiFeedback.recommendation
                 return .none
 
             case .fetchDailyFeedbackResponse(let data):
