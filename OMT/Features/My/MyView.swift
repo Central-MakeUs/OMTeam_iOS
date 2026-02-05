@@ -22,8 +22,9 @@ struct MyView: View {
 
             profile
             goal
-            Spacer()
             menuList
+            
+            Spacer()
         }
         .padding(.horizontal, 20)
         .onAppear {
@@ -106,6 +107,7 @@ extension MyView {
             .background(.gray2)
             .clipShape(RoundedRectangle(cornerRadius: 10))
         }
+        .padding(.bottom, 36)
     }
 }
 
