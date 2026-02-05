@@ -14,12 +14,27 @@ struct ChatView: View {
     @FocusState private var isInputFocused: Bool
     @State private var isAtBottom: Bool = true
     @StateObject private var keyboard = KeyboardResponder()
-    
+
     var body: some View {
+        Group {
+            if store.isLoading && store.messages.isEmpty {
+                ProgressView()
+            } else if store.messages.isEmpty {
+                EmptyChatView(store: store)
+            } else {
+                chatContent
+            }
+        }
+        .onAppear {
+            store.send(.onAppear)
+        }
+    }
+
+    private var chatContent: some View {
         VStack(spacing: 0) {
             Text("채팅하기")
                 .padding(.bottom, 10)
-            
+
             ScrollViewReader { proxy in
                 List {
                     ForEach(store.messages) { message in

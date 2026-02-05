@@ -11,7 +11,7 @@ import ComposableArchitecture
 struct MessageRow: View {
     let store: StoreOf<ChatFeature>
     let message: Message
-    
+
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
             if message.isFromUser {
@@ -32,83 +32,63 @@ struct MessageRow: View {
                     )
                     .frame(maxWidth: 250, alignment: .trailing)
             } else {
-                if message.type == .text {
-                    Text(message.content)
-                        .typography(.sub_b2_4)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 11)
-                        .background(.gray2)
-                        .foregroundColor(.gray12)
-                        .clipShape(
-                            UnevenRoundedRectangle(
-                                topLeadingRadius: 0,
-                                bottomLeadingRadius: 12,
-                                bottomTrailingRadius: 12,
-                                topTrailingRadius: 12
-                            )
-                        )
-                        .frame(maxWidth: 250, alignment: .leading)
-                } else {
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Image(systemName: "heart") // 프로필
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 30, height: 30)
-                            
-                            Text("채팅봇") // 봇 이름
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 20) {
-                            Text(message.content)
-                                .typography(.sub_b2_4)
-                                .foregroundColor(.gray12)
-                            
-                            VStack(spacing: 10) {
-                                if let options = message.options {
-                                    ForEach(options, id: \.self) { option in
-                                        Button {
-                                            if message.selectedOption == nil {  // 선택 안 된 경우만 동작
-                                                store.send(.optionSelected(option))
-                                            }
-                                        } label: {
-                                            Text(option)
-                                                .padding(.horizontal, 20)
-                                                .padding(.vertical, 10)
-                                                .frame(maxWidth: .infinity)
-                                                .foregroundColor(.blue)
-                                                .background(
-                                                    Capsule()
-                                                        .fill(message.selectedOption == option ?
-                                                            .greenGray5 : .greenGray2)
-                                                )
-                                                .overlay(
-                                                    Capsule()
-                                                        .stroke(.greenGray5, lineWidth: 1)
-                                                )
+                VStack(alignment: .leading) {
+                    HStack {
+                        Image(systemName: "heart") // 프로필
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 30)
+
+                        Text("채팅봇") // 봇 이름
+                    }
+
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text(message.content)
+                            .typography(.sub_b2_4)
+                            .foregroundColor(.gray12)
+
+                        VStack(spacing: 10) {
+                            if let options = message.options {
+                                ForEach(options, id: \.value) { option in
+                                    Button {
+                                        if message.selectedOption == nil {
+                                            store.send(.optionSelected(label: option.label, value: option.value))
                                         }
-                                        .allowsHitTesting(message.selectedOption == nil)
+                                    } label: {
+                                        Text(option.label)
+                                            .padding(.horizontal, 20)
+                                            .padding(.vertical, 10)
+                                            .frame(maxWidth: .infinity)
+                                            .foregroundColor(.blue)
+                                            .background(
+                                                Capsule()
+                                                    .fill(message.selectedOption == option.value ?
+                                                        .greenGray5 : .greenGray2)
+                                            )
+                                            .overlay(
+                                                Capsule()
+                                                    .stroke(.greenGray5, lineWidth: 1)
+                                            )
                                     }
-                                    .buttonStyle(PlainButtonStyle())
+                                    .allowsHitTesting(message.selectedOption == nil)
                                 }
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 11)
-                        .background(.gray2)
-                        .clipShape(
-                            UnevenRoundedRectangle(
-                                topLeadingRadius: 0,
-                                bottomLeadingRadius: 12,
-                                bottomTrailingRadius: 12,
-                                topTrailingRadius: 12
-                            )
-                        )
-                        .frame(maxWidth: 250, alignment: .leading)
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 11)
+                    .background(.gray2)
+                    .clipShape(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 0,
+                            bottomLeadingRadius: 12,
+                            bottomTrailingRadius: 12,
+                            topTrailingRadius: 12
+                        )
+                    )
+                    .frame(maxWidth: 250, alignment: .leading)
                 }
-                
-                Spacer()
             }
         }
     }

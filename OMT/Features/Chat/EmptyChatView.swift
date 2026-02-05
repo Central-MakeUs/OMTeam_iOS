@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 struct EmptyChatView: View {
+    let store: StoreOf<ChatFeature>
+
     var body: some View {
         VStack {
             HStack {
@@ -39,7 +42,7 @@ struct EmptyChatView: View {
             Spacer()
             
             Button {
-                
+                store.send(.startChatTapped)
             } label: {
                 Text("OMT와 채팅 시작하기")
                     .frame(maxWidth: .infinity)
