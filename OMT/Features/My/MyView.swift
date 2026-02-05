@@ -19,7 +19,7 @@ struct MyView: View {
                 Spacer()
             }
             .padding(.bottom, 16)
-            
+
             profile
             goal
             Spacer()
@@ -40,6 +40,10 @@ struct MyView: View {
                 store.send(.logoutConfirmed)
             }
         }
+        .sheet(isPresented: $store.nicknameEditSheetPresented) {
+            nicknameEditSheet
+                .presentationDetents([.height(280)])
+        }
     }
 }
 
@@ -50,7 +54,18 @@ extension MyView {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
-            
+                .overlay(alignment: .topTrailing) {
+                    Button {
+                        store.send(.nicknameEditSheetOpen)
+                    } label: {
+                        Image("icon_pencil")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 52, height: 52)
+                            .offset(x: 5, y: 5)
+                    }
+                }
+
             Text(store.nickname)
                 .typography(.h3)
                 .foregroundStyle(.gray13)
@@ -159,13 +174,82 @@ extension MyView {
         switch item {
         case .editProfile:
             Text("내정보수정")
-        case .inquiry:
-            Text("문의하기")
         case .etc:
-            Text("기타")
+            EtcView()
         default:
             EmptyView()
         }
     }
 }
 
+extension MyView {
+    private var nicknameEditSheet: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Spacer()
+                Button {
+                    store.send(.nicknameEditSheetClose)
+                } label: {
+                    Image("xmark")
+                }
+            }
+            .padding(.bottom, 8)
+
+            Text("닉네임 변경하기")
+                .typography(.h3)
+                .foregroundStyle(.gray11)
+                .padding(.bottom, 8)
+
+            Text("한글, 영어, 숫자를 사용하여 8글자 이내로 닉네임을 설정해주세요.")
+                .typography(.sub_b2_4)
+                .foregroundStyle(.gray8)
+                .padding(.bottom, 16)
+
+            TextField(
+                "",
+                text: $store.nicknameEditText,
+                prompt: Text("닉네임을 입력해주세요. (최대 8글자)")
+                    .typography(.sub_btn3_disabled)
+                    .foregroundStyle(.gray6)
+            )
+            .padding()
+            .typography(.sub_btn2_enabled)
+            .foregroundStyle(.gray10)
+            .background(.greenGray2)
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(.greenGray4, lineWidth: 1)
+            )
+            .autocorrectionDisabled()
+
+            if let errorMessage = store.nicknameErrorMessage {
+                HStack {
+                    Image("error_icon")
+                    Text(errorMessage)
+                        .typography(.sub_btn2_enabled)
+                        .foregroundStyle(.error)
+                }
+                .padding(.top, 8)
+            }
+
+            Spacer()
+
+            Button {
+                store.send(.nicknameEditConfirmed)
+            } label: {
+                Text("변경하기")
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .typography(store.isNicknameValid ? .btn2_enabled : .btn2_disabled)
+                    .foregroundColor(store.isNicknameValid ? .gray12 : .gray9)
+                    .background(store.isNicknameValid ? .primary7 : .primary4)
+                    .cornerRadius(12)
+            }
+            .disabled(!store.isNicknameValid)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
+        .padding(.bottom, 20)
+    }
+}
