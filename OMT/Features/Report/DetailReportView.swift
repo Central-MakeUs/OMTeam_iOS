@@ -11,7 +11,8 @@ import ComposableArchitecture
 
 struct DetailReportView: View {
     let store: StoreOf<ReportFeature>
-
+    @Environment(\.dismiss) var dismiss
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -22,10 +23,23 @@ struct DetailReportView: View {
             .padding(.horizontal, 20)
         }
         .background(.gray2)
-        .navigationTitle("상세 분석 보기")
         .onAppear {
             store.send(.fetchMonthlyPattern)
         }
+        .customNavigationBar(
+            centerView: {
+                Text("상세 분석 보기")
+                    .typography(.h2_2)
+                    .foregroundStyle(.gray11)
+            },
+            leftView: {
+                Button {
+                    dismiss()
+                } label: {
+                    Image("arrow_back_01")
+                }
+            },
+        )
     }
 }
 
