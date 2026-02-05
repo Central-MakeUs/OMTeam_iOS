@@ -119,7 +119,7 @@ struct HomeFeature {
                 state.dailyResults = missions
                 state.totalSuccessCount = data.thisWeekSuccessCount
                 state.thisWeekSuccessRate = data.thisWeekSuccessRate
-                state.overallFeedback = data.aiFeedback.overallFeedback
+                state.overallFeedback = data.aiFeedback.weeklyFeedback ?? ""
 
             case .missionChatTapped:
                 return .send(.delegate(.switchToChatTab))

@@ -29,21 +29,6 @@ struct DailyResultDTO: Decodable {
     let missionTitle: String?
 }
 
-enum DayOfWeek: String, Decodable {
-    case monday = "MONDAY"
-    case tuesday = "TUESDAY"
-    case wednesday = "WEDNESDAY"
-    case thursday = "THURSDAY"
-    case friday = "FRIDAY"
-    case saturday = "SATURDAY"
-    case sunday = "SUNDAY"
-}
-
-enum MissionType: String, Decodable {
-    case exercise = "EXERCISE"
-    case diet = "DIET"
-}
-
 struct TypeSuccessCountDTO: Decodable {
     let type: MissionType
     let typeName: String
@@ -52,11 +37,12 @@ struct TypeSuccessCountDTO: Decodable {
 
 struct FailureReasonDTO: Decodable {
     let rank: Int
-    let reason: String
+    let category: String
     let count: Int
 }
 
 struct AIFeedbackDTO: Decodable {
-    let mainFailureReason: String?
-    let overallFeedback: String
+    let failureReasonRanking: [FailureReasonDTO]
+    let weeklyFeedback: String?
 }
+
