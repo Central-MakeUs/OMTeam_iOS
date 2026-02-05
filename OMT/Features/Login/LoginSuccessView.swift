@@ -17,6 +17,9 @@ struct LoginSuccessView: View {
             
             VStack(spacing: 40) {
                 Image("linkSuccess")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 266, height: 263)
                 
                 VStack(spacing: 16) {
                     Text("계정 연동이 완료되었어요!")
