@@ -46,8 +46,8 @@ extension OnboardingRouter {
         var encoder = JSONEncoder()
         
         switch self {
-        case .saveOnboarding(let OnboardingRequestDTO):
-            return try? encoder.encode(OnboardingRequestDTO)
+        case .saveOnboarding(let onboardingRequestDTO):
+            return try? encoder.encode(onboardingRequestDTO)
         case .fetchOnboarding:
             return nil
         }
