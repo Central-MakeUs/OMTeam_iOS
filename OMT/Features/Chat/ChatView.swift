@@ -32,9 +32,6 @@ struct ChatView: View {
 
     private var chatContent: some View {
         VStack(spacing: 0) {
-            Text("채팅하기")
-                .padding(.bottom, 10)
-
             ScrollViewReader { proxy in
                 List {
                     ForEach(store.messages) { message in
@@ -81,6 +78,13 @@ struct ChatView: View {
             
             messageInput
         }
+        .customNavigationBar(
+            centerView: {
+                Text("채팅하기")
+                    .typography(.h2_2)
+                    .foregroundStyle(.gray11)
+            }
+        )
     }
 }
 

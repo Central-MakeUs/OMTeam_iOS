@@ -63,7 +63,20 @@ struct ChatFeature {
                 state.isLoading = false
                 state.hasFetched = true
                 state.hasActiveSession = data.hasActiveSession
-                state.messages = data.messages.map { Message.from($0) }
+                state.messages = data.messages
+                    .sorted { $0.messageId < $1.messageId }
+                    .enumerated()
+                    .map { index, dto in
+                        var message = Message.from(dto)
+                        let isLastMessage = index == data.messages.count - 1
+                        let isAssistantWithOptions = !message.isFromUser && message.options != nil
+                        
+                        // 마지막 메시지이면서 assistant가 보낸 옵션 메시지가 아니면 비활성화
+                        if message.options != nil && !(isLastMessage && isAssistantWithOptions) {
+                            message.selectedOption = "fetched"
+                        }
+                        return message
+                    }
 
             case .startChatTapped:
                 state.isLoading = true
@@ -108,7 +121,6 @@ struct ChatFeature {
                         type: .text,
                         text: text,
                         value: "",
-                        startRequest: false
                     )
 
                     let response = try await networkManager.requestNetwork(
@@ -149,9 +161,8 @@ struct ChatFeature {
                 return .run { send in
                     let request = MessageRequestDTO(
                         type: .option,
-                        text: label,
-                        value: value,
-                        startRequest: false
+                        text: "",
+                        value: label,
                     )
 
                     let response = try await networkManager.requestNetwork(

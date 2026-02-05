@@ -34,10 +34,10 @@ struct MessageRow: View {
             } else {
                 VStack(alignment: .leading) {
                     HStack {
-                        Image(systemName: "heart") // 프로필
+                        Image("profile")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 30, height: 30)
+                            .frame(width: 24, height: 24)
 
                         Text("채팅봇") // 봇 이름
                     }
@@ -47,8 +47,8 @@ struct MessageRow: View {
                             .typography(.sub_b2_4)
                             .foregroundColor(.gray12)
 
-                        VStack(spacing: 10) {
-                            if let options = message.options {
+                        if let options = message.options, !options.isEmpty {
+                            VStack(spacing: 10) {
                                 ForEach(options, id: \.value) { option in
                                     Button {
                                         if message.selectedOption == nil {
@@ -56,18 +56,21 @@ struct MessageRow: View {
                                         }
                                     } label: {
                                         Text(option.label)
+                                            .typography(.btn2_enabled)
+                                            .lineLimit(nil)
+                                            .multilineTextAlignment(.center) 
+                                            .fixedSize(horizontal: false, vertical: true)
                                             .padding(.horizontal, 20)
                                             .padding(.vertical, 10)
                                             .frame(maxWidth: .infinity)
-                                            .foregroundColor(.blue)
+                                            .foregroundColor(.gray12)
                                             .background(
                                                 Capsule()
-                                                    .fill(message.selectedOption == option.value ?
-                                                        .greenGray5 : .greenGray2)
+                                                    .fill(.primary2)
                                             )
                                             .overlay(
                                                 Capsule()
-                                                    .stroke(.greenGray5, lineWidth: 1)
+                                                    .stroke(.primary3, lineWidth: 1)
                                             )
                                     }
                                     .allowsHitTesting(message.selectedOption == nil)
