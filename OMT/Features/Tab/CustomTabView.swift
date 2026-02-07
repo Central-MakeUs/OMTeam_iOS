@@ -9,7 +9,8 @@ import SwiftUI
 import ComposableArchitecture
 
 struct CustomTabView: View {
-    let store: StoreOf<RootContainer>
+    // 자식
+    @Bindable var store: StoreOf<RootContainer>
     
     init(store: StoreOf<RootContainer>) {
         self.store = store
@@ -37,11 +38,8 @@ struct CustomTabView: View {
     
     var body: some View {
         NavigationStack {
-            TabView(selection: Binding(
-                get: { store.selectedTab },
-                set: { store.send(.tabSelected($0)) }
-            )
-            ) {
+            
+            TabView(selection: $store.selectedTab.sending(\.tabSelected))  {
                 Tab("HOME",
                     image: store.selectedTab == .home ? "home_enabled" : "home_disabled",
                     value: RootContainer.Tab.home) {

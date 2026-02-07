@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct MissionRecommendView: View {
-    let store: StoreOf<ChatFeature>
+    @Bindable var store: StoreOf<ChatFeature>
 
     var body: some View {
         VStack(spacing: 0) {

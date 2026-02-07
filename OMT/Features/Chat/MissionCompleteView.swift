@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct MissionCompleteView: View {
-    let store: StoreOf<ChatFeature>
+    @Bindable var store: StoreOf<ChatFeature>
 
     var body: some View {
         VStack(spacing: 0) {
@@ -110,7 +110,7 @@ struct MissionCompleteView: View {
                         // Fail button
                         Button {
                             if store.selectedResult == nil {
-                                store.send(.resultSelected("FAIL"))
+                                store.send(.resultSelected("FAILURE"))
                             }
                         } label: {
                             Text("실패했어요")

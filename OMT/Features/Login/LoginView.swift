@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct LoginView: View {
-    let store: StoreOf<LoginFeature>
+    @Bindable var store: StoreOf<LoginFeature>
     
     var body: some View {
         ZStack {

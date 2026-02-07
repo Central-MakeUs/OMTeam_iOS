@@ -10,7 +10,7 @@ import Charts
 import ComposableArchitecture
 
 struct DetailReportView: View {
-    let store: StoreOf<ReportFeature>
+    @Bindable var store: StoreOf<ReportFeature>
     @Environment(\.dismiss) var dismiss
     
     var body: some View {

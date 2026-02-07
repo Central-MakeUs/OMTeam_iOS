@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct EmptyChatView: View {
-    let store: StoreOf<ChatFeature>
+    @Bindable var store: StoreOf<ChatFeature>
 
     var body: some View {
         VStack {

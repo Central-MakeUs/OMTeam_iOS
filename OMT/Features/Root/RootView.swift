@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct RootView: View {
-    let store: StoreOf<RootContainer>
+    @Bindable var store: StoreOf<RootContainer>
     
     var body: some View {
         Group {

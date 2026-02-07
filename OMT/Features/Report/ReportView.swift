@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct ReportView: View {
-    let store: StoreOf<ReportFeature>
+    @Bindable var store: StoreOf<ReportFeature>
 
     var body: some View {
         ZStack {
@@ -166,7 +166,7 @@ extension ReportView {
             }
             
             if store.topDifficulties.isEmpty {
-                Text("데이터가 없음")
+                Text("아직 기록이 없습니다")
             } else {
                 ForEach(store.topDifficulties, id: \.self) { difficulty in
                     Text(difficulty)

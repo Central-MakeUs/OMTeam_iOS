@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct HomeView: View {
-    let store: StoreOf<HomeFeature>
+    @Bindable var store: StoreOf<HomeFeature>
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -141,6 +141,8 @@ extension HomeView {
             } else if store.hasCompletedMission, let mission = store.completeMission {
                 // Completed mission
                 completedMissionInfo(mission: mission)
+                anotherMissionButton
+                    
             } else {
                 // No mission
                 missionInfo
@@ -245,6 +247,7 @@ extension HomeView {
                 )
                 .contentShape(Rectangle())
         }
+        .disabled(true)
     }
     
     private var emptyMission: some View {

@@ -9,7 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct MessageRow: View {
-    let store: StoreOf<ChatFeature>
+    @Bindable var store: StoreOf<ChatFeature>
     let message: Message
 
     var body: some View {
