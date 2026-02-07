@@ -14,11 +14,14 @@ struct EtcView: View {
         VStack {
             ForEach(MyFeature.EtcMenuItem.allCases, id: \.self) { item in
                 NavigationLink(destination: destinationView(for: item)) {
-                    Text(item.rawValue)
-                        .typography(.sub_b2_2)
-                        .foregroundStyle(.gray10)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
+                    HStack {
+                        Image(item.iconName)
+                        Text(item.rawValue)
+                            .typography(.sub_b2_2)
+                            .foregroundStyle(.gray10)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
                 }
                 .buttonStyle(.plain)
                 .padding(.vertical, 18)

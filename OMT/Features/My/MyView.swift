@@ -55,15 +55,15 @@ extension MyView {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
-                .overlay(alignment: .topTrailing) {
+                .overlay(alignment: .bottomTrailing) {
                     Button {
                         store.send(.nicknameEditSheetOpen)
                     } label: {
-                        Image("icon_pencil")
+                        Image("edit_nickname")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 52, height: 52)
-                            .offset(x: 5, y: 5)
+                            .frame(width: 24, height: 24)
+                            .offset(x: -5, y: -5)
                     }
                 }
 
@@ -144,7 +144,7 @@ extension MyView {
                 .typography(.sub_b2_2)
                 .foregroundStyle(.gray10)
         }
-        .tint(.primary7) 
+        .tint(.primary7)
     }
     
     private var logoutButton: some View {

@@ -72,10 +72,10 @@ struct MyFeature {
         
         var iconName: String {
             switch self {
-            case .notice: return "megaphone"
-            case .faq: return ""
-            case .contactUs: return "envelope"
-            case .privacyPolicy: return "lock.shield"
+            case .notice: return "icon_announcement"
+            case .faq: return "icon_FAQ"
+            case .contactUs: return "icon_question"
+            case .privacyPolicy: return "icon_policy"
             case .termsOfService: return "doc.text"
             }
         }
