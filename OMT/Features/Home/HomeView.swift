@@ -134,13 +134,117 @@ extension HomeView {
     
     private var missionCard: some View {
         VStack(spacing: 16) {
-            missionInfo
-            proposalButton
+            if store.hasActiveMission, let mission = store.activeMission {
+                // In progress mission
+                activeMissionInfo(mission: mission)
+                completeButton
+            } else if store.hasCompletedMission, let mission = store.completeMission {
+                // Completed mission
+                completedMissionInfo(mission: mission)
+            } else {
+                // No mission
+                missionInfo
+                proposalButton
+            }
         }
         .padding([.horizontal, .top], 12)
         .padding(.bottom, 14)
         .background(.greenGray2)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func activeMissionInfo(mission: RecommendDTO) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 10) {
+                Text(mission.mission.type == .exercise ? "운동" : "식단")
+                    .typography(.sub_b4_2)
+                    .padding(4)
+                    .foregroundStyle(.secondary7)
+                    .background(.secondary2)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+
+                Text(mission.mission.name)
+                    .typography(.sub_btn1_enabled)
+                    .foregroundStyle(.gray11)
+
+                HStack(spacing: 8) {
+                    Text("난이도 \(mission.mission.difficulty)")
+                    Label("\(mission.mission.estimatedMinutes)분", systemImage: "clock")
+                    Label("\(mission.mission.estimatedCalories)kcal", systemImage: "flame")
+                }
+                .typography(.sub_b4_3)
+                .foregroundStyle(.gray9)
+            }
+
+            Spacer()
+        }
+        .padding([.horizontal, .top], 8)
+        .padding(.bottom, 14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.gray0)
+        .cornerRadius(10)
+    }
+
+    private func completedMissionInfo(mission: CompleteMissionDataDTO) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 10) {
+                Text(mission.mission.type == .exercise ? "운동" : "식단")
+                    .typography(.sub_b4_2)
+                    .padding(4)
+                    .foregroundStyle(.secondary7)
+                    .background(.secondary2)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+
+                Text("내일 다시 만나요!")
+                    .typography(.sub_btn1_enabled)
+                    .foregroundStyle(.gray8)
+            }
+
+            Spacer()
+
+            if mission.result == "SUCCESS" {
+                Image("icon_check")
+            }
+        }
+        .padding([.horizontal, .top], 8)
+        .padding(.bottom, 14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.gray0)
+        .cornerRadius(10)
+    }
+
+    private var completeButton: some View {
+        Button {
+            store.send(.missionCompleteTapped)
+        } label: {
+            Text("미션 인증하기")
+                .padding()
+                .frame(maxWidth: .infinity)
+                .typography(.btn2_enabled)
+                .foregroundStyle(.gray12)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.primary7)
+                )
+                .contentShape(Rectangle())
+        }
+    }
+
+    private var anotherMissionButton: some View {
+        Button {
+            store.send(.missionChatTapped)
+        } label: {
+            Text("다른 미션 제안받기")
+                .padding()
+                .frame(maxWidth: .infinity)
+                .typography(.btn2_enabled)
+                .foregroundStyle(.gray12)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(.primary7)
+                )
+                .contentShape(Rectangle())
+        }
     }
     
     private var emptyMission: some View {
@@ -179,12 +283,6 @@ extension HomeView {
             }
             
             Spacer()
-            
-            Button {
-                
-            } label: {
-                Image("icon_check")
-            }
         }
         .padding([.horizontal, .top], 8)
         .padding(.bottom, 14)

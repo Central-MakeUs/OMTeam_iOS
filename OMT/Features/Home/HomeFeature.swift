@@ -19,7 +19,6 @@ struct HomeFeature {
     @ObservableState
     struct State: Equatable {
         var user: User? = nil
-//        var todayMission: Mission? = nil // 미션 생성 여부(채팅으로 생성 등)
         var totalSuccessCount: Int = 0
         var thisWeekSuccessRate: Double = 0.0
         var overallFeedback: String = ""
@@ -27,8 +26,14 @@ struct HomeFeature {
         var characterLevel: Int = 0
         var experiencePercent: Int = 0
         var encouragementMessage: String = ""
-        
+
         var dailyResults: [DailyMission] = []
+
+        // Mission Status
+        var hasActiveMission: Bool = false
+        var hasCompletedMission: Bool = false
+        var activeMission: RecommendDTO? = nil
+        var completeMission: CompleteMissionDataDTO? = nil
     }
     
     enum Action {
@@ -36,13 +41,19 @@ struct HomeFeature {
         case fetchCharacterResponse(CharacterDataDTO)
         case fetchWeeklyReportsResponse(WeeklyReportsDataDTO)
         case missionChatTapped
+        case missionCompleteTapped
         case analysisDetailTapped
+
+        // Mission Status
+        case refreshMissionStatus
+        case fetchMissionStatusResponse(MissionStatusDataDTO)
 
         case delegate(Delegate)
 
         enum Delegate {
             case switchToChatTab
             case switchToAnalysisTab
+            case switchToCompleteMode(RecommendDTO)
         }
     }
     
@@ -79,6 +90,18 @@ struct HomeFeature {
 
                         if let data = response.data {
                             await send(.fetchWeeklyReportsResponse(data))
+                        }
+                    } catch: { error, send in
+                        print(error)
+                    },
+                    .run { [networkManager] send in
+                        let response = try await networkManager.requestNetwork(
+                            dto: MissionStatusResponseDTO.self,
+                            router: MissionRouter.dailyMissionStatus
+                        )
+
+                        if let data = response.data {
+                            await send(.fetchMissionStatusResponse(data))
                         }
                     } catch: { error, send in
                         print(error)
@@ -124,8 +147,36 @@ struct HomeFeature {
             case .missionChatTapped:
                 return .send(.delegate(.switchToChatTab))
 
+            case .missionCompleteTapped:
+                guard let mission = state.activeMission else { return .none }
+                return .send(.delegate(.switchToCompleteMode(mission)))
+
             case .analysisDetailTapped:
                 return .send(.delegate(.switchToAnalysisTab))
+
+            case .refreshMissionStatus:
+                return .run { [networkManager] send in
+                    let response = try await networkManager.requestNetwork(
+                        dto: MissionStatusResponseDTO.self,
+                        router: MissionRouter.dailyMissionStatus
+                    )
+
+                    if let data = response.data {
+                        await send(.fetchMissionStatusResponse(data))
+                    }
+                } catch: { error, send in
+                    print(error)
+                }
+
+            case .fetchMissionStatusResponse(let data):
+                state.hasActiveMission = data.hasInProgressMission
+                state.hasCompletedMission = data.hasCompletedMission
+                
+                if data.hasInProgressMission {
+                    state.activeMission = data.currentMission
+                } else {
+                    state.completeMission = data.missionResult
+                }
 
             default:
                  break
