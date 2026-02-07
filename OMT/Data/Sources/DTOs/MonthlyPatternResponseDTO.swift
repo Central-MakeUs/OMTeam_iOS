@@ -26,6 +26,6 @@ struct DayOfWeekStatDTO: Decodable {
 }
 
 struct MonthlyAIFeedbackDTO: Decodable {
-    let summary: String
-    let recommendation: String
+    let dayOfWeekFeedbackTitle: String
+    let dayOfWeekFeedbackContent: String
 }

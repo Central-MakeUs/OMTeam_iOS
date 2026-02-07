@@ -164,8 +164,8 @@ struct ReportFeature {
                 state.dayOfWeekStats = data.dayOfWeekStats.map {
                     DayOfWeekStat(id: $0.dayOfWeek.rawValue, dayName: $0.dayName, successCount: $0.successCount)
                 }
-                state.monthlySummary = data.aiFeedback.summary
-                state.monthlyRecommendation = data.aiFeedback.recommendation
+                state.monthlySummary = data.aiFeedback.dayOfWeekFeedbackTitle
+                state.monthlyRecommendation = data.aiFeedback.dayOfWeekFeedbackContent
                 return .none
 
             case .fetchDailyFeedbackResponse(let data):

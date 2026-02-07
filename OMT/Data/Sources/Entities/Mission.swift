@@ -9,7 +9,7 @@ import SwiftUI
 
 enum MissionStatus: String, Decodable {
     case success = "SUCCESS"
-    case fail = "FAIL"
+    case fail = "FAILURE"
     case notPerformed = "NOT_PERFORMED"
     
     var imageName: String {
