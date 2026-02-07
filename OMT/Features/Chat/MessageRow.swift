@@ -58,7 +58,7 @@ struct MessageRow: View {
                                         Text(option.label)
                                             .typography(.btn2_enabled)
                                             .lineLimit(nil)
-                                            .multilineTextAlignment(.center) 
+                                            .multilineTextAlignment(.center)
                                             .fixedSize(horizontal: false, vertical: true)
                                             .padding(.horizontal, 20)
                                             .padding(.vertical, 10)
@@ -74,8 +74,8 @@ struct MessageRow: View {
                                             )
                                     }
                                     .allowsHitTesting(message.selectedOption == nil)
+                                    .buttonStyle(PlainButtonStyle())
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                     }

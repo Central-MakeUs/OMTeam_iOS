@@ -17,7 +17,11 @@ struct ChatView: View {
 
     var body: some View {
         Group {
-            if store.isLoading && store.messages.isEmpty {
+            if store.mode == .missionRecommend {
+                MissionRecommendView(store: store)
+            } else if store.mode == .missionComplete {
+                MissionCompleteView(store: store)
+            } else if store.isLoading && store.messages.isEmpty {
                 ProgressView()
             } else if store.messages.isEmpty {
                 EmptyChatView(store: store)
@@ -26,7 +30,9 @@ struct ChatView: View {
             }
         }
         .onAppear {
-            store.send(.onAppear)
+            if store.mode == .regular {
+                store.send(.onAppear)
+            }
         }
     }
 
