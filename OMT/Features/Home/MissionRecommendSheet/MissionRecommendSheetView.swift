@@ -58,7 +58,7 @@ struct MissionRecommendSheetView: View {
             }
             .background(.greenGray1)
         }
-        .background(.white)
+        .background(.gray0)
         .overlay {
             if isRefetching {
                 Color.black.opacity(0.3)
@@ -66,7 +66,7 @@ struct MissionRecommendSheetView: View {
                     .overlay {
                         ProgressView()
                             .scaleEffect(1.5)
-                            .tint(.white)
+                            .tint(.gray0)
                     }
             }
         }

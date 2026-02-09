@@ -75,7 +75,7 @@ struct CustomTabView: View {
                     .overlay {
                         ProgressView()
                             .scaleEffect(1.5)
-                            .tint(.white)
+                            .tint(.gray0)
                     }
             }
         }

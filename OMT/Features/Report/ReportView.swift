@@ -149,7 +149,7 @@ extension ReportView {
         .padding(.top, 4)
         .padding(.bottom, 8)
         .padding(.horizontal, 12)
-        .background(.white)
+        .background(.gray0)
         .cornerRadius(16)
     }
 }
@@ -175,7 +175,7 @@ extension ReportView {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.white)
+        .background(.gray0)
         .cornerRadius(16)
     }
 }
@@ -193,7 +193,7 @@ extension ReportView {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.white)
+        .background(.gray0)
         .cornerRadius(16)
     }
 }

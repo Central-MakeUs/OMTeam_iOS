@@ -75,7 +75,7 @@ extension HomeView {
                 .frame(height: 280)
             
             VStack(spacing: 0) {
-                VStack {
+                VStack(spacing: 21) {
                     Text(store.encouragementMessage)
                         .typography(.sub_b4_2)
                         .padding(.horizontal, 12)
@@ -104,9 +104,9 @@ extension HomeView {
                     CustomProgressBar(progress: Double(store.experiencePercent) / 100.0)
                 }
                 .padding(.horizontal, 8)
-                .padding(.top, 24)
             }
             .padding(.horizontal, 20)
+            .padding(.top, 12)
         }
     }
     

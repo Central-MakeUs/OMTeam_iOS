@@ -139,7 +139,7 @@ struct DatePickerModal: View {
                 .disabled(!store.isConfirmButtonEnabled)
             }
             .padding(20)
-            .background(.white)
+            .background(.gray0)
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .frame(maxWidth: .infinity)
             .padding()
