@@ -55,17 +55,21 @@ struct EtcView: View {
     private func destinationView(for item: MyFeature.EtcMenuItem) -> some View {
         switch item {
         case .notice:
-            Text("내정보수정")
+            Text("공지사항")
         case .faq:
-            Text("기타")
+            Text("FAQ")
         case .contactUs:
             Text("문의하기")
         case .privacyPolicy:
-            Text("개인정보 정책")
+            WebView(
+                url: URL(string: "https://slashpage.com/omt-policy-terms/5r398nmnx6zxzmvwje7y")!,
+                title: "개인정보 정책"
+            )
         case .termsOfService:
-            Text("이용약관")
-        default:
-            EmptyView()
+            WebView(
+                url: URL(string: "https://slashpage.com/omt-policy-terms")!,
+                title: "이용약관"
+            )
         }
     }
 }
