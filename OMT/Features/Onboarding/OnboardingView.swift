@@ -116,7 +116,7 @@ extension OnboardingView {
                 } label: {
                     Text("이전")
                         .frame(maxWidth: .infinity)
-                        .frame(height: 56)
+                        .frame(height: 60)
                         .typography( .btn2_disabled)
                         .foregroundColor(.gray7)
                         .background(.gray3)
@@ -129,7 +129,7 @@ extension OnboardingView {
                 } label: {
                     Text("다음")
                         .frame(maxWidth: .infinity)
-                        .frame(height: 56)
+                        .frame(height: 60)
                         .typography(store.canProceed ? .btn2_enabled : .btn2_disabled)
                         .foregroundColor(store.canProceed ? .gray12 : .gray9)
                         .background(store.canProceed ? .primary7 : .primary4)
@@ -143,7 +143,7 @@ extension OnboardingView {
                 } label: {
                     Text("다음")
                         .frame(maxWidth: .infinity)
-                        .frame(height: 56)
+                        .frame(height: 60)
                         .typography(store.canProceed ? .btn2_enabled : .btn2_disabled)
                         .foregroundColor(store.canProceed ? .gray12 : .gray9)
                         .background(store.canProceed ? .primary7 : .primary4)
