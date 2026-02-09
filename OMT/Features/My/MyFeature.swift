@@ -136,10 +136,19 @@ struct MyFeature {
                 return .none
 
             case .nicknameEditConfirmed:
-                state.nickname = state.nicknameEditText
+                let newNickname = state.nicknameEditText
+                state.nickname = newNickname
                 state.nicknameEditSheetPresented = false
-                // TODO: API call to update nickname
-                return .none
+                
+                return .run { [networkManager] _ in
+                    let requestDTO = UpdateNicknameRequestDTO(nickname: newNickname)
+                    _ = try await networkManager.requestNetwork(
+                        dto: OnboardingResponseDTO.self,
+                        router: OnboardingRouter.updateNickname(requestDTO)
+                    )
+                } catch: { error, _ in
+                    print(error)
+                }
 
             case .delegate:
                 return .none

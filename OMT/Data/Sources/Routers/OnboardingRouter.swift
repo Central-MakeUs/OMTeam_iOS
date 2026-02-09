@@ -11,6 +11,7 @@ import Alamofire
 enum OnboardingRouter: TargetType {
     case saveOnboarding(OnboardingRequestDTO)
     case fetchOnboarding
+    case updateNickname(UpdateNicknameRequestDTO)
 }
 
 extension OnboardingRouter {
@@ -20,6 +21,8 @@ extension OnboardingRouter {
             return .post
         case .fetchOnboarding:
             return .get
+        case .updateNickname:
+            return .patch
         }
     }
     
@@ -27,6 +30,8 @@ extension OnboardingRouter {
         switch self {
         case .saveOnboarding, .fetchOnboarding:
             return "/api/onboarding"
+        case .updateNickname:
+            return "/api/onboarding/nickname"
         }
     }
     
@@ -43,19 +48,21 @@ extension OnboardingRouter {
     }
     
     var body: Data? {
-        var encoder = JSONEncoder()
+        let encoder = JSONEncoder()
         
         switch self {
         case .saveOnboarding(let onboardingRequestDTO):
             return try? encoder.encode(onboardingRequestDTO)
         case .fetchOnboarding:
             return nil
+        case .updateNickname(let updateNicknameRequestDTO):
+            return try? encoder.encode(updateNicknameRequestDTO)
         }
     }
     
     var encodingType: EncodingType {
         switch self {
-        case .saveOnboarding:
+        case .saveOnboarding, .updateNickname:
             return .json
         case .fetchOnboarding:
             return .url

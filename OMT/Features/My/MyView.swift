@@ -43,7 +43,8 @@ struct MyView: View {
         }
         .sheet(isPresented: $store.nicknameEditSheetPresented) {
             nicknameEditSheet
-                .presentationDetents([.height(280)])
+                .presentationDetents([.height(365)])
+                .presentationCornerRadius(32)
         }
     }
 }
@@ -192,20 +193,27 @@ extension MyView {
                 Button {
                     store.send(.nicknameEditSheetClose)
                 } label: {
-                    Image("xmark")
+                    Image("arrow_close")
                 }
             }
-            .padding(.bottom, 8)
+            .padding(.bottom, 16)
 
-            Text("닉네임 변경하기")
-                .typography(.h3)
-                .foregroundStyle(.gray11)
-                .padding(.bottom, 8)
-
-            Text("한글, 영어, 숫자를 사용하여 8글자 이내로 닉네임을 설정해주세요.")
-                .typography(.sub_b2_4)
-                .foregroundStyle(.gray8)
-                .padding(.bottom, 16)
+            VStack(alignment: .leading, spacing: 11) {
+                Text("닉네임 변경하기")
+                    .typography(.btn1_enabled)
+                    .foregroundStyle(.gray12)
+                
+                HStack(spacing: 0) {
+                    Text("새롭게 사용하실 닉네임")
+                        .typography(.sub_btn3_enabled)
+                        .foregroundStyle(.error)
+                    
+                    Text("을 입력해주세요.")
+                        .typography(.sub_btn3_enabled)
+                        .foregroundStyle(.gray9)
+                }
+            }
+            .padding(.bottom, 28)
 
             TextField(
                 "",
@@ -215,6 +223,7 @@ extension MyView {
                     .foregroundStyle(.gray6)
             )
             .padding()
+            .frame(height: 60)
             .typography(.sub_btn2_enabled)
             .foregroundStyle(.gray10)
             .background(.greenGray2)
@@ -251,7 +260,7 @@ extension MyView {
             .disabled(!store.isNicknameValid)
         }
         .padding(.horizontal, 20)
-        .padding(.top, 16)
-        .padding(.bottom, 20)
+        .padding(.top, 20)
+        .padding(.bottom, 10)
     }
 }
