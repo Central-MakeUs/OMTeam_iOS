@@ -86,7 +86,7 @@ extension HomeView {
                                 .fill(.gray0)
                         )
                     
-                    Image("basic")
+                    Image(store.characterImageName)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 150, height: 133)

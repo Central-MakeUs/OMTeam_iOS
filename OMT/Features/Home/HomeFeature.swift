@@ -38,6 +38,16 @@ struct HomeFeature {
         // Mission Recommend Sheet
         var isLoadingRecommendations: Bool = false
         @Presents var missionRecommendSheet: MissionRecommendSheetFeature.State?
+
+        var characterImageName: String {
+            if hasCompletedMission, let mission = completeMission {
+                return mission.result == "SUCCESS" ? "happy" : "excited"
+            } else if hasActiveMission, let mission = activeMission {
+                return mission.mission.type == .exercise ? "exercise" : "diet"
+            } else {
+                return "basic"
+            }
+        }
     }
 
     enum Action {
