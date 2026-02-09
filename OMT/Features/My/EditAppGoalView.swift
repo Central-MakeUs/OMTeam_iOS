@@ -33,6 +33,7 @@ struct EditAppGoalView: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 27)
+            .frame(height: 91)
             .frame(maxWidth: .infinity)
             .background(.gray2)
             .clipShape(RoundedRectangle(cornerRadius: 10))

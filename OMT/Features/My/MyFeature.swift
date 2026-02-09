@@ -94,7 +94,7 @@ struct MyFeature {
             case .faq: return "icon_FAQ"
             case .contactUs: return "icon_question"
             case .privacyPolicy: return "icon_policy"
-            case .termsOfService: return "doc.text"
+            case .termsOfService: return "icon_info"
             }
         }
     }
