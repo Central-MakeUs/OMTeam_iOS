@@ -60,11 +60,8 @@ struct ReportFeature {
         }
         
         var displayText: String {
-            let calendar = Calendar.current
-            let year = calendar.component(.year, from: currentDate)
-            let month = calendar.component(.month, from: currentDate)
-            let weekOfMonth = calendar.component(.weekOfMonth, from: currentDate)
-            
+            let calendar = Calendar.mondayFirst
+            let (year, month, weekOfMonth) = calendar.weekInfoFromFirstMonday(for: currentDate)
             return "\(year)년 \(month)월 \(weekOfMonth)주"
         }
         
@@ -103,10 +100,8 @@ struct ReportFeature {
                 return .send(.fetchWeeklyReports)
 
             case .fetchWeeklyReports:
-                let calendar = Calendar.current
-                let year = calendar.component(.year, from: state.currentDate)
-                let month = calendar.component(.month, from: state.currentDate)
-                let weekOfMonth = calendar.component(.weekOfMonth, from: state.currentDate)
+                let calendar = Calendar.mondayFirst
+                let (year, month, weekOfMonth) = calendar.weekInfoFromFirstMonday(for: state.currentDate)
 
                 let formatter = DateFormatter()
                 formatter.dateFormat = "yyyy-MM-dd"
@@ -206,7 +201,7 @@ struct ReportFeature {
                 return .none
 
             case .previousWeekTapped:
-                if let newDate = Calendar.current.date(
+                if let newDate = Calendar.mondayFirst.date(
                     byAdding: .weekOfYear,
                     value: -1,
                     to: state.currentDate
@@ -216,7 +211,7 @@ struct ReportFeature {
                 return .send(.fetchWeeklyReports)
 
             case .nextWeekTapped:
-                if let newDate = Calendar.current.date(
+                if let newDate = Calendar.mondayFirst.date(
                     byAdding: .weekOfYear,
                     value: 1,
                     to: state.currentDate
@@ -255,12 +250,8 @@ struct ReportFeature {
                     return .none
                 }
 
-                var components = DateComponents()
-                components.year = year
-                components.month = month
-                components.weekOfMonth = week
-                components.weekday = Calendar.current.firstWeekday
-                if let date = Calendar.current.date(from: components) {
+                let calendar = Calendar.mondayFirst
+                if let date = calendar.dateFromFirstMondayWeek(week: week, month: month, year: year) {
                     state.currentDate = date
                 }
 

@@ -130,8 +130,8 @@ extension ReportView {
             
             HStack(spacing: 12) {
                 ForEach(store.dailyResults, id: \.date) { mission in
-                    let weekday = Calendar.current.component(.weekday, from: mission.date)
-                    let dayName = Calendar.current.shortWeekdaySymbols[weekday - 1]
+                    let weekday = Calendar.mondayFirst.component(.weekday, from: mission.date)
+                    let dayName = Calendar.mondayFirst.shortWeekdaySymbols[weekday - 1]
                     VStack(spacing: 12) {
                         Text(dayName)
                             .typography(mission.result.font)
