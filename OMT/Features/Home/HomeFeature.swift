@@ -34,13 +34,19 @@ struct HomeFeature {
         var hasCompletedMission: Bool = false
         var activeMission: RecommendDTO? = nil
         var completeMission: CompleteMissionDataDTO? = nil
+
+        // Mission Recommend Sheet
+        var isLoadingRecommendations: Bool = false
+        @Presents var missionRecommendSheet: MissionRecommendSheetFeature.State?
     }
-    
+
     enum Action {
         case onAppear
         case fetchCharacterResponse(CharacterDataDTO)
         case fetchWeeklyReportsResponse(WeeklyReportsDataDTO)
-        case missionChatTapped
+        case missionRecommendTapped
+        case fetchRecommendationsResponse([RecommendDTO])
+        case fetchRecommendationsFailed
         case missionCompleteTapped
         case analysisDetailTapped
 
@@ -48,10 +54,12 @@ struct HomeFeature {
         case refreshMissionStatus
         case fetchMissionStatusResponse(MissionStatusDataDTO)
 
+        // Mission Recommend Sheet
+        case missionRecommendSheet(PresentationAction<MissionRecommendSheetFeature.Action>)
+
         case delegate(Delegate)
 
         enum Delegate {
-            case switchToChatTab
             case switchToAnalysisTab
             case switchToCompleteMode(RecommendDTO)
         }
@@ -77,11 +85,9 @@ struct HomeFeature {
                         print(error)
                     },
                     .run { [networkManager] send in
-                        let calendar = Calendar.current
+                        let calendar = Calendar.mondayFirst
                         let today = Date()
-                        let year = calendar.component(.year, from: today)
-                        let month = calendar.component(.month, from: today)
-                        let weekOfMonth = calendar.component(.weekOfMonth, from: today)
+                        let (year, month, weekOfMonth) = calendar.weekInfoFromFirstMonday(for: today)
 
                         let response = try await networkManager.requestNetwork(
                             dto: WeeklyReportsResponseDTO.self,
@@ -144,8 +150,31 @@ struct HomeFeature {
                 state.thisWeekSuccessRate = data.thisWeekSuccessRate
                 state.overallFeedback = data.aiFeedback.weeklyFeedback ?? ""
 
-            case .missionChatTapped:
-                return .send(.delegate(.switchToChatTab))
+            case .missionRecommendTapped:
+                state.isLoadingRecommendations = true
+                return .run { [networkManager] send in
+                    let response = try await networkManager.requestNetwork(
+                        dto: DailyRecommendResponseDTO.self,
+                        router: MissionRouter.fetchDailyRecommend
+                    )
+                    if let data = response.data {
+                        await send(.fetchRecommendationsResponse(data.recommendations))
+                    } else {
+                        await send(.fetchRecommendationsFailed)
+                    }
+                } catch: { error, send in
+                    print(error)
+                    await send(.fetchRecommendationsFailed)
+                }
+
+            case .fetchRecommendationsResponse(let recommendations):
+                state.isLoadingRecommendations = false
+                state.missionRecommendSheet = MissionRecommendSheetFeature.State(recommendations: recommendations)
+                return .none
+
+            case .fetchRecommendationsFailed:
+                state.isLoadingRecommendations = false
+                return .none
 
             case .missionCompleteTapped:
                 guard let mission = state.activeMission else { return .none }
@@ -171,18 +200,28 @@ struct HomeFeature {
             case .fetchMissionStatusResponse(let data):
                 state.hasActiveMission = data.hasInProgressMission
                 state.hasCompletedMission = data.hasCompletedMission
-                
+
                 if data.hasInProgressMission {
                     state.activeMission = data.currentMission
                 } else {
                     state.completeMission = data.missionResult
                 }
 
-            default:
-                 break
+            case .missionRecommendSheet(.presented(.delegate(.missionStarted))):
+                state.missionRecommendSheet = nil
+                return .send(.refreshMissionStatus)
+
+            case .missionRecommendSheet:
+                break
+
+            case .delegate:
+                break
             }
 
             return .none
+        }
+        .ifLet(\.$missionRecommendSheet, action: \.missionRecommendSheet) {
+            MissionRecommendSheetFeature()
         }
     }
 }

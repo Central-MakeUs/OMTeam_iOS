@@ -17,7 +17,7 @@ struct HomeView: View {
             Image("logo")
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
-            
+
             // 스크롤 가능한 영역
             ScrollView {
                 VStack(spacing: 0) {
@@ -26,16 +26,23 @@ struct HomeView: View {
                         progressSection
                     }
                     .padding(.bottom, 24)
-                    
+
                     todayMission
                         .padding(.bottom, 48)
-                    
+
                     analysisSummary
                 }
             }
         }
         .onAppear {
             store.send(.onAppear)
+        }
+        .sheet(
+            item: $store.scope(state: \.missionRecommendSheet, action: \.missionRecommendSheet)
+        ) { sheetStore in
+            MissionRecommendSheetView(store: sheetStore)
+                .presentationDetents([.height(578)])
+                .presentationCornerRadius(32)
         }
     }
 }
@@ -68,7 +75,7 @@ extension HomeView {
                 .frame(height: 280)
             
             VStack(spacing: 0) {
-                VStack(spacing: 24) {
+                VStack {
                     Text(store.encouragementMessage)
                         .typography(.sub_b4_2)
                         .padding(.horizontal, 12)
@@ -97,9 +104,9 @@ extension HomeView {
                     CustomProgressBar(progress: Double(store.experiencePercent) / 100.0)
                 }
                 .padding(.horizontal, 8)
+                .padding(.top, 24)
             }
             .padding(.horizontal, 20)
-            .padding(.top, 20)
         }
     }
     
@@ -190,7 +197,7 @@ extension HomeView {
     private func completedMissionInfo(mission: CompleteMissionDataDTO) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 10) {
-                Text(mission.mission.type == .exercise ? "운동" : "식단")
+                Text(mission.mission.type == .exercise ? "운동 미션" : "식단 미션")
                     .typography(.sub_b4_2)
                     .padding(4)
                     .foregroundStyle(.secondary7)
@@ -234,7 +241,7 @@ extension HomeView {
 
     private var anotherMissionButton: some View {
         Button {
-            store.send(.missionChatTapped)
+            store.send(.missionRecommendTapped)
         } label: {
             Text("다음 미션 제안받기")
                 .padding()
@@ -296,9 +303,9 @@ extension HomeView {
     
     private var proposalButton: some View {
         Button {
-            store.send(.missionChatTapped)
+            store.send(.missionRecommendTapped)
         } label: {
-            Text("채팅으로 미션 제안받기")
+            Text("미션 제안받기")
                 .padding()
                 .frame(maxWidth: .infinity)
                 .typography(.btn2_enabled)

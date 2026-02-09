@@ -68,6 +68,17 @@ struct CustomTabView: View {
                 }
             }
         }
+        .overlay {
+            if store.home.isLoadingRecommendations {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .overlay {
+                        ProgressView()
+                            .scaleEffect(1.5)
+                            .tint(.white)
+                    }
+            }
+        }
     }
 }
 
