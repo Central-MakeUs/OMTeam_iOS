@@ -84,20 +84,20 @@ extension MyView {
                     .typography(.h4)
                     .foregroundStyle(.gray11)
                 Spacer()
-                Button {
-                    
-                } label: {
+                
+                NavigationLink(destination: EditAppGoalView(store: store)) {
                     Text("수정하기")
                         .typography(.sub_btn3_enabled)
                         .foregroundStyle(.greenGray12)
                 }
+                .buttonStyle(.plain)
                 .padding(10)
                 .background(.primary7)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
             }
             
-            HStack {
-                Image("icon_exercise")
+            HStack(spacing: 8) {
+                Image("goal")
                 Text(store.appGoalText)
                     .typography(.h3)
                     .foregroundStyle(.gray11)

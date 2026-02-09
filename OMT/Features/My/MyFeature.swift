@@ -12,6 +12,7 @@ import ComposableArchitecture
 struct MyFeature {
     @ObservableState
     struct State: Equatable {
+        var hasLoaded = false
         var nickname: String = ""
         var appGoalText: String = ""
         var isNotificationOn = false
@@ -19,6 +20,8 @@ struct MyFeature {
 
         var nicknameEditSheetPresented = false
         var nicknameEditText = ""
+
+        var appGoalEditText = ""
 
         var isNicknameValid: Bool {
             let text = nicknameEditText
@@ -35,6 +38,20 @@ struct MyFeature {
             if hasSpecialChar { return "특수문자는 입력할 수 없습니다." }
             return nil
         }
+        
+        var isAppGoalValid: Bool {
+            let text = appGoalEditText
+            guard !text.isEmpty, text.count <= 15 else { return false }
+            
+            return true
+        }
+        
+        var appGoalErrorMessage: String? {
+            let text = appGoalEditText
+            guard !text.isEmpty else { return nil }
+            if text.count > 15 { return "입력할 수 있는 글자 수를 초과했어요." }
+            return nil
+        }
     }
 
     enum Action: BindableAction {
@@ -48,6 +65,7 @@ struct MyFeature {
         case nicknameEditSheetOpen
         case nicknameEditSheetClose
         case nicknameEditConfirmed
+        case appGoalEditConfirmed
 
         case delegate(Delegate)
 
@@ -92,6 +110,9 @@ struct MyFeature {
                 return .none
 
             case .onAppear:
+                guard !state.hasLoaded else { return .none }
+                state.hasLoaded = true
+
                 return .run { [networkManager] send in
                     let response = try await networkManager.requestNetwork(
                         dto: OnboardingResponseDTO.self,
@@ -107,6 +128,7 @@ struct MyFeature {
             case .fetchOnboardingResponse(let data):
                 state.nickname = data.nickname
                 state.appGoalText = data.appGoalText
+                state.appGoalEditText = data.appGoalText
                 state.isNotificationOn = data.remindEnabled && data.checkinEnabled && data.reviewEnabled
                 return .none
 
@@ -139,12 +161,26 @@ struct MyFeature {
                 let newNickname = state.nicknameEditText
                 state.nickname = newNickname
                 state.nicknameEditSheetPresented = false
-                
+
                 return .run { [networkManager] _ in
                     let requestDTO = UpdateNicknameRequestDTO(nickname: newNickname)
                     _ = try await networkManager.requestNetwork(
                         dto: OnboardingResponseDTO.self,
                         router: OnboardingRouter.updateNickname(requestDTO)
+                    )
+                } catch: { error, _ in
+                    print(error)
+                }
+
+            case .appGoalEditConfirmed:
+                let newAppGoal = state.appGoalEditText
+                state.appGoalText = newAppGoal
+
+                return .run { [networkManager] _ in
+                    let requestDTO = UpdateAppGoalRequestDTO(appGoalText: newAppGoal)
+                    _ = try await networkManager.requestNetwork(
+                        dto: OnboardingResponseDTO.self,
+                        router: OnboardingRouter.updateAppGoal(requestDTO)
                     )
                 } catch: { error, _ in
                     print(error)

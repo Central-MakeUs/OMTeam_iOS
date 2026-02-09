@@ -12,6 +12,7 @@ enum OnboardingRouter: TargetType {
     case saveOnboarding(OnboardingRequestDTO)
     case fetchOnboarding
     case updateNickname(UpdateNicknameRequestDTO)
+    case updateAppGoal(UpdateAppGoalRequestDTO)
 }
 
 extension OnboardingRouter {
@@ -21,7 +22,7 @@ extension OnboardingRouter {
             return .post
         case .fetchOnboarding:
             return .get
-        case .updateNickname:
+        case .updateNickname, .updateAppGoal:
             return .patch
         }
     }
@@ -32,6 +33,8 @@ extension OnboardingRouter {
             return "/api/onboarding"
         case .updateNickname:
             return "/api/onboarding/nickname"
+        case .updateAppGoal:
+            return "/api/onboarding/app-goal"
         }
     }
     
@@ -51,18 +54,21 @@ extension OnboardingRouter {
         let encoder = JSONEncoder()
         
         switch self {
-        case .saveOnboarding(let onboardingRequestDTO):
-            return try? encoder.encode(onboardingRequestDTO)
+        case .saveOnboarding(let request):
+            return try? encoder.encode(request)
         case .fetchOnboarding:
             return nil
-        case .updateNickname(let updateNicknameRequestDTO):
-            return try? encoder.encode(updateNicknameRequestDTO)
+        case .updateNickname(let request):
+            return try? encoder.encode(request)
+        case .updateAppGoal(let request):
+            return try? encoder.encode(request)
+            
         }
     }
     
     var encodingType: EncodingType {
         switch self {
-        case .saveOnboarding, .updateNickname:
+        case .saveOnboarding, .updateNickname, .updateAppGoal:
             return .json
         case .fetchOnboarding:
             return .url
