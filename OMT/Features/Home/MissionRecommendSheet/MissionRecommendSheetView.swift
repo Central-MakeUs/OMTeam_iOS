@@ -27,6 +27,7 @@ struct MissionRecommendSheetView: View {
             }
             .padding(.top, 20)
             .padding(.bottom, 10)
+            .padding(.trailing, 20)
             
             sheetHeader
                 .padding(.horizontal, 20)
@@ -53,8 +54,8 @@ struct MissionRecommendSheetView: View {
                 
                 bottomButtons
                     .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
             }
-            .padding(.vertical, 12)
             .background(.greenGray1)
         }
         .background(.white)
@@ -87,13 +88,13 @@ struct MissionRecommendSheetView: View {
             } label: {
                 Text("다시 제안받기")
                     .typography(.btn2_enabled)
-                    .foregroundStyle(.greenGray9)
                     .frame(maxWidth: .infinity)
                     .frame(height: 60)
+                    .foregroundStyle(.greenGray9)
+                    .background(.greenGray5)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
             }
             .frame(width: 126)
-            .background(.greenGray5)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
             .disabled(store.isLoading)
             
             Button {
@@ -107,16 +108,14 @@ struct MissionRecommendSheetView: View {
                 } else {
                     Text("미션 시작하기")
                         .typography(.btn2_enabled)
-                        .foregroundStyle(store.selectedRecommendation != nil ? .gray12 : .gray9)
                         .frame(maxWidth: .infinity)
                         .frame(height: 60)
+                        .foregroundStyle(store.selectedRecommendation != nil ? .gray12 : .gray9)
+                        .background(store.selectedRecommendation != nil ? .primary7 : .primary4)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
             }
             .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(store.selectedRecommendation != nil ? .primary7 : .gray4)
-            )
             .disabled(store.selectedRecommendation == nil || store.isLoading)
         }
     }
@@ -166,10 +165,8 @@ struct MissionOptionCard: View {
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? .primary1 : .gray1)
-            )
+            .background(isSelected ? .primary1 : .gray1)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(isSelected ? .primary3 : .gray3, lineWidth: 1)

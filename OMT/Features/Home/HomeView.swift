@@ -165,7 +165,7 @@ extension HomeView {
     private func activeMissionInfo(mission: RecommendDTO) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 10) {
-                Text(mission.mission.type == .exercise ? "운동" : "식단")
+                Text(mission.mission.type == .exercise ? "운동 미션" : "식단 미션")
                     .typography(.sub_b4_2)
                     .padding(4)
                     .foregroundStyle(.secondary7)
@@ -175,14 +175,6 @@ extension HomeView {
                 Text(mission.mission.name)
                     .typography(.sub_btn1_enabled)
                     .foregroundStyle(.gray11)
-
-                HStack(spacing: 8) {
-                    Text("난이도 \(mission.mission.difficulty)")
-                    Label("\(mission.mission.estimatedMinutes)분", systemImage: "clock")
-                    Label("\(mission.mission.estimatedCalories)kcal", systemImage: "flame")
-                }
-                .typography(.sub_b4_3)
-                .foregroundStyle(.gray9)
             }
 
             Spacer()
@@ -197,7 +189,7 @@ extension HomeView {
     private func completedMissionInfo(mission: CompleteMissionDataDTO) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 10) {
-                Text(mission.mission.type == .exercise ? "운동 미션" : "식단 미션")
+                Text("미션 01")
                     .typography(.sub_b4_2)
                     .padding(4)
                     .foregroundStyle(.secondary7)
