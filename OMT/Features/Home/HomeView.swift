@@ -68,7 +68,7 @@ extension HomeView {
                 .frame(height: 280)
             
             VStack(spacing: 0) {
-                VStack {
+                VStack(spacing: 24) {
                     Text(store.encouragementMessage)
                         .typography(.sub_b4_2)
                         .padding(.horizontal, 12)
@@ -97,9 +97,9 @@ extension HomeView {
                     CustomProgressBar(progress: Double(store.experiencePercent) / 100.0)
                 }
                 .padding(.horizontal, 8)
-                .padding(.top, 24)
             }
             .padding(.horizontal, 20)
+            .padding(.top, 20)
         }
     }
     
@@ -236,14 +236,14 @@ extension HomeView {
         Button {
             store.send(.missionChatTapped)
         } label: {
-            Text("다른 미션 제안받기")
+            Text("다음 미션 제안받기")
                 .padding()
                 .frame(maxWidth: .infinity)
                 .typography(.btn2_enabled)
-                .foregroundStyle(.gray12)
+                .foregroundStyle(.gray9)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(.primary7)
+                        .fill(.primary4)
                 )
                 .contentShape(Rectangle())
         }
