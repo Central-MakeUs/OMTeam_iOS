@@ -41,7 +41,10 @@ struct OnboardingFeature {
         func toServerRequest() -> OnboardingRequestDTO {
             let nickname = answers[0] ?? ""
             let appGoalText = answers[1] ?? ""
-            let preferredExerciseText = answers[4] ?? ""
+            let preferredExercisesText = answers[4] ?? ""
+            let preferredExercises = preferredExercisesText
+                .components(separatedBy: ", ")
+                .filter { !$0.isEmpty }
             let remindEnabled = answers[6] == "받을래요."
             
             // 시간 변환
@@ -86,7 +89,7 @@ struct OnboardingFeature {
                 availableStartTime: startTime,
                 availableEndTime: endTime,
                 minExerciseMinutes: minExerciseMinutes,
-                preferredExerciseText: preferredExerciseText,
+                preferredExercises: preferredExercises,
                 lifestyleType: lifestyleType,
                 remindEnabled: remindEnabled,
                 checkinEnabled: remindEnabled,
@@ -136,11 +139,17 @@ struct OnboardingFeature {
                         .components(separatedBy: ", ")
                         .filter { !$0.isEmpty }
 
-                    if !selections.contains(option), selections.count < state.currentStepData.maxSelections {
+                    if let index = selections.firstIndex(of: option) {
+                        selections.remove(at: index)
+                    } else if selections.count < state.currentStepData.maxSelections {
                         selections.append(option)
                     }
 
-                    state.answers[state.currentStep] = selections.joined(separator: ", ")
+                    if selections.isEmpty {
+                        state.answers.removeValue(forKey: state.currentStep)
+                    } else {
+                        state.answers[state.currentStep] = selections.joined(separator: ", ")
+                    }
                 } else {
                     state.answers[state.currentStep] = option
                 }
