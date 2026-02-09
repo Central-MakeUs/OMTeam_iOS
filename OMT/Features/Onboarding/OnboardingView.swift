@@ -32,6 +32,7 @@ struct OnboardingView: View {
         .sheet(isPresented: $store.customInputSheetPresented.sending(\.customInputSheetPresentedChanged)) {
             customInputSheet
                 .presentationDetents([.height(260)])
+                .presentationCornerRadius(32)
         }
     }
 }
