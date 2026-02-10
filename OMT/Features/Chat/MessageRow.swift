@@ -52,7 +52,11 @@ struct MessageRow: View {
                                 ForEach(options, id: \.value) { option in
                                     Button {
                                         if message.selectedOption == nil {
-                                            store.send(.optionSelected(label: option.label, value: option.value))
+                                            if option.label.contains("직접 입력") {
+                                                store.send(.customInputOptionTapped)
+                                            } else {
+                                                store.send(.optionSelected(label: option.label, value: option.value))
+                                            }
                                         }
                                     } label: {
                                         Text(option.label)

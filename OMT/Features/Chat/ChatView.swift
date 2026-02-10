@@ -30,6 +30,12 @@ struct ChatView: View {
                 store.send(.onAppear)
             }
         }
+        .onChange(of: store.shouldFocusInput) { _, newValue in
+            if newValue {
+                isInputFocused = true
+                store.shouldFocusInput = false
+            }
+        }
     }
 
     private var chatContent: some View {

@@ -24,6 +24,7 @@ struct ChatFeature {
         var hasFetched: Bool = false
 
         var mode: ChatMode = .regular
+        var shouldFocusInput: Bool = false
 
         // Mission Complete Mode
         var currentMission: RecommendDTO? = nil
@@ -39,6 +40,7 @@ struct ChatFeature {
         case sendButtonTapped
         case sendMessageResponse(MessageDataDTO)
         case optionSelected(label: String, value: String)
+        case customInputOptionTapped
 
         // Mission Complete Mode Actions
         case enterMissionCompleteMode(RecommendDTO)
@@ -221,6 +223,14 @@ struct ChatFeature {
                 } catch: { error, send in
                     print(error)
                 }
+
+            case .customInputOptionTapped:
+                // 옵션 버튼을 선택된 상태로 표시
+                if let index = state.messages.lastIndex(where: { $0.options != nil && $0.selectedOption == nil }) {
+                    state.messages[index].selectedOption = "custom_input"
+                }
+                state.shouldFocusInput = true
+                return .none
 
             // MARK: - Mission Complete Mode
 
