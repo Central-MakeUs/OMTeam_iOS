@@ -73,11 +73,11 @@ struct OnboardingFeature {
             case "비교적 규칙적인 평일 주간 근무에요.":
                 lifestyleType = "REGULAR_DAYTIME"
             case "야근/불규칙한 일정이 자주 있어요.":
-                lifestyleType = "IRREGULAR"
+                lifestyleType = "IRREGULAR_OVERTIME"
             case "주기적으로 교대/밤샘 근무가 있어요.":
-                lifestyleType = "SHIFT_WORK"
+                lifestyleType = "SHIFT_NIGHT"
             case "일정이 매일매일 달라요.":
-                lifestyleType = "VARIABLE"
+                lifestyleType = "VARIABLE_DAILY"
             default:
                 lifestyleType = "REGULAR_DAYTIME"
             }
