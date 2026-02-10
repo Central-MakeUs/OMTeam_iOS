@@ -235,13 +235,13 @@ struct ComparisonBar: View {
 
                 HStack {
                     Spacer(minLength: 0)
-                    Text("\(String(format: "%.1f", percentage)) %")
+                    Text("\(String(format: "%.1f", percentage))%")
                         .padding(.horizontal, 10)
                         .padding(.vertical, 12)
                         .typography(.sub_btn3_enabled)
                         .foregroundStyle(isHighlighted ? .primary12 : .gray9)
                 }
-                .frame(width: max(70, (geometry.size.width - 100) * CGFloat(percentage / 100)))
+                .frame(width: barWidth(availableWidth: geometry.size.width - 100))
                 .background(
                     RoundedRectangle(cornerRadius: 12)
                         .fill(isHighlighted ? Color.primary6 : Color.gray3)
@@ -249,5 +249,14 @@ struct ComparisonBar: View {
             }
         }
         .frame(height: 40)
+    }
+    
+    private func barWidth(availableWidth: CGFloat) -> CGFloat {
+        if percentage <= 10 {
+            return 60
+        } else {
+            let scaledPercentage = (percentage - 10) / 90
+            return 60 + (availableWidth - 60) * CGFloat(scaledPercentage)
+        }
     }
 }
