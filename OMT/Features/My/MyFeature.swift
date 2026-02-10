@@ -16,7 +16,6 @@ struct MyFeature {
         var nickname: String = ""
         var appGoalText: String = ""
         var isNotificationOn = false
-        var showLogoutAlert = false
 
         var nicknameEditSheetPresented = false
         var nicknameEditText = ""
@@ -60,17 +59,17 @@ struct MyFeature {
         case fetchOnboardingResponse(OnboardingDataDTO)
         case notificationToggled(Bool)
         case logoutButtonTapped
-        case logoutConfirmed
-        case logoutCanceled
         case nicknameEditSheetOpen
         case nicknameEditSheetClose
         case nicknameEditConfirmed
         case appGoalEditConfirmed
+        case withdrawButtonTapped
 
         case delegate(Delegate)
 
         enum Delegate {
-            case logout
+            case showLogoutAlert
+            case showWithdrawAlert
         }
     }
     
@@ -134,19 +133,26 @@ struct MyFeature {
 
             case .notificationToggled(let isOn):
                 state.isNotificationOn = isOn
-                return .none
+                
+                return .run { [networkManager] _ in
+                    let requestDTO = UpdateAlertRequestDTO(
+                        remindEnabled: isOn,
+                        checkinEnabled: isOn,
+                        reviewEnabled: isOn
+                    )
+                    _ = try await networkManager.requestNetwork(
+                        dto: OnboardingResponseDTO.self,
+                        router: OnboardingRouter.updateAlert(requestDTO)
+                    )
+                } catch: { error, _ in
+                    print(error)
+                }
 
             case .logoutButtonTapped:
-                state.showLogoutAlert = true
-                return .none
-
-            case .logoutConfirmed:
-                state.showLogoutAlert = false
-                return .none
-
-            case .logoutCanceled:
-                state.showLogoutAlert = false
-                return .none
+                return .send(.delegate(.showLogoutAlert))
+                
+            case .withdrawButtonTapped:
+                return .send(.delegate(.showWithdrawAlert))
 
             case .nicknameEditSheetOpen:
                 state.nicknameEditText = state.nickname
