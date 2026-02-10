@@ -168,8 +168,16 @@ extension ReportView {
             if store.topDifficulties.isEmpty {
                 Text("아직 기록이 없습니다")
             } else {
-                ForEach(store.topDifficulties, id: \.self) { difficulty in
-                    Text(difficulty)
+                ForEach(Array(store.topDifficulties.prefix(2).enumerated()), id: \.offset) { index, difficulty in
+                    HStack(spacing: 16) {
+                        Text("\(index + 1)위")
+                            .typography(.sub_btn3_enabled)
+                            .foregroundStyle(index == 0 ? .primary8 : .greenGray7)
+                        
+                        Text(difficulty)
+                            .typography(index == 0 ? .sub_btn1_enabled : .sub_btn2_disabled)
+                            .foregroundStyle(index == 0 ? .gray13 : .gray10)
+                    }
                 }
             }
         }
@@ -183,9 +191,16 @@ extension ReportView {
 extension ReportView {
     private var recommendCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("OMT의 제안")
-                .typography(.h3)
-                .foregroundStyle(.gray11)
+            HStack(spacing: 8) {
+                Image("icon_suggest")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 32, height: 32)
+                
+                Text("OMT의 제안")
+                    .typography(.h3)
+                    .foregroundStyle(.gray11)
+            }
             
             Text(store.overallFeedback)
                 .typography(.sub_b2_2)
