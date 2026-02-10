@@ -25,10 +25,10 @@ struct HomeView: View {
                         topCalendar
                         progressSection
                     }
-                    .padding(.bottom, 24)
+                    .padding(.bottom, 20)
 
                     todayMission
-                        .padding(.bottom, 48)
+                        .padding(.bottom, 28)
 
                     analysisSummary
                 }
