@@ -12,6 +12,7 @@ import ComposableArchitecture
 struct RootContainer {
     @ObservableState
     struct State: Equatable {
+        var showSplash = true
         var currentView: ViewStatus
         var selectedTab: Tab = .home
         var alertType: AlertType?
@@ -22,6 +23,10 @@ struct RootContainer {
         var chat = ChatFeature.State()
         var report = ReportFeature.State()
         var my = MyFeature.State()
+
+        var isLoggedIn: Bool {
+            KeychainManager.shared.refreshToken != nil
+        }
 
         init() {
             if KeychainManager.shared.refreshToken != nil {
@@ -44,6 +49,9 @@ struct RootContainer {
         case alertCanceled
         case alertConfirmed
         case withdrawCompleted
+        case splashAppeared
+        case splashCompleted
+        case splashDataFetched(CharacterDataDTO?, WeeklyReportsDataDTO?, MissionStatusDataDTO?)
     }
     
     enum ViewStatus: Hashable {
@@ -155,6 +163,66 @@ struct RootContainer {
 
             case .withdrawCompleted:
                 state.alertType = .withdrawComplete
+
+            case .splashAppeared:
+                let isLoggedIn = state.isLoggedIn
+                return .run { [networkManager] send in
+                    let startTime = Date()
+
+                    if isLoggedIn {
+                        let calendar = Calendar.mondayFirst
+                        let today = Date()
+                        let (year, month, weekOfMonth) = calendar.weekInfoFromFirstMonday(for: today)
+
+                        async let characterResponse = try? networkManager.requestNetwork(
+                            dto: CharacterResponseDTO.self,
+                            router: CharacterRouter.fetchCharacter
+                        )
+                        async let weeklyResponse = try? networkManager.requestNetwork(
+                            dto: WeeklyReportsResponseDTO.self,
+                            router: ReportRouter.fetchWeeklyReports(year: year, month: month, weekOfMonth: weekOfMonth)
+                        )
+                        async let missionResponse = try? networkManager.requestNetwork(
+                            dto: MissionStatusResponseDTO.self,
+                            router: MissionRouter.dailyMissionStatus
+                        )
+
+                        let (character, weekly, mission) = await (characterResponse, weeklyResponse, missionResponse)
+                        await send(.splashDataFetched(character?.data, weekly?.data, mission?.data))
+                    }
+
+                    let elapsed = Date().timeIntervalSince(startTime)
+                    let remaining = max(0, 1.5 - elapsed)
+
+                    if remaining > 0 {
+                        try? await Task.sleep(for: .seconds(remaining))
+                    }
+
+                    await send(.splashCompleted)
+                }
+
+            case .splashCompleted:
+                state.showSplash = false
+
+            case let .splashDataFetched(character, weekly, mission):
+                if let character {
+                    state.home.characterLevel = character.level
+                    state.home.experiencePercent = character.experiencePercent
+                    state.home.encouragementMessage = character.encouragementMessage
+                }
+                if let weekly {
+                    state.home.thisWeekSuccessRate = weekly.thisWeekSuccessRate
+                }
+                if let mission {
+                    state.home.hasActiveMission = mission.hasInProgressMission
+                    state.home.hasCompletedMission = mission.hasCompletedMission
+                    if mission.hasInProgressMission {
+                        state.home.activeMission = mission.currentMission
+                    }
+                    if mission.hasCompletedMission {
+                        state.home.completeMission = mission.missionResult
+                    }
+                }
 
             default:
                 break

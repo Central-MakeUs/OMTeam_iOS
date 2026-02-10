@@ -213,7 +213,9 @@ struct HomeFeature {
 
                 if data.hasInProgressMission {
                     state.activeMission = data.currentMission
-                } else {
+                }
+                
+                if data.hasCompletedMission {
                     state.completeMission = data.missionResult
                 }
 
