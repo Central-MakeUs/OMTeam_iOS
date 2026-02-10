@@ -279,7 +279,7 @@ extension HomeView {
                     .background(.secondary2)
                     .clipShape(RoundedRectangle(cornerRadius: 4))
                 
-                Text("채팅을 통해 미션을 받아보세요!")
+                Text("미션을 선택해주세요!")
                     .typography(.sub_btn1_enabled)
                     .foregroundStyle(.gray8)
             }
