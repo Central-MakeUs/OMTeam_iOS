@@ -79,6 +79,21 @@ struct CustomTabView: View {
                     }
             }
         }
+        .overlay {
+            if let alertType = store.alertType {
+                OMTAlertView(
+                    alertType: alertType,
+                    onCancel: {
+                        store.send(.alertCanceled)
+                    },
+                    onConfirm: {
+                        store.send(.alertConfirmed)
+                    }
+                )
+                .transition(.opacity)
+                .animation(.easeInOut(duration: 0.2), value: store.alertType)
+            }
+        }
     }
 }
 

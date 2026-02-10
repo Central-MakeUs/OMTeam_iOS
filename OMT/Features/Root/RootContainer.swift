@@ -14,14 +14,15 @@ struct RootContainer {
     struct State: Equatable {
         var currentView: ViewStatus
         var selectedTab: Tab = .home
-        
+        var alertType: OMTAlertType?
+
         var login = LoginFeature.State()
         var onboarding: OnboardingFeature.State?
         var home = HomeFeature.State()
         var chat = ChatFeature.State()
         var report = ReportFeature.State()
         var my = MyFeature.State()
-        
+
         init() {
             if KeychainManager.shared.refreshToken != nil {
                 self.currentView = .home
@@ -39,6 +40,10 @@ struct RootContainer {
         case report(ReportFeature.Action)
         case my(MyFeature.Action)
         case tabSelected(Tab)
+        case showAlert(OMTAlertType)
+        case alertCanceled
+        case alertConfirmed
+        case withdrawCompleted
     }
     
     enum ViewStatus: Hashable {
@@ -51,7 +56,9 @@ struct RootContainer {
     enum Tab {
         case home, chat, analysis, myPage
     }
-    
+
+    @Dependency(\.networkManager) var networkManager
+
     var body: some ReducerOf<Self> {
         Scope(state: \.login, action: \.login) {
             LoginFeature()
@@ -86,25 +93,73 @@ struct RootContainer {
             case .login(.delegate(.moveToOnBoarding)):
                 state.currentView = .onboarding
                 state.onboarding = OnboardingFeature.State()
-                
+
             case .onboarding(.delegate(.onboardingCompleted)):
                 state.currentView = .home
                 state.selectedTab = .home
                 state.onboarding = nil
-                
+
             case let .tabSelected(tab):
                 state.selectedTab = tab
-                
-            case .home(.delegate(.switchToChatTab)):
-                state.selectedTab = .chat
-                
+
+//            case .home(.delegate(.switchToChatTab)):
+//                state.selectedTab = .chat
+
             case .home(.delegate(.switchToAnalysisTab)):
                 state.selectedTab = .analysis
-                
+
+            case .my(.delegate(.showLogoutAlert)):
+                state.alertType = .logout
+
+            case .my(.delegate(.showWithdrawAlert)):
+                state.alertType = .withdraw
+
+            case let .showAlert(alertType):
+                state.alertType = alertType
+
+            case .alertCanceled:
+                state.alertType = nil
+
+            case .alertConfirmed:
+                guard let alertType = state.alertType else { return .none }
+                state.alertType = nil
+
+                switch alertType {
+                case .logout:
+                    KeychainManager.shared.deleteTokens()
+                    state.currentView = .login
+                    state.my = MyFeature.State()
+                    state.home = HomeFeature.State()
+                    state.chat = ChatFeature.State()
+                    state.report = ReportFeature.State()
+                    
+                case .withdraw:
+                    return .run { [networkManager] send in
+                        _ = try await networkManager.requestNetwork(
+                            dto: WithdrawResponseDTO.self,
+                            router: AuthRouter.withdraw
+                        )
+                        await send(.withdrawCompleted)
+                    } catch: { error, _ in
+                        print(error)
+                    }
+                    
+                case .withdrawComplete:
+                    KeychainManager.shared.deleteTokens()
+                    state.currentView = .login
+                    state.my = MyFeature.State()
+                    state.home = HomeFeature.State()
+                    state.chat = ChatFeature.State()
+                    state.report = ReportFeature.State()
+                }
+
+            case .withdrawCompleted:
+                state.alertType = .withdrawComplete
+
             default:
                 break
             }
-            
+
             return .none
         }
         .ifLet(\.onboarding, action: \.onboarding) {

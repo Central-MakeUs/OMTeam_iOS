@@ -30,17 +30,6 @@ struct MyView: View {
         .onAppear {
             store.send(.onAppear)
         }
-        .alert("로그아웃", isPresented:  Binding(
-            get: { store.showLogoutAlert },
-            set: { _ in }
-        )) {
-            Button("취소", role: .cancel) {
-                store.send(.logoutCanceled)
-            }
-            Button("로그아웃", role: .destructive) {
-                store.send(.logoutConfirmed)
-            }
-        }
         .sheet(isPresented: $store.nicknameEditSheetPresented) {
             nicknameEditSheet
                 .presentationDetents([.height(365)])
@@ -177,7 +166,7 @@ extension MyView {
     private func destinationView(for item: MyFeature.MenuItem) -> some View {
         switch item {
         case .editProfile:
-            Text("내정보수정")
+            EditMyInfoView(store: store)
         case .etc:
             EtcView()
         default:
