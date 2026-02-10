@@ -10,7 +10,8 @@ import ComposableArchitecture
 
 struct OnboardingView: View {
     @Bindable var store: StoreOf<OnboardingFeature>
-    
+    @FocusState private var isFocused: Bool
+
     var body: some View {
         VStack(spacing: 0) {
             headerView
@@ -26,8 +27,12 @@ struct OnboardingView: View {
             .padding(.horizontal, 20)
             
             Spacer()
-            
+
             navigationButtons
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            isFocused = false
         }
         .sheet(isPresented: $store.customInputSheetPresented.sending(\.customInputSheetPresentedChanged)) {
             customInputSheet
@@ -181,7 +186,8 @@ extension OnboardingView {
                     .stroke(.greenGray4, lineWidth: 1)
             )
             .autocorrectionDisabled()
-            
+            .focused($isFocused)
+
             let text = store.answers[store.currentStep] ?? ""
             let hasSpecialChar = text.range(of: "[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]", options: .regularExpression) != nil
             var errorMessage: String? {
@@ -295,6 +301,7 @@ extension OnboardingView {
                     .stroke(.greenGray4, lineWidth: 1)
             )
             .autocorrectionDisabled()
+            .focused($isFocused)
             .keyboardType(store.currentStepData.customInputKeyboardType)
             .onChange(of: store.customInputText) { oldValue, newValue in
                 if store.currentStepData.customInputKeyboardType == .numberPad {
@@ -324,5 +331,9 @@ extension OnboardingView {
         .padding(.horizontal, 20)
         .padding(.top, 24)
         .padding(.bottom, 20)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            isFocused = false
+        }
     }
 }

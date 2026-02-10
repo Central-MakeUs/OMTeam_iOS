@@ -180,6 +180,7 @@ extension MyView {
 struct NicknameEditSheetView: View {
     @Bindable var store: StoreOf<MyFeature>
     @Environment(\.dismiss) private var dismiss
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -217,6 +218,7 @@ struct NicknameEditSheetView: View {
                     .typography(.sub_btn3_disabled)
                     .foregroundStyle(.gray6)
             )
+            .focused($isFocused)
             .padding()
             .frame(height: 60)
             .typography(.sub_btn2_enabled)
@@ -258,5 +260,9 @@ struct NicknameEditSheetView: View {
         .padding(.horizontal, 20)
         .padding(.top, 20)
         .padding(.bottom, 10)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            isFocused = false
+        }
     }
 }

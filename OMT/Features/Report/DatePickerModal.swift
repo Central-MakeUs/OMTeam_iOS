@@ -10,14 +10,15 @@ import ComposableArchitecture
 
 struct DatePickerModal: View {
     @Bindable var store: StoreOf<ReportFeature>
-    
+    @FocusState private var isFocused: Bool
+
     var body: some View {
         ZStack {
             Color.black.opacity(0.3)
                 .ignoresSafeArea()
-//                .onTapGesture {
-//                    store.send(.closeDatePicker)
-//                }
+                .onTapGesture {
+                    store.send(.closeDatePicker)
+                }
             
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
@@ -57,6 +58,7 @@ struct DatePickerModal: View {
                                 .typography(.sub_btn3_disabled)
                                 .foregroundStyle(.gray7)
                             )
+                            .focused($isFocused)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 10)
@@ -78,6 +80,7 @@ struct DatePickerModal: View {
                                 .typography(.sub_btn3_disabled)
                                 .foregroundStyle(.gray7)
                             )
+                            .focused($isFocused)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 10)
@@ -99,6 +102,7 @@ struct DatePickerModal: View {
                                 .typography(.sub_btn3_disabled)
                                 .foregroundStyle(.gray7)
                             )
+                            .focused($isFocused)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 10)
@@ -143,7 +147,10 @@ struct DatePickerModal: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .frame(maxWidth: .infinity)
             .padding()
-            .offset(y: -50)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                isFocused = false
+            }
         }
     }
 }

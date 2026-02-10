@@ -11,7 +11,8 @@ import ComposableArchitecture
 struct EditAppGoalView: View {
     @Bindable var store: StoreOf<MyFeature>
     @Environment(\.dismiss) var dismiss
-    
+    @FocusState private var isFocused: Bool
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("나의 목표")
@@ -30,6 +31,7 @@ struct EditAppGoalView: View {
                 .typography(.h3)
                 .foregroundStyle(.gray11)
                 .autocorrectionDisabled()
+                .focused($isFocused)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 27)
@@ -72,6 +74,10 @@ struct EditAppGoalView: View {
         .padding(.top, 8)
         .padding(.horizontal, 20)
         .padding(.bottom, 28)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            isFocused = false
+        }
         .customNavigationBar(
             centerView: {
                 Text("나의 목표 수정하기")
