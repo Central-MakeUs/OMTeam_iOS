@@ -116,6 +116,18 @@ struct RootContainer {
             case .home(.delegate(.switchToAnalysisTab)):
                 state.selectedTab = .analysis
 
+            case let .home(.delegate(.switchToCompleteMode(mission))):
+                state.selectedTab = .chat
+                state.chat.mode = .missionComplete
+                state.chat.currentMission = mission
+                state.chat.currentActionType = "COMPLETE_MISSION"
+                return .send(.chat(.sendCompleteMissionRequest))
+
+            case .chat(.delegate(.missionCompleted)):
+                state.selectedTab = .home
+                state.chat.mode = .regular
+                return .send(.home(.refreshMissionStatus))
+
             case .my(.delegate(.showLogoutAlert)):
                 state.alertType = .logout
 

@@ -12,7 +12,6 @@ import ComposableArchitecture
 struct ChatFeature {
     enum ChatMode: Equatable {
         case regular
-        case missionRecommend
         case missionComplete
     }
 
@@ -24,15 +23,11 @@ struct ChatFeature {
         var hasActiveSession: Bool = false
         var hasFetched: Bool = false
 
-        // Mission Recommend Mode
         var mode: ChatMode = .regular
-        var recommendations: [Recommendation] = []
-        var selectedRecommendation: Recommendation? = nil
-        var showStartMissionButton: Bool = false
 
         // Mission Complete Mode
         var currentMission: RecommendDTO? = nil
-        var selectedResult: String? = nil  // "SUCCESS" or "FAIL"
+        var currentActionType: String? = nil  // Track current action type for requests
     }
 
     enum Action: BindableAction {
@@ -45,24 +40,14 @@ struct ChatFeature {
         case sendMessageResponse(MessageDataDTO)
         case optionSelected(label: String, value: String)
 
-        // Mission Recommend Mode Actions
-        case enterMissionRecommendMode
-        case exitMissionRecommendMode
-        case fetchDailyRecommendResponse(DailyRecommendDataDTO)
-        case recommendSelected(Recommendation)
-        case startMissionTapped
-        case startMissionResponse(StartMissionDataDTO)
-
         // Mission Complete Mode Actions
         case enterMissionCompleteMode(RecommendDTO)
-        case resultSelected(String)  // "SUCCESS" or "FAIL"
-        case backToHome
-        case completeMissionResponse(CompleteMissionDataDTO)
+        case sendCompleteMissionRequest
+        case sendCompleteMissionResponse(MessageDataDTO)
 
         case delegate(Delegate)
 
         enum Delegate {
-            case missionStarted
             case missionCompleted
         }
     }
@@ -147,11 +132,18 @@ struct ChatFeature {
                 )
                 state.messages.append(userMessage)
 
-                return .run { send in
+                let actionType = state.currentActionType
+
+                // Clear actionType after text input for failure reason
+                if state.currentActionType == "MISSION_FAILURE_REASON" {
+                    state.currentActionType = nil
+                }
+
+                return .run { [networkManager] send in
                     let request = MessageRequestDTO(
+                        actionType: actionType,
                         type: .text,
-                        text: text,
-                        value: "",
+                        value: text
                     )
 
                     let response = try await networkManager.requestNetwork(
@@ -171,6 +163,14 @@ struct ChatFeature {
                 let message = Message.from(data)
                 state.messages.append(message)
 
+                // If in mission complete mode and terminal, complete the flow
+                if state.mode == .missionComplete && data.terminal {
+                    state.mode = .regular
+                    state.currentMission = nil
+                    state.currentActionType = nil
+                    return .send(.delegate(.missionCompleted))
+                }
+
             case .optionSelected(let label, let value):
                 if let index = state.messages.lastIndex(where: { $0.options != nil && $0.selectedOption == nil }) {
                     state.messages[index].selectedOption = value
@@ -189,11 +189,25 @@ struct ChatFeature {
                 )
                 state.messages.append(userMessage)
 
-                return .run { send in
+                let actionType = state.currentActionType
+
+                // Update actionType based on selection
+                if state.currentActionType == "COMPLETE_MISSION" && (value == "SUCCESS" || value == "FAILURE") {
+                    if value == "FAILURE" {
+                        state.currentActionType = "MISSION_FAILURE_REASON"
+                    } else {
+                        state.currentActionType = nil
+                    }
+                } else if state.currentActionType == "MISSION_FAILURE_REASON" {
+                    state.currentActionType = nil
+                }
+
+                return .run { [networkManager] send in
                     let request = MessageRequestDTO(
+                        actionType: actionType,
                         type: .option,
-                        text: "",
                         value: label,
+                        optionValue: value
                     )
 
                     let response = try await networkManager.requestNetwork(
@@ -208,104 +222,43 @@ struct ChatFeature {
                     print(error)
                 }
 
-            // MARK: - Mission Recommend Mode
-
-            case .enterMissionRecommendMode:
-                state.mode = .missionRecommend
-                state.recommendations = []
-                state.selectedRecommendation = nil
-                state.showStartMissionButton = false
-                state.isLoading = true
-                return .run { send in
-                    let response = try await networkManager.requestNetwork(
-                        dto: DailyRecommendResponseDTO.self,
-                        router: MissionRouter.fetchDailyRecommend
-                    )
-
-                    if let data = response.data {
-                        await send(.fetchDailyRecommendResponse(data))
-                    }
-                } catch: { error, send in
-                    print(error)
-                }
-
-            case .exitMissionRecommendMode:
-                state.mode = .regular
-                state.recommendations = []
-                state.selectedRecommendation = nil
-                state.showStartMissionButton = false
-                state.currentMission = nil
-                state.selectedResult = nil
-
-            case .fetchDailyRecommendResponse(let data):
-                state.isLoading = false
-                state.recommendations = data.recommendations.map { Recommendation.from($0) }
-
-            case .recommendSelected(let recommendation):
-                state.selectedRecommendation = recommendation
-                state.showStartMissionButton = true
-
-            case .startMissionTapped:
-                guard let recommendation = state.selectedRecommendation else { return .none }
-                state.isLoading = true
-                let requestDTO = StartMissionRequestDTO(recommendedMissionId: recommendation.id)
-                return .run { send in
-                    let response = try await networkManager.requestNetwork(
-                        dto: StartMissionResponseDTO.self,
-                        router: MissionRouter.startMission(requestDTO)
-                    )
-
-                    if let data = response.data {
-                        await send(.startMissionResponse(data))
-                    }
-                } catch: { error, send in
-                    print(error)
-                }
-
-            case .startMissionResponse:
-                state.isLoading = false
-                state.mode = .regular
-                state.recommendations = []
-                state.selectedRecommendation = nil
-                state.showStartMissionButton = false
-                return .send(.delegate(.missionStarted))
-
             // MARK: - Mission Complete Mode
 
             case .enterMissionCompleteMode(let mission):
                 state.mode = .missionComplete
                 state.currentMission = mission
-                state.selectedResult = nil
+                state.currentActionType = "COMPLETE_MISSION"
+                return .send(.sendCompleteMissionRequest)
 
-            case .resultSelected(let result):
-                state.selectedResult = result
-                
+            case .sendCompleteMissionRequest:
                 state.isLoading = true
-                let requestDTO = CompleteMissionRequestDTO(
-                    result: result,
-                    failureReason: result == "FAIL" ? "사용자 선택" : ""
-                )
-                return .run { send in
+                return .run { [networkManager] send in
+                    let request = MessageRequestDTO(actionType: "COMPLETE_MISSION")
+
                     let response = try await networkManager.requestNetwork(
-                        dto: CompleteMissionRepsonseDTO.self,
-                        router: MissionRouter.completeMission(requestDTO)
+                        dto: MessageResponseDTO.self,
+                        router: ChatRouter.sendChat(request)
                     )
 
                     if let data = response.data {
-                        await send(.completeMissionResponse(data))
+                        await send(.sendCompleteMissionResponse(data))
                     }
                 } catch: { error, send in
                     print(error)
                 }
 
-            case .backToHome:
-                return .send(.delegate(.missionCompleted))
-
-            case .completeMissionResponse:
+            case .sendCompleteMissionResponse(let data):
                 state.isLoading = false
-                state.mode = .regular
-                state.currentMission = nil
-                state.selectedResult = nil
+                let message = Message.from(data)
+                state.messages.append(message)
+
+                // If terminal message, mission complete flow is done
+                if data.terminal {
+                    state.mode = .regular
+                    state.currentMission = nil
+                    state.currentActionType = nil
+                    return .send(.delegate(.missionCompleted))
+                }
 
             default:
                 break

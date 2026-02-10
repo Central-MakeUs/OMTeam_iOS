@@ -8,7 +8,20 @@
 import Foundation
 
 struct MessageRequestDTO: Encodable {
-    let type: MessageType
-    let text: String
-    let value: String
+    let actionType: String?
+    let type: MessageType?
+    let value: String?
+    let optionValue: String?
+    
+    init(
+        actionType: String? = nil,
+        type: MessageType? = nil,
+        value: String? = nil,
+        optionValue: String? = nil
+    ) {
+        self.actionType = actionType
+        self.type = type
+        self.value = value
+        self.optionValue = optionValue
+    }
 }

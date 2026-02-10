@@ -21,4 +21,5 @@ struct MessageDataDTO: Decodable {
 struct optionsDTO: Decodable {
     let label: String
     let value: String
+    let actionType: String?
 }

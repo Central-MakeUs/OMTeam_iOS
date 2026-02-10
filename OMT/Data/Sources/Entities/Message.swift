@@ -22,7 +22,7 @@ struct Message: Identifiable, Equatable {
             content: dto.content,
             isFromUser: dto.role == .user,
             createdAt: dto.createdAt,
-            options: dto.options.isEmpty ? nil : dto.options.map { MessageOption(label: $0.label, value: $0.value) },
+            options: dto.options.isEmpty ? nil : dto.options.map { MessageOption(label: $0.label, value: $0.value, actionType: $0.actionType) },
             terminal: dto.terminal,
             selectedOption: nil
         )
@@ -32,4 +32,5 @@ struct Message: Identifiable, Equatable {
 struct MessageOption: Equatable {
     let label: String
     let value: String
+    let actionType: String?
 }

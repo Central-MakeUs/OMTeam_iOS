@@ -171,7 +171,7 @@ struct ReportFeature {
                 state.hasReport = data.dailyResults.contains { $0.status != .notPerformed }
                 state.lastWeekSuccessRate = data.lastWeekSuccessRate
                 state.thisWeekSuccessRate = data.thisWeekSuccessRate
-                state.topDifficulties = data.topFailureReasons.map { $0.category }
+                state.topDifficulties = data.topFailureReasons.map { $0.reason }
 
                 let formatter = DateFormatter()
                 formatter.dateFormat = "yyyy-MM-dd"
