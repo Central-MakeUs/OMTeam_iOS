@@ -73,9 +73,15 @@ struct CustomTabView: View {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()
                     .overlay {
-                        ProgressView()
-                            .scaleEffect(1.5)
-                            .tint(.gray0)
+                        VStack(spacing: 16) {
+                            ProgressView()
+                                .scaleEffect(1.5)
+                                .tint(.gray0)
+
+                            Text("오늘의 추천 미션 가져오는 중..")
+                                .typography(.sub_b2_2)
+                                .foregroundStyle(.gray0)
+                        }
                     }
             }
         }
