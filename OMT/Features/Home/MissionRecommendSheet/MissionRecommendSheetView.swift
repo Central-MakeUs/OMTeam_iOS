@@ -10,6 +10,7 @@ import ComposableArchitecture
 
 struct MissionRecommendSheetView: View {
     @Bindable var store: StoreOf<MissionRecommendSheetFeature>
+    @Environment(\.dismiss) private var dismiss
 
     private var isRefetching: Bool {
         store.isLoading && store.selectedRecommendation == nil
@@ -20,7 +21,7 @@ struct MissionRecommendSheetView: View {
             HStack {
                 Spacer()
                 Button {
-                    
+                    dismiss()
                 } label: {
                     Image("arrow_close")
                 }

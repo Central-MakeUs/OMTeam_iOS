@@ -60,7 +60,6 @@ struct MyFeature {
         case notificationToggled(Bool)
         case logoutButtonTapped
         case nicknameEditSheetOpen
-        case nicknameEditSheetClose
         case nicknameEditConfirmed
         case appGoalEditConfirmed
         case withdrawButtonTapped
@@ -159,14 +158,9 @@ struct MyFeature {
                 state.nicknameEditSheetPresented = true
                 return .none
 
-            case .nicknameEditSheetClose:
-                state.nicknameEditSheetPresented = false
-                return .none
-
             case .nicknameEditConfirmed:
                 let newNickname = state.nicknameEditText
                 state.nickname = newNickname
-                state.nicknameEditSheetPresented = false
 
                 return .run { [networkManager] _ in
                     let requestDTO = UpdateNicknameRequestDTO(nickname: newNickname)

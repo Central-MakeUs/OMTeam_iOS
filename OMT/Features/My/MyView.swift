@@ -31,7 +31,7 @@ struct MyView: View {
             store.send(.onAppear)
         }
         .sheet(isPresented: $store.nicknameEditSheetPresented) {
-            nicknameEditSheet
+            NicknameEditSheetView(store: store)
                 .presentationDetents([.height(365)])
                 .presentationCornerRadius(32)
         }
@@ -175,13 +175,16 @@ extension MyView {
     }
 }
 
-extension MyView {
-    private var nicknameEditSheet: some View {
+struct NicknameEditSheetView: View {
+    @Bindable var store: StoreOf<MyFeature>
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Spacer()
                 Button {
-                    store.send(.nicknameEditSheetClose)
+                    dismiss()
                 } label: {
                     Image("arrow_close")
                 }
@@ -192,12 +195,12 @@ extension MyView {
                 Text("닉네임 변경하기")
                     .typography(.btn1_enabled)
                     .foregroundStyle(.gray12)
-                
+
                 HStack(spacing: 0) {
                     Text("새롭게 사용하실 닉네임")
                         .typography(.sub_btn3_enabled)
                         .foregroundStyle(.error)
-                    
+
                     Text("을 입력해주세요.")
                         .typography(.sub_btn3_enabled)
                         .foregroundStyle(.gray9)
@@ -238,6 +241,7 @@ extension MyView {
 
             Button {
                 store.send(.nicknameEditConfirmed)
+                dismiss()
             } label: {
                 Text("변경하기")
                     .frame(maxWidth: .infinity)
