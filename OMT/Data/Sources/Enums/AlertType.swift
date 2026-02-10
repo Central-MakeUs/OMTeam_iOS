@@ -26,7 +26,7 @@ enum AlertType: Equatable {
     var message: String {
         switch self {
         case .logout:
-            return "잠시 쉬어가시려나요?\n언제든 다시 돌아와 주세요."
+            return "잠시 쉬어가시나요?\n언제든 다시 돌아와 주세요."
         case .withdraw:
             return "탈퇴하면 모든 기록이 삭제되고,\n계정 정보도 함께 파기돼요."
         case .withdrawComplete:
