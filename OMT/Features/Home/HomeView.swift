@@ -19,7 +19,7 @@ struct HomeView: View {
                 .padding(.vertical, 12)
 
             // 스크롤 가능한 영역
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     VStack(spacing: 0) {
                         topCalendar

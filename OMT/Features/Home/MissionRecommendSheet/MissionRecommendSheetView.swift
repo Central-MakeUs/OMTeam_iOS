@@ -33,7 +33,7 @@ struct MissionRecommendSheetView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 12)
 
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 10) {
                     ForEach(store.recommendations, id: \.recommendedMissionId) { recommendation in
                         MissionOptionCard(
