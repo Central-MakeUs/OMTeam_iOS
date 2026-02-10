@@ -55,9 +55,15 @@ struct EtcView: View {
     private func destinationView(for item: MyFeature.EtcMenuItem) -> some View {
         switch item {
         case .notice:
-            Text("공지사항")
+            WebView(
+                url: URL(string: "https://slashpage.com/omt-policy-terms/y9e1xp2x5p5p1m7k35vz?e=1&post=5r398nmnx4xyemvwje7y")!,
+                title: "공지사항"
+            )
         case .faq:
-            Text("FAQ")
+            WebView(
+                url: URL(string: "https://slashpage.com/omt-policy-terms/ndvwx7287q7d7m3z6jpg?e=1")!,
+                title: "FAQ"
+            )
         case .contactUs:
             Text("문의하기")
         case .privacyPolicy:
