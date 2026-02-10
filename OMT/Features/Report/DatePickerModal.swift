@@ -13,7 +13,7 @@ struct DatePickerModal: View {
     
     var body: some View {
         ZStack {
-            Color.black.opacity(0.4)
+            Color.black.opacity(0.3)
                 .ignoresSafeArea()
 //                .onTapGesture {
 //                    store.send(.closeDatePicker)

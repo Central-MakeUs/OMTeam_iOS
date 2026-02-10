@@ -12,17 +12,20 @@ struct CustomNavigationBarModifier<C: View, L: View, R: View>: ViewModifier {
     let leftView: () -> L
     let rightView: () -> R
     let overlay: Bool
+    let backgroundColor: Color?
 
     init(
         @ViewBuilder centerView: @escaping () -> C = { EmptyView() },
         @ViewBuilder leftView: @escaping () -> L = { EmptyView() },
         @ViewBuilder rightView: @escaping () -> R = { EmptyView() },
         overlay: Bool = false,
+        backgroundColor: Color? = nil
     ) {
         self.centerView = centerView
         self.leftView = leftView
         self.rightView = rightView
         self.overlay = overlay
+        self.backgroundColor = backgroundColor
     }
 
     func body(content: Content) -> some View {
@@ -38,6 +41,7 @@ struct CustomNavigationBarModifier<C: View, L: View, R: View>: ViewModifier {
                     navBar
                     content
                 }
+                .background(backgroundColor ?? .clear)
             }
         }
         .navigationBarHidden(true)
@@ -70,7 +74,7 @@ struct CustomNavigationBarModifier<C: View, L: View, R: View>: ViewModifier {
             Rectangle()
                 .fill(.gray3)
                 .frame(height: 1)
-            
+
         }
         .frame(maxWidth: .infinity)
     }

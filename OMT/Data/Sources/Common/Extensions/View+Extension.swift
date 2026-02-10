@@ -32,12 +32,14 @@ extension View {
         @ViewBuilder centerView: @escaping () -> C = { EmptyView() },
         @ViewBuilder leftView: @escaping () -> L = { EmptyView() },
         @ViewBuilder rightView: @escaping () -> R = { EmptyView() },
-        overlay: Bool = false
+        overlay: Bool = false,
+        backgroundColor: Color? = nil
     ) -> some View {
         self.modifier(CustomNavigationBarModifier(centerView: centerView,
                                                  leftView: leftView,
                                                  rightView: rightView,
-                                                 overlay: overlay))
+                                                 overlay: overlay,
+                                                 backgroundColor: backgroundColor))
     }
 }
 

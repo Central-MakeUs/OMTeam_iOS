@@ -39,6 +39,7 @@ struct DetailReportView: View {
                     Image("arrow_back_01")
                 }
             },
+            backgroundColor: .gray2
         )
     }
 }
