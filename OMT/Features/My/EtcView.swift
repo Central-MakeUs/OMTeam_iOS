@@ -9,24 +9,43 @@ import SwiftUI
 
 struct EtcView: View {
     @Environment(\.dismiss) var dismiss
-    
+    @Environment(\.openURL) var openURL
+
     var body: some View {
         VStack {
             ForEach(MyFeature.EtcMenuItem.allCases, id: \.self) { item in
-                NavigationLink(destination: destinationView(for: item)) {
-                    HStack {
-                        Image(item.iconName)
-                        Text(item.rawValue)
-                            .typography(.sub_b2_2)
-                            .foregroundStyle(.gray10)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .contentShape(Rectangle())
+                if item == .contactUs {
+                    Button {
+                        openMailApp()
+                    } label: {
+                        HStack {
+                            Image(item.iconName)
+                            Text(item.rawValue)
+                                .typography(.sub_b2_2)
+                                .foregroundStyle(.gray10)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .contentShape(Rectangle())
+                        }
                     }
+                    .buttonStyle(.plain)
+                    .padding(.vertical, 18)
+                    .padding(.horizontal, 12)
+                } else {
+                    NavigationLink(destination: destinationView(for: item)) {
+                        HStack {
+                            Image(item.iconName)
+                            Text(item.rawValue)
+                                .typography(.sub_b2_2)
+                                .foregroundStyle(.gray10)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .contentShape(Rectangle())
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.vertical, 18)
+                    .padding(.horizontal, 12)
                 }
-                .buttonStyle(.plain)
-                .padding(.vertical, 18)
-                .padding(.horizontal, 12)
-                
+
                 if item != MyFeature.EtcMenuItem.allCases.last {
                     Divider()
                 }
@@ -47,7 +66,7 @@ struct EtcView: View {
                 } label: {
                     Image("arrow_back_01")
                 }
-            },
+            }
         )
     }
     
@@ -65,7 +84,7 @@ struct EtcView: View {
                 title: "FAQ"
             )
         case .contactUs:
-            Text("문의하기")
+            EmptyView()
         case .privacyPolicy:
             WebView(
                 url: URL(string: "https://slashpage.com/omt-policy-terms/5r398nmnx6zxzmvwje7y")!,
@@ -76,6 +95,18 @@ struct EtcView: View {
                 url: URL(string: "https://slashpage.com/omt-policy-terms")!,
                 title: "이용약관"
             )
+        }
+    }
+
+    private func openMailApp() {
+        let email = "omteam.omt@gmail.com"
+        let subject = "[OMT 문의]"
+
+        let urlString = "mailto:\(email)?subject=\(subject)"
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+
+        if let url = URL(string: urlString) {
+            openURL(url)
         }
     }
 }
