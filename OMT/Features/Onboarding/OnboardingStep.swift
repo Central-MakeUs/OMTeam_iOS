@@ -54,7 +54,7 @@ extension OnboardingStep {
         OnboardingStep(
             title: "하루 중 운동할 수 있는\n시간을 알려주세요.",
             type: .choice,
-            options: ["18:00 이전", "18:00 이후 부터", "19:00 이후 부터", "20:00 이후 부터"]
+            options: ["18:00 이전", "18:00 이후부터", "19:00 이후부터", "20:00 이후부터"]
         ),
         OnboardingStep(
             title: "OMT와 함께 미션 수행에 투자할 수 있는 시간을 알려주세요!",

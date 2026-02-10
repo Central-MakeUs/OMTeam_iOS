@@ -49,18 +49,7 @@ struct OnboardingFeature {
             
             // 시간 변환
             let timeText = answers[2] ?? ""
-            let (startTime, endTime): (String, String)
-            if timeText == "18:00 이전" {
-                (startTime, endTime) = ("00:00", "17:59")
-            } else if timeText.contains("18:00") {
-                (startTime, endTime) = ("18:00", "23:59")
-            } else if timeText.contains("19:00") {
-                (startTime, endTime) = ("19:00", "23:59")
-            } else if timeText.contains("20:00") {
-                (startTime, endTime) = ("20:00", "23:59")
-            } else {
-                (startTime, endTime) = ("00:00", "23:59")
-            }
+            let timeOption = WorkTimeOption.from(selectionText: timeText)
             
             // 운동 시간
             let exerciseText = answers[3] ?? "10"
@@ -68,29 +57,17 @@ struct OnboardingFeature {
             
             // 생활패턴 매핑
             let lifestyleText = answers[5] ?? ""
-            let lifestyleType: String
-            switch lifestyleText {
-            case "비교적 규칙적인 평일 주간 근무에요.":
-                lifestyleType = "REGULAR_DAYTIME"
-            case "야근/불규칙한 일정이 자주 있어요.":
-                lifestyleType = "IRREGULAR_OVERTIME"
-            case "주기적으로 교대/밤샘 근무가 있어요.":
-                lifestyleType = "SHIFT_NIGHT"
-            case "일정이 매일매일 달라요.":
-                lifestyleType = "VARIABLE_DAILY"
-            default:
-                lifestyleType = "REGULAR_DAYTIME"
-            }
+            let selectedLifeStyleType = LifestyleType.allCases.first { $0.description == lifestyleText } ?? .regularDaytime
             
             return OnboardingRequestDTO(
                 nickname: nickname,
                 appGoalText: appGoalText,
                 workTimeType: "FIXED",
-                availableStartTime: startTime,
-                availableEndTime: endTime,
+                availableStartTime: timeOption.startTime,
+                availableEndTime: timeOption.endTime,
                 minExerciseMinutes: minExerciseMinutes,
                 preferredExercises: preferredExercises,
-                lifestyleType: lifestyleType,
+                lifestyleType: selectedLifeStyleType,
                 remindEnabled: remindEnabled,
                 checkinEnabled: remindEnabled,
                 reviewEnabled: remindEnabled
