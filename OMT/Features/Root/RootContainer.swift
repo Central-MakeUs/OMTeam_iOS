@@ -14,7 +14,7 @@ struct RootContainer {
     struct State: Equatable {
         var currentView: ViewStatus
         var selectedTab: Tab = .home
-        var alertType: OMTAlertType?
+        var alertType: AlertType?
 
         var login = LoginFeature.State()
         var onboarding: OnboardingFeature.State?
@@ -40,7 +40,7 @@ struct RootContainer {
         case report(ReportFeature.Action)
         case my(MyFeature.Action)
         case tabSelected(Tab)
-        case showAlert(OMTAlertType)
+        case showAlert(AlertType)
         case alertCanceled
         case alertConfirmed
         case withdrawCompleted

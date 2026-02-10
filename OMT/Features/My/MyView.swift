@@ -55,6 +55,7 @@ extension MyView {
                             .frame(width: 24, height: 24)
                             .offset(x: -5, y: -5)
                     }
+                    .buttonStyle(.plain)
                 }
 
             Text(store.nickname)
@@ -126,6 +127,7 @@ extension MyView {
                 }
             }
         }
+        .buttonStyle(.plain)
         .padding(.bottom, 11)
     }
     

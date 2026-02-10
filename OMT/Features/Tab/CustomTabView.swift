@@ -81,7 +81,7 @@ struct CustomTabView: View {
         }
         .overlay {
             if let alertType = store.alertType {
-                OMTAlertView(
+                CustomAlertView(
                     alertType: alertType,
                     onCancel: {
                         store.send(.alertCanceled)
