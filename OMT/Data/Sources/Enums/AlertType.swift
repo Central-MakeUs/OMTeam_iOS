@@ -2,7 +2,7 @@
 //  AlertType.swift
 //  OMT
 //
-//  Created by wayblemac02 on 2/10/26.
+//  Created by 이인호 on 2/10/26.
 //
 
 import Foundation

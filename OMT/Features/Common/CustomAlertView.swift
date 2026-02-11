@@ -62,7 +62,7 @@ struct CustomAlertView: View {
                     }
                 }
             }
-            .padding(.horizontal, 14)
+            .padding(.horizontal, 20)
             .padding(.top, 42)
             .padding(.bottom, 24)
             .frame(width: 335)
