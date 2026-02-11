@@ -11,18 +11,14 @@ import ComposableArchitecture
 struct EditAvailableTimeView: View {
     @Bindable var store: StoreOf<MyFeature>
     @Environment(\.dismiss) var dismiss
-    
-    let columns = [
-        GridItem(.flexible(), spacing: 10),
-        GridItem(.flexible(), spacing: 10)
-    ]
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             itemValueView
             Spacer()
             editButton
         }
+        .padding(.horizontal, 20)
         .customNavigationBar(
             centerView: {
                 Text("내 정보 수정하기")
@@ -45,40 +41,69 @@ extension EditAvailableTimeView {
         store.selectedAvailableTime ?? store.originalAvailableTime
     }
 
+    @ViewBuilder
+    private func timeOptionButton(_ option: WorkTimeOption) -> some View {
+        let isSelected = option == currentSelectedOption
+        Button {
+            store.send(.availableTimeSelected(option))
+        } label: {
+            Text(option.displayText)
+                .typography(.sub_btn2_enabled)
+                .foregroundStyle(isSelected ? .gray12 : .gray9)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    Capsule()
+                        .strokeBorder(.gray3, lineWidth: 1)
+                        .background(Capsule().fill(.gray1))
+                )
+        }
+    }
+
     private var itemValueView: some View {
-        VStack(alignment: .leading) {
-            Text("운동 가능한 시간대를 선택해주세요.")
-
-            Text("\(currentSelectedOption.displayText)")
-                .typography(.sub_btn3_enabled)
-                .foregroundStyle(.gray8)
-
-            Divider()
-
-            HStack {
-                Image("icon_info")
-                Text("몇 시 이후부터 운동할 수 있는지 아래에서 선택해주세요.")
+        VStack(alignment: .leading, spacing: 32) {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("운동 가능한 시간대를 선택해주세요.")
+                    .typography(.sub_b3_1)
+                    .foregroundStyle(.gray7)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("\(currentSelectedOption.displayText)")
+                        .typography(.sub_btn2_enabled)
+                        .foregroundStyle(.gray12)
+                    
+                    Divider()
+                    
+                    HStack(spacing: 2) {
+                        Image("icon_info")
+                        Text("몇 시 이후부터 운동할 수 있는지 아래에서 선택해주세요.")
+                            .typography(.sub_b4_2)
+                            .foregroundStyle(.gray8)
+                    }
+                }
             }
 
-            Text("운동 가능 시간대 목록")
+            VStack(alignment: .leading, spacing: 8) {
+                Text("운동 가능 시간대 목록")
+                    .typography(.sub_btn3_enabled)
+                    .foregroundStyle(.gray10)
 
-            LazyVGrid(columns: columns, spacing: 10) {
-                ForEach(WorkTimeOption.allCases, id: \.self) { option in
-                    Button {
-                        store.send(.availableTimeSelected(option))
-                    } label: {
-                        let isSelected = option == currentSelectedOption
-                        Text(option.displayText)
-                            .typography(.sub_btn3_enabled)
-                            .foregroundStyle(isSelected ? .white : .gray10)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(isSelected ? .primary7 : .greenGray3)
-                            .clipShape(Capsule())
+                let options = WorkTimeOption.allCases
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 8) {
+                        ForEach(options.prefix(2), id: \.self) { option in
+                            timeOptionButton(option)
+                        }
+                    }
+                    HStack(spacing: 8) {
+                        ForEach(options.suffix(2), id: \.self) { option in
+                            timeOptionButton(option)
+                        }
                     }
                 }
             }
         }
+        .padding(.horizontal, 12)  
     }
 }
 
@@ -97,5 +122,6 @@ extension EditAvailableTimeView {
                 .cornerRadius(12)
         }
         .disabled(!store.isAvailableTimeChanged)
+        .padding(.bottom, 28 )
     }
 }
