@@ -59,6 +59,14 @@ struct ChatView: View {
                                 }
                             }
                     }
+
+                    if store.isLoading {
+                        TypingIndicatorRow()
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                            .listRowBackground(Color.clear)
+                            .id("typing-indicator")
+                    }
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
@@ -76,10 +84,17 @@ struct ChatView: View {
                     isAtBottom = true
                 }
                 .onChange(of: store.messages.count) { _, _ in
-                    if let lastMessage = store.messages.last {
+                    if store.isLoading {
+                        proxy.scrollTo("typing-indicator", anchor: .bottom)
+                    } else if let lastMessage = store.messages.last {
                         proxy.scrollTo(lastMessage.id, anchor: .bottom)
                     }
                     isAtBottom = true
+                }
+                .onChange(of: store.isLoading) { _, newValue in
+                    if newValue {
+                        proxy.scrollTo("typing-indicator", anchor: .bottom)
+                    }
                 }
                 .onChange(of: keyboard.currentHeight) { oldHeight, newHeight in
                     if newHeight > oldHeight && isAtBottom {
