@@ -46,6 +46,30 @@ struct MyFeature {
             return selected != lifestyleType
         }
 
+        var minExerciseMinutesEditText: String = ""
+
+        var minExerciseMinutesEditValue: Int? {
+            Int(minExerciseMinutesEditText)
+        }
+
+        var isMinExerciseMinutesValid: Bool {
+            guard let value = minExerciseMinutesEditValue else { return false }
+            return value >= 1 && value <= 30
+        }
+
+        var isMinExerciseMinutesChanged: Bool {
+            guard let value = minExerciseMinutesEditValue else { return false }
+            return isMinExerciseMinutesValid && value != minExerciseMinutes
+        }
+
+        var minExerciseMinutesErrorMessage: String? {
+            guard let value = minExerciseMinutesEditValue else { return nil }
+            if value > 30 {
+                return "30이하 숫자를 입력해주세요."
+            }
+            return nil
+        }
+
         var isNicknameValid: Bool {
             let text = nicknameEditText
             guard !text.isEmpty, text.count <= 8 else { return false }
@@ -98,6 +122,8 @@ struct MyFeature {
 
         case lifestyleTypeSelected(LifestyleType)
         case lifestyleTypeEditConfirmed
+
+        case minExerciseMinutesEditConfirmed
 
         case delegate(Delegate)
 
@@ -263,6 +289,21 @@ struct MyFeature {
                     _ = try await networkManager.requestNetwork(
                         dto: OnboardingResponseDTO.self,
                         router: OnboardingRouter.updateLifestyle(requestDTO)
+                    )
+                } catch: { error, _ in
+                    print(error)
+                }
+
+            case .minExerciseMinutesEditConfirmed:
+                guard let value = state.minExerciseMinutesEditValue,
+                      state.isMinExerciseMinutesValid else { return .none }
+                state.minExerciseMinutes = value
+
+                return .run { [networkManager] _ in
+                    let requestDTO = UpdateMinExerciseMinutesRequestDTO(minExerciseMinutes: value)
+                    _ = try await networkManager.requestNetwork(
+                        dto: OnboardingResponseDTO.self,
+                        router: OnboardingRouter.updateMinExerciseMinutes(requestDTO)
                     )
                 } catch: { error, _ in
                     print(error)
