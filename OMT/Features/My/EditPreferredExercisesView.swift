@@ -92,35 +92,19 @@ extension EditPreferredExercisesView {
     private var customExerciseView: some View {
         if store.canAddMoreExercises {
             if store.isAddingCustomExercise {
-                HStack(spacing: 8) {
-                    TextField("", text: $store.customExerciseText)
-                        .focused($isCustomFieldFocused)
-                        .typography(.sub_btn2_enabled)
-                        .foregroundStyle(.gray12)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(
-                            Capsule()
-                                .strokeBorder(.gray3, lineWidth: 1)
-                                .background(Capsule().fill(.gray1))
-                        )
-                        .frame(maxWidth: 150)
-
-                    Button {
-                        store.send(.customExerciseAdded)
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(.gray12)
-                            .frame(width: 32, height: 32)
-                            .background(
-                                Circle()
-                                    .strokeBorder(.gray3, lineWidth: 1)
-                                    .background(Circle().fill(.gray1))
-                            )
-                    }
-                    .disabled(store.customExerciseText.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
+                TextField("", text: $store.customExerciseText)
+                    .focused($isCustomFieldFocused)
+                    .typography(.sub_btn2_enabled)
+                    .foregroundStyle(.gray12)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .frame(minWidth: 115)
+                    .fixedSize()
+                    .background(
+                        Capsule()
+                            .strokeBorder(.gray3, lineWidth: 1)
+                            .background(Capsule().fill(.gray1))
+                    )
             } else if !store.customExerciseText.isEmpty {
                 Button {
                     store.send(.customExerciseConfirmed)
@@ -219,20 +203,41 @@ extension EditPreferredExercisesView {
 }
 
 extension EditPreferredExercisesView {
+    private var isCustomTextValid: Bool {
+        !store.customExerciseText.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
     private var editButton: some View {
-        Button {
-            store.send(.preferredExercisesEditConfirmed)
-            dismiss()
-        } label: {
-            Text("선호 운동 수정하기")
-                .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .typography(store.isPreferredExercisesChanged ? .btn2_enabled : .btn2_disabled)
-                .foregroundColor(store.isPreferredExercisesChanged ? .gray12 : .gray9)
-                .background(store.isPreferredExercisesChanged ? .primary7 : .primary4)
-                .cornerRadius(12)
+        Group {
+            if store.isAddingCustomExercise {
+                Button {
+                    store.send(.customExerciseAdded)
+                } label: {
+                    Text("저장하기")
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .typography(isCustomTextValid ? .btn2_enabled : .btn2_disabled)
+                        .foregroundColor(isCustomTextValid ? .gray12 : .gray9)
+                        .background(isCustomTextValid ? .primary7 : .primary4)
+                        .cornerRadius(12)
+                }
+                .disabled(!isCustomTextValid)
+            } else {
+                Button {
+                    store.send(.preferredExercisesEditConfirmed)
+                    dismiss()
+                } label: {
+                    Text("선호 운동 수정하기")
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .typography(store.isPreferredExercisesChanged ? .btn2_enabled : .btn2_disabled)
+                        .foregroundColor(store.isPreferredExercisesChanged ? .gray12 : .gray9)
+                        .background(store.isPreferredExercisesChanged ? .primary7 : .primary4)
+                        .cornerRadius(12)
+                }
+                .disabled(!store.isPreferredExercisesChanged)
+            }
         }
-        .disabled(!store.isPreferredExercisesChanged)
         .padding(.bottom, 28)
     }
 }
