@@ -62,7 +62,7 @@ struct MissionRecommendSheetView: View {
         .background(.gray0)
         .overlay {
             if isRefetching {
-                Color.black.opacity(0.3)
+                Color.black.opacity(0.25)
                     .ignoresSafeArea()
                     .overlay {
                         ProgressView()

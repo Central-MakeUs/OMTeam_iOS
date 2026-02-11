@@ -14,7 +14,7 @@ struct CustomAlertView: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.3)
+            Color.black.opacity(0.25)
                 .ignoresSafeArea()
                 .onTapGesture {
                     if alertType.showCancelButton {

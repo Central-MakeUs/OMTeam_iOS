@@ -70,7 +70,7 @@ struct CustomTabView: View {
         }
         .overlay {
             if store.home.isLoadingRecommendations {
-                Color.black.opacity(0.3)
+                Color.black.opacity(0.25)
                     .ignoresSafeArea()
                     .overlay {
                         VStack(spacing: 16) {
