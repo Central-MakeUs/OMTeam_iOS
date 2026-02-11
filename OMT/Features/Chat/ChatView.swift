@@ -63,6 +63,9 @@ struct ChatView: View {
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
                 .scrollIndicators(.hidden)
+                .safeAreaInset(edge: .top) {
+                    Color.clear.frame(height: 2)
+                }
                 .onTapGesture {
                     isInputFocused = false
                 }

@@ -37,7 +37,7 @@ struct CustomNavigationBarModifier<C: View, L: View, R: View>: ViewModifier {
                     navBar
                 }
             } else {
-                VStack(spacing: 12) {
+                VStack(spacing: 0) {
                     navBar
                     content
                 }

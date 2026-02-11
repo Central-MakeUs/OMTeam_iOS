@@ -53,6 +53,7 @@ struct EtcView: View {
             
             Spacer()
         }
+        .padding(.top, 12)
         .padding(.horizontal, 20)
         .customNavigationBar(
             centerView: {

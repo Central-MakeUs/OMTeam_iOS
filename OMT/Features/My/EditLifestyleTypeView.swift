@@ -18,6 +18,7 @@ struct EditLifestyleTypeView: View {
             Spacer()
             editButton
         }
+        .padding(.top, 16)
         .padding(.horizontal, 20)
         .customNavigationBar(
             centerView: {

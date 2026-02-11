@@ -71,7 +71,7 @@ struct EditAppGoalView: View {
             }
             .disabled(!store.isAppGoalValid)
         }
-        .padding(.top, 8)
+        .padding(.top, 27)
         .padding(.horizontal, 20)
         .padding(.bottom, 28)
         .contentShape(Rectangle())

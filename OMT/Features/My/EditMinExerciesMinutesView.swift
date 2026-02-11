@@ -19,6 +19,7 @@ struct EditMinExerciesMinutesView: View {
             Spacer()
             editButton
         }
+        .padding(.top, 16)
         .padding(.horizontal, 20)
         .contentShape(Rectangle())
         .onTapGesture {

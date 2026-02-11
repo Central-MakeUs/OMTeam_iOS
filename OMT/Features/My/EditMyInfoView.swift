@@ -18,6 +18,7 @@ struct EditMyInfoView: View {
             withdrawCell
             Spacer()
         }
+        .padding(.top, 36)
         .padding(.horizontal, 20)
         .customNavigationBar(
             centerView: {
