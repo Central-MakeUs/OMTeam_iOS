@@ -14,6 +14,10 @@ enum OnboardingRouter: TargetType {
     case updateNickname(UpdateNicknameRequestDTO)
     case updateAppGoal(UpdateAppGoalRequestDTO)
     case updateAlert(UpdateAlertRequestDTO)
+    case updateAvailableTime(UpdateAvailableTimeRequestDTO)
+    case updateMinExerciseMinutes(UpdateMinExerciseMinutesRequestDTO)
+    case updateLifestyle(UpdateLifestyleRequestDTO)
+    case updatePreferredExercise(UpdatePreferredExerciseRequestDTO)
 }
 
 extension OnboardingRouter {
@@ -23,7 +27,7 @@ extension OnboardingRouter {
             return .post
         case .fetchOnboarding:
             return .get
-        case .updateNickname, .updateAppGoal, .updateAlert:
+        case .updateNickname, .updateAppGoal, .updateAlert, .updateAvailableTime, .updateMinExerciseMinutes, .updateLifestyle, .updatePreferredExercise:
             return .patch
         }
     }
@@ -38,6 +42,14 @@ extension OnboardingRouter {
             return "/api/onboarding/app-goal"
         case .updateAlert:
             return "/api/onboarding/notification"
+        case .updateAvailableTime:
+            return "/api/onboarding/available-time"
+        case .updateMinExerciseMinutes:
+            return "/api/onboarding/min-exercise-minutes"
+        case .updateLifestyle:
+            return "/api/onboarding/lifestyle"
+        case .updatePreferredExercise:
+            return "/api/onboarding/preferred-exercise"
         }
     }
     
@@ -67,12 +79,20 @@ extension OnboardingRouter {
             return try? encoder.encode(request)
         case .updateAlert(let request):
             return try? encoder.encode(request)
+        case .updateAvailableTime(let request):
+            return try? encoder.encode(request)
+        case .updateMinExerciseMinutes(let request):
+            return try? encoder.encode(request)
+        case .updateLifestyle(let request):
+            return try? encoder.encode(request)
+        case .updatePreferredExercise(let request):
+            return try? encoder.encode(request)
         }
     }
     
     var encodingType: EncodingType {
         switch self {
-        case .saveOnboarding, .updateNickname, .updateAppGoal, .updateAlert:
+        case .saveOnboarding, .updateNickname, .updateAppGoal, .updateAlert, .updateAvailableTime, .updateLifestyle, .updateMinExerciseMinutes, .updatePreferredExercise:
             return .json
         case .fetchOnboarding:
             return .url
