@@ -24,6 +24,7 @@ struct ReportFeature {
         var hasReport: Bool = false
         var lastWeekSuccessRate: Double = 0.0
         var thisWeekSuccessRate: Double = 0.0
+        var thisWeekSuccessCount: Int = 0
         var topDifficulties: [String] = []
         var dailyResults: [DailyMission] = []
         var overallFeedback: String = ""
@@ -138,6 +139,7 @@ struct ReportFeature {
                 state.dailyResults = []
                 state.lastWeekSuccessRate = 0.0
                 state.thisWeekSuccessRate = 0.0
+                state.thisWeekSuccessCount = 0
                 state.topDifficulties = []
                 state.overallFeedback = ""
                 return .none
@@ -171,6 +173,7 @@ struct ReportFeature {
                 state.hasReport = data.dailyResults.contains { $0.status != .notPerformed }
                 state.lastWeekSuccessRate = data.lastWeekSuccessRate
                 state.thisWeekSuccessRate = data.thisWeekSuccessRate
+                state.thisWeekSuccessCount = data.thisWeekSuccessCount
                 state.topDifficulties = data.topFailureReasons.map { $0.reason }
 
                 let formatter = DateFormatter()

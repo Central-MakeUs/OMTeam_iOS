@@ -34,28 +34,28 @@ struct ReportView: View {
                     }
                     .padding(.horizontal, 20)
                 } else {
-                    VStack(spacing: 28) {
-                        VStack(spacing: 20) {
-                            HStack {
-                                weekNavigationHeader
-                                Spacer()
-                                Button {
-                                    
-                                } label: {
-                                    Image("refresh")
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 28) {
+                            VStack(spacing: 20) {
+                                HStack {
+                                    weekNavigationHeader
+                                    Spacer()
+                                    Button {
+                                        
+                                    } label: {
+                                        Image("refresh")
+                                    }
                                 }
+                                
+                                successRateCard
+                                topDifficultiesCard
+                                recommendCard
                             }
                             
-                            successRateCard
-                            topDifficultiesCard
-                            recommendCard
+                            analysisDetailButton
                         }
-                        
-                        Spacer()
-                        
-                        analysisDetailButton
+                        .padding(.horizontal, 20)
                     }
-                    .padding(.horizontal, 20)
                 }
             }
             .background(.gray2)
@@ -119,9 +119,15 @@ extension ReportView {
                     Text("이번주 미션 성공률")
                         .foregroundStyle(.gray10)
 
-                    Text("\(Int(store.thisWeekSuccessRate))%")
-                        .typography(.h1)
-                        .foregroundStyle(.gray13)
+                    HStack(alignment: .bottom) {
+                        Text(String(format: "%.1f%%", store.thisWeekSuccessRate))
+                            .typography(.h1)
+                            .foregroundStyle(.gray13)
+                        
+                        Text(String(format: "%02d/07", store.thisWeekSuccessCount))
+                            .typography(.sub_b4_3)
+                            .foregroundStyle(.gray7)
+                    }
                 }
             }
             .padding(.vertical, 10)
