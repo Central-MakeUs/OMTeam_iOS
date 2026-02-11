@@ -31,6 +31,7 @@ struct HomeView: View {
                         .padding(.bottom, 28)
 
                     analysisSummary
+                        .padding(.bottom, 56)
                 }
             }
         }
@@ -86,10 +87,13 @@ extension HomeView {
                                 .fill(.gray0)
                         )
                     
-                    Image(store.characterImageName)
+                    Image(store.characterImage.imageName)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 150, height: 133)
+                        .frame(
+                            width: store.characterImage.size.width,
+                            height: store.characterImage.size.height
+                        )
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {

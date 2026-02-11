@@ -39,13 +39,13 @@ struct HomeFeature {
         var isLoadingRecommendations: Bool = false
         @Presents var missionRecommendSheet: MissionRecommendSheetFeature.State?
 
-        var characterImageName: String {
+        var characterImage: CharacterImage {
             if hasCompletedMission, let mission = completeMission {
-                return mission.result == "SUCCESS" ? "happy" : "excited"
+                return mission.result == "SUCCESS" ? .happy : .excited
             } else if hasActiveMission, let mission = activeMission {
-                return mission.mission.type == .exercise ? "exercise" : "diet"
+                return mission.mission.type == .exercise ? .exercise : .diet
             } else {
-                return "basic"
+                return .basic
             }
         }
     }
