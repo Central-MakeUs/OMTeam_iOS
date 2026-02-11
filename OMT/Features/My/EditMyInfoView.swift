@@ -38,27 +38,31 @@ struct EditMyInfoView: View {
 
 extension EditMyInfoView {
     private var infoListView: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 28) {
             ForEach(MyFeature.ListItem.allCases, id: \.self) { item in
-                NavigationLink(destination: destinationView(for: item)) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Text(item.rawValue)
-                                .typography(.sub_b2_2)
-                                .foregroundStyle(.gray10)
-                            Spacer()
-                            Image("arrow_forth")
+                VStack(spacing: 4) {
+                    NavigationLink(destination: destinationView(for: item)) {
+                        VStack(alignment: .leading, spacing: 16) {
+                            HStack {
+                                Text(item.rawValue)
+                                    .typography(.sub_b3_1)
+                                    .foregroundStyle(.gray7)
+                                Spacer()
+                                Image("arrow_forth")
+                            }
+                            
+                            itemValueView(for: item)
                         }
-
-                        itemValueView(for: item)
                     }
-                    .padding(.vertical, 16)
+                    .buttonStyle(.plain)
+                    
+                    Divider()
                 }
-                .buttonStyle(.plain)
-
-                Divider()
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
             }
         }
+        .padding(.bottom, 54)
     }
 
     @ViewBuilder
@@ -68,30 +72,33 @@ extension EditMyInfoView {
             let timeOption = WorkTimeOption(serverStartTime: store.availableStartTime)
             
             Text("\(timeOption.displayText)")
-                .typography(.sub_btn3_enabled)
-                .foregroundStyle(.gray8)
+                .typography(.sub_btn2_enabled)
+                .foregroundStyle(.gray12)
         case .minExerciseMinutes:
             Text("\(store.minExerciseMinutes)분")
-                .typography(.sub_btn3_enabled)
-                .foregroundStyle(.gray8)
+                .typography(.sub_btn2_enabled)
+                .foregroundStyle(.gray12)
         case .preferredExercises:
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(store.preferredExercises, id: \.self) { exercise in
                         Text(exercise)
-                            .typography(.sub_btn3_enabled)
-                            .foregroundStyle(.gray10)
+                            .typography(.sub_btn2_enabled)
+                            .foregroundStyle(.gray12)
                             .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(.greenGray3)
-                            .clipShape(Capsule())
+                            .padding(.vertical, 8)
+                            .background(
+                                Capsule()
+                                    .strokeBorder(.gray3, lineWidth: 1)
+                                    .background(Capsule().fill(.gray1))
+                            )
                     }
                 }
             }
         case .lifestyleType:
             Text(store.lifestyleType.description)
-                .typography(.sub_btn3_enabled)
-                .foregroundStyle(.gray8)
+                .typography(.sub_btn2_enabled)
+                .foregroundStyle(.gray12)
         }
     }
     
@@ -115,8 +122,8 @@ extension EditMyInfoView {
     private var withdrawCell: some View {
         HStack {
             Text("회원정보를 삭제하시겠어요?")
-                .typography(.sub_btn3_enabled)
-                .foregroundStyle(.gray8)
+                .typography(.sub_b3_1)
+                .foregroundStyle(.gray7)
 
             Spacer()
 
@@ -124,12 +131,12 @@ extension EditMyInfoView {
                 store.send(.withdrawButtonTapped)
             } label: {
                 Text("회원탈퇴")
-                    .typography(.sub_btn3_enabled)
-                    .foregroundStyle(.error)
-                    .underline()
+                    .typography(.sub_btn3_disabled)
+                    .foregroundStyle(.gray7)
             }
             .buttonStyle(.plain)
         }
-        .padding(.top, 24)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
     }
 }
