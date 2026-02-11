@@ -39,6 +39,13 @@ struct MyFeature {
             return selected != originalAvailableTime
         }
 
+        var selectedLifestyleType: LifestyleType?
+
+        var isLifestyleTypeChanged: Bool {
+            guard let selected = selectedLifestyleType else { return false }
+            return selected != lifestyleType
+        }
+
         var isNicknameValid: Bool {
             let text = nicknameEditText
             guard !text.isEmpty, text.count <= 8 else { return false }
@@ -88,6 +95,9 @@ struct MyFeature {
 
         case availableTimeSelected(WorkTimeOption)
         case availableTimeEditConfirmed
+
+        case lifestyleTypeSelected(LifestyleType)
+        case lifestyleTypeEditConfirmed
 
         case delegate(Delegate)
 
@@ -235,6 +245,24 @@ struct MyFeature {
                     _ = try await networkManager.requestNetwork(
                         dto: OnboardingResponseDTO.self,
                         router: OnboardingRouter.updateAvailableTime(requestDTO)
+                    )
+                } catch: { error, _ in
+                    print(error)
+                }
+
+            case .lifestyleTypeSelected(let type):
+                state.selectedLifestyleType = type
+
+            case .lifestyleTypeEditConfirmed:
+                guard let selected = state.selectedLifestyleType else { return .none }
+                state.lifestyleType = selected
+                state.selectedLifestyleType = nil
+
+                return .run { [networkManager] _ in
+                    let requestDTO = UpdateLifestyleRequestDTO(lifestyleType: selected)
+                    _ = try await networkManager.requestNetwork(
+                        dto: OnboardingResponseDTO.self,
+                        router: OnboardingRouter.updateLifestyle(requestDTO)
                     )
                 } catch: { error, _ in
                     print(error)
