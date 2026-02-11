@@ -33,13 +33,15 @@ struct MessageRow: View {
                     .frame(maxWidth: 250, alignment: .trailing)
             } else {
                 VStack(alignment: .leading) {
-                    HStack {
+                    HStack(spacing: 8) {
                         Image("profile")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 24, height: 24)
 
                         Text("채팅봇") // 봇 이름
+                            .typography(.sub_b2_1)
+                            .foregroundColor(.gray11)
                     }
 
                     VStack(alignment: .leading, spacing: 20) {
