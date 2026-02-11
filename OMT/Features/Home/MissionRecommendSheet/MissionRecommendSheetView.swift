@@ -166,11 +166,10 @@ struct MissionOptionCard: View {
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(isSelected ? .primary1 : .gray1)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(
+            .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? .primary3 : .gray3, lineWidth: 1)
+                    .fill(isSelected ? .primary1 : .gray1)
+                    .strokeBorder(isSelected ? .primary3 : .gray3, lineWidth: 1)
             )
         }
         .buttonStyle(PlainButtonStyle())

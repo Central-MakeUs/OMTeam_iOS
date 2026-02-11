@@ -223,11 +223,10 @@ struct NicknameEditSheetView: View {
             .frame(height: 60)
             .typography(.sub_btn2_enabled)
             .foregroundStyle(.gray10)
-            .background(.greenGray2)
-            .cornerRadius(10)
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(.greenGray4, lineWidth: 1)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.greenGray2)
+                    .strokeBorder(.greenGray4, lineWidth: 1)
             )
             .autocorrectionDisabled()
 

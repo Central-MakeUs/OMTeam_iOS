@@ -64,11 +64,8 @@ extension OnboardingView {
                     .foregroundColor(.greenGray6)
                     .background(
                         Capsule()
-                            .fill(.greenGray2)
-                    )
-                    .overlay(
-                        Capsule()
-                            .stroke(.greenGray5, lineWidth: 1)
+                            .strokeBorder(.greenGray5, lineWidth: 1)
+                            .background(Capsule().fill(.greenGray2))
                     )
             }
         }
@@ -179,11 +176,10 @@ extension OnboardingView {
             .padding()
             .typography(.sub_btn2_enabled)
             .foregroundStyle(.gray10)
-            .background(.greenGray2)
-            .cornerRadius(10)
-            .overlay(
+            .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(.greenGray4, lineWidth: 1)
+                    .fill(.greenGray2)
+                    .strokeBorder(.greenGray4, lineWidth: 1)
             )
             .autocorrectionDisabled()
             .focused($isFocused)
@@ -294,11 +290,10 @@ extension OnboardingView {
             .padding()
             .typography(.sub_btn2_enabled)
             .foregroundStyle(.gray10)
-            .background(.greenGray2)
-            .cornerRadius(10)
-            .overlay(
+            .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(.greenGray4, lineWidth: 1)
+                    .fill(.greenGray2)
+                    .strokeBorder(.greenGray4, lineWidth: 1)
             )
             .autocorrectionDisabled()
             .focused($isFocused)

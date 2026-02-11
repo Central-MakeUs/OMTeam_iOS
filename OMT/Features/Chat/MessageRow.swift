@@ -70,11 +70,8 @@ struct MessageRow: View {
                                             .foregroundColor(.gray12)
                                             .background(
                                                 Capsule()
-                                                    .fill(.primary2)
-                                            )
-                                            .overlay(
-                                                Capsule()
-                                                    .stroke(.primary3, lineWidth: 1)
+                                                    .strokeBorder(.primary3, lineWidth: 1)
+                                                    .background(Capsule().fill(.primary2))
                                             )
                                     }
                                     .allowsHitTesting(message.selectedOption == nil)

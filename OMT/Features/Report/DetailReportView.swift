@@ -150,11 +150,10 @@ extension DetailReportView {
         .padding([.top, .horizontal], 8)
         .padding(.bottom, 10)
         .frame(maxWidth: .infinity)
-        .background(.primary2)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(
+        .background(
             RoundedRectangle(cornerRadius: 10)
-                .stroke(.greenGray4, lineWidth: 1)
+                .fill(.primary2)
+                .strokeBorder(.primary4, lineWidth: 1)
         )
     }
 }
@@ -214,11 +213,10 @@ extension DetailReportView {
         }
         .padding([.top, .horizontal], 8)
         .padding(.bottom, 10)
-        .background(.primary2)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(
+        .background(
             RoundedRectangle(cornerRadius: 10)
-                .stroke(.greenGray4, lineWidth: 1)
+                .fill(.primary2)
+                .strokeBorder(.primary4, lineWidth: 1)
         )
     }
 }
