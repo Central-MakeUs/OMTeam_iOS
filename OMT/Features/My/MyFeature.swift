@@ -70,6 +70,20 @@ struct MyFeature {
             return nil
         }
 
+        var selectedPreferredExercises: [String] = []
+        var customExerciseText: String = ""
+        var isAddingCustomExercise: Bool = false
+
+        static let defaultExerciseOptions = ["걷기", "스트레칭/요가", "홈 트레이닝(맨몸 운동)", "헬스", "생활 속 운동"]
+
+        var isPreferredExercisesChanged: Bool {
+            Set(selectedPreferredExercises) != Set(preferredExercises)
+        }
+
+        var canAddMoreExercises: Bool {
+            selectedPreferredExercises.count < 3
+        }
+
         var isNicknameValid: Bool {
             let text = nicknameEditText
             guard !text.isEmpty, text.count <= 8 else { return false }
@@ -124,6 +138,13 @@ struct MyFeature {
         case lifestyleTypeEditConfirmed
 
         case minExerciseMinutesEditConfirmed
+
+        case preferredExerciseToggled(String)
+        case startAddingCustomExercise
+        case cancelAddingCustomExercise
+        case customExerciseAdded
+        case customExerciseConfirmed
+        case preferredExercisesEditConfirmed
 
         case delegate(Delegate)
 
@@ -304,6 +325,56 @@ struct MyFeature {
                     _ = try await networkManager.requestNetwork(
                         dto: OnboardingResponseDTO.self,
                         router: OnboardingRouter.updateMinExerciseMinutes(requestDTO)
+                    )
+                } catch: { error, _ in
+                    print(error)
+                }
+
+            case .preferredExerciseToggled(let exercise):
+                if let index = state.selectedPreferredExercises.firstIndex(of: exercise) {
+                    state.selectedPreferredExercises.remove(at: index)
+                } else if state.canAddMoreExercises {
+                    state.selectedPreferredExercises.append(exercise)
+                }
+
+            case .startAddingCustomExercise:
+                state.isAddingCustomExercise = true
+                state.customExerciseText = ""
+
+            case .cancelAddingCustomExercise:
+                state.isAddingCustomExercise = false
+                state.customExerciseText = ""
+
+            case .customExerciseAdded:
+                let trimmed = state.customExerciseText.trimmingCharacters(in: .whitespaces)
+                guard !trimmed.isEmpty else {
+                    state.isAddingCustomExercise = false
+                    state.customExerciseText = ""
+                    return .none
+                }
+                state.customExerciseText = trimmed
+                state.isAddingCustomExercise = false
+
+            case .customExerciseConfirmed:
+                let exercise = state.customExerciseText
+                guard !exercise.isEmpty,
+                      state.canAddMoreExercises,
+                      !state.selectedPreferredExercises.contains(exercise) else {
+                    return .none
+                }
+                state.selectedPreferredExercises.append(exercise)
+                state.customExerciseText = ""
+
+            case .preferredExercisesEditConfirmed:
+                guard state.isPreferredExercisesChanged else { return .none }
+                let exercises = state.selectedPreferredExercises
+                state.preferredExercises = exercises
+
+                return .run { [networkManager] _ in
+                    let requestDTO = UpdatePreferredExerciseRequestDTO(preferredExercises: exercises)
+                    _ = try await networkManager.requestNetwork(
+                        dto: OnboardingResponseDTO.self,
+                        router: OnboardingRouter.updatePreferredExercise(requestDTO)
                     )
                 } catch: { error, _ in
                     print(error)

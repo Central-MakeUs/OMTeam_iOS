@@ -110,7 +110,7 @@ extension EditMyInfoView {
         case .minExerciseMinutes:
             EditMinExerciesMinutesView(store: store)
         case .preferredExercises:
-            Text("문의하기")
+            EditPreferredExercisesView(store: store)
         case .lifestyleType:
             EditLifestyleTypeView(store: store)
         }
