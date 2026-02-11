@@ -69,6 +69,7 @@ struct EditAppGoalView: View {
                     .background(store.isAppGoalValid ? .primary7 : .primary4)
                     .cornerRadius(12)
             }
+            .buttonStyle(.plain)
             .disabled(!store.isAppGoalValid)
         }
         .padding(.top, 27)

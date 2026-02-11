@@ -95,9 +95,10 @@ struct MissionRecommendSheetView: View {
                     .background(.greenGray5)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
             }
+            .buttonStyle(.plain)
             .frame(width: 126)
             .disabled(store.isLoading)
-            
+
             Button {
                 store.send(.startMissionTapped)
             } label: {
@@ -116,6 +117,7 @@ struct MissionRecommendSheetView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
             }
+            .buttonStyle(.plain)
             .frame(maxWidth: .infinity)
             .disabled(store.selectedRecommendation == nil || store.isLoading)
         }

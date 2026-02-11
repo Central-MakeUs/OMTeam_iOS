@@ -46,7 +46,8 @@ struct CustomAlertView: View {
                             .background(alertType.isDestructive ? .greenGray5 : .primary7)
                             .cornerRadius(8)
                     }
-                    
+                    .buttonStyle(.plain)
+
                     if alertType.showCancelButton {
                         Button {
                             onCancel()
@@ -59,6 +60,7 @@ struct CustomAlertView: View {
                                 .background(.primary7)
                                 .cornerRadius(8)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
             }

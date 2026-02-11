@@ -104,6 +104,7 @@ extension EditMinExerciesMinutesView {
                 .background(store.isMinExerciseMinutesChanged ? .primary7 : .primary4)
                 .cornerRadius(12)
         }
+        .buttonStyle(.plain)
         .disabled(!store.isMinExerciseMinutesChanged)
         .padding(.bottom, 28)
     }

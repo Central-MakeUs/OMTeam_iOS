@@ -50,6 +50,7 @@ struct LoginSuccessView: View {
                     .background(.primary7)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             }
+            .buttonStyle(.plain)
         }
         .padding(.horizontal, 20)
     }

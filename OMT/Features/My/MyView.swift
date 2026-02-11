@@ -254,6 +254,7 @@ struct NicknameEditSheetView: View {
                     .background(store.isNicknameValid ? .primary7 : .primary4)
                     .cornerRadius(12)
             }
+            .buttonStyle(.plain)
             .disabled(!store.isNicknameValid)
         }
         .padding(.horizontal, 20)

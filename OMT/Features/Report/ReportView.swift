@@ -24,12 +24,13 @@ struct ReportView: View {
                             weekNavigationHeader
                             Spacer()
                             Button {
-                                
+
                             } label: {
                                 Image("refresh")
                             }
+                            .buttonStyle(.plain)
                         }
-                        
+
                         Spacer()
                     }
                     .padding(.horizontal, 20)
@@ -41,12 +42,13 @@ struct ReportView: View {
                                     weekNavigationHeader
                                     Spacer()
                                     Button {
-                                        
+
                                     } label: {
                                         Image("refresh")
                                     }
+                                    .buttonStyle(.plain)
                                 }
-                                
+
                                 successRateCard
                                 topDifficultiesCard
                                 recommendCard
@@ -96,6 +98,7 @@ extension ReportView {
                         Image("down")
                     }
                 }
+                .buttonStyle(.plain)
                 
                 Button {
                     store.send(.nextWeekTapped)

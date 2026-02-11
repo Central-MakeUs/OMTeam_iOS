@@ -59,6 +59,7 @@ extension EditAvailableTimeView {
                         .background(Capsule().fill(.gray1))
                 )
         }
+        .buttonStyle(.plain)
     }
 
     private var itemValueView: some View {
@@ -122,6 +123,7 @@ extension EditAvailableTimeView {
                 .background(store.isAvailableTimeChanged ? .primary7 : .primary4)
                 .cornerRadius(12)
         }
+        .buttonStyle(.plain)
         .disabled(!store.isAvailableTimeChanged)
         .padding(.bottom, 28 )
     }

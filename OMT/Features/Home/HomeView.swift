@@ -233,6 +233,7 @@ extension HomeView {
                 )
                 .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
     }
 
     private var anotherMissionButton: some View {
@@ -250,6 +251,7 @@ extension HomeView {
                 )
                 .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
         .disabled(true)
     }
     
@@ -312,6 +314,7 @@ extension HomeView {
                 )
                 .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
     }
 }
 
@@ -374,6 +377,7 @@ extension HomeView {
                 )
                 .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
     }
     
     private var emptyAnalysis: some View {

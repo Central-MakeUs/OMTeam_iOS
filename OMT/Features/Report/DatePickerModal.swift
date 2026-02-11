@@ -140,6 +140,7 @@ struct DatePickerModal: View {
                         .background(store.isConfirmButtonEnabled ? .primary7 : .primary4)
                         .cornerRadius(12)
                 }
+                .buttonStyle(.plain)
                 .disabled(!store.isConfirmButtonEnabled)
             }
             .padding(20)

@@ -59,6 +59,7 @@ extension EditLifestyleTypeView {
                         .background(Capsule().fill(.gray1))
                 )
         }
+        .buttonStyle(.plain)
     }
 
     private var itemValueView: some View {
@@ -115,6 +116,7 @@ extension EditLifestyleTypeView {
                 .background(store.isLifestyleTypeChanged ? .primary7 : .primary4)
                 .cornerRadius(12)
         }
+        .buttonStyle(.plain)
         .disabled(!store.isLifestyleTypeChanged)
         .padding(.bottom, 28)
     }

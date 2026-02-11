@@ -67,6 +67,7 @@ extension EditPreferredExercisesView {
                         .background(Capsule().fill(.gray1))
                 )
         }
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder
@@ -86,6 +87,7 @@ extension EditPreferredExercisesView {
                         .background(Capsule().fill(.gray1))
                 )
         }
+        .buttonStyle(.plain)
         .disabled(isSelected || !store.canAddMoreExercises)
     }
 
@@ -121,6 +123,7 @@ extension EditPreferredExercisesView {
                                 .background(Capsule().fill(.gray1))
                         )
                 }
+                .buttonStyle(.plain)
             } else {
                 Button {
                     store.send(.startAddingCustomExercise)
@@ -139,6 +142,7 @@ extension EditPreferredExercisesView {
                             .background(Capsule().fill(.gray1))
                     )
                 }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -221,6 +225,7 @@ extension EditPreferredExercisesView {
                         .background(isCustomTextValid ? .primary7 : .primary4)
                         .cornerRadius(12)
                 }
+                .buttonStyle(.plain)
                 .disabled(!isCustomTextValid)
             } else {
                 Button {
@@ -235,6 +240,7 @@ extension EditPreferredExercisesView {
                         .background(store.isPreferredExercisesChanged ? .primary7 : .primary4)
                         .cornerRadius(12)
                 }
+                .buttonStyle(.plain)
                 .disabled(!store.isPreferredExercisesChanged)
             }
         }

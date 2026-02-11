@@ -68,6 +68,7 @@ extension OnboardingView {
                             .background(Capsule().fill(.greenGray2))
                     )
             }
+            .buttonStyle(.plain)
         }
         .padding(.trailing, 20)
     }
@@ -124,8 +125,9 @@ extension OnboardingView {
                         .background(.gray3)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
+                .buttonStyle(.plain)
                 .frame(width: 126)
-                
+
                 Button {
                     store.send(.nextTapped)
                 } label: {
@@ -137,6 +139,7 @@ extension OnboardingView {
                         .background(store.canProceed ? .primary7 : .primary4)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
+                .buttonStyle(.plain)
                 .frame(maxWidth: .infinity)
                 .disabled(!store.canProceed)
             } else {
@@ -151,6 +154,7 @@ extension OnboardingView {
                         .background(store.canProceed ? .primary7 : .primary4)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
+                .buttonStyle(.plain)
                 .disabled(!store.canProceed)
             }
         }
@@ -321,6 +325,7 @@ extension OnboardingView {
                     .background(isDisabled ? .primary4 : .primary7)
                     .cornerRadius(12)
             }
+            .buttonStyle(.plain)
             .disabled(isDisabled)
         }
         .padding(.horizontal, 20)

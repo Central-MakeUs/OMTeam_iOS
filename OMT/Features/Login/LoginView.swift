@@ -41,18 +41,21 @@ extension LoginView {
             } label: {
                 Image("applelogin")
             }
-            
+            .buttonStyle(.plain)
+
             Button {
                 store.send(.kakaoLoginTapped)
             } label: {
                 Image("kakaologin")
             }
-            
+            .buttonStyle(.plain)
+
             Button {
                 store.send(.googleLoginTapped)
             } label: {
                 Image("googlelogin")
             }
+            .buttonStyle(.plain)
         }
         .padding(.bottom, 22)
     }
