@@ -19,6 +19,7 @@ struct EditPreferredExercisesView: View {
             Spacer()
             editButton
         }
+        .padding(.top, 16)
         .padding(.horizontal, 20)
         .contentShape(Rectangle())
         .onTapGesture {
@@ -125,8 +126,7 @@ extension EditPreferredExercisesView {
                     store.send(.startAddingCustomExercise)
                 } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 12))
+                        Image("icon_plus")
                         Text("직접 추가하기")
                     }
                     .typography(.sub_btn2_enabled)
