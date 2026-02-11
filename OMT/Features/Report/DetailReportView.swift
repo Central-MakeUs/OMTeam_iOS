@@ -21,6 +21,7 @@ struct DetailReportView: View {
                 omtRecommendationCard
             }
             .padding(.horizontal, 20)
+            .padding(.top, 19)
         }
         .background(.gray2)
         .onAppear {
@@ -130,7 +131,7 @@ extension DetailReportView {
     }
 
     private var failReasonSummary: some View {
-        HStack {
+        HStack(spacing: 8) {
             ZStack {
                 Circle()
                     .fill(.secondary2)
@@ -147,7 +148,8 @@ extension DetailReportView {
                 .foregroundStyle(.gray11)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding([.top, .horizontal], 8)
+        .padding(.horizontal, 12)
+        .padding(.top, 8)
         .padding(.bottom, 10)
         .frame(maxWidth: .infinity)
         .background(
@@ -185,7 +187,9 @@ extension DetailReportView {
                     x: .value("Day", stat.dayName),
                     y: .value("Value", stat.successCount)
                 )
-                .foregroundStyle(.gray)
+                .foregroundStyle(
+                    stat.successCount == minSuccessCount ? .primary5 : .gray3
+                )
                 .cornerRadius(8)
             }
             .frame(height: 150)
@@ -211,13 +215,18 @@ extension DetailReportView {
                 .foregroundStyle(.gray11)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding([.top, .horizontal], 8)
+        .padding(.horizontal, 12)
+        .padding(.top, 8)
         .padding(.bottom, 10)
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(.primary2)
                 .strokeBorder(.primary4, lineWidth: 1)
         )
+    }
+    
+    private var minSuccessCount: Int {
+        store.dayOfWeekStats.map { $0.successCount }.min() ?? 0
     }
 }
 
