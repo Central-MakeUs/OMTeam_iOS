@@ -17,10 +17,27 @@ struct MyFeature {
         var appGoalText: String = ""
         var isNotificationOn = false
 
+        var availableStartTime: String = ""
+        var availableEndTime: String = ""
+        var minExerciseMinutes: Int = 0
+        var preferredExercises: [String] = []
+        var lifestyleType: LifestyleType = .regularDaytime
+        
         var nicknameEditSheetPresented = false
         var nicknameEditText = ""
 
         var appGoalEditText = ""
+
+        var selectedAvailableTime: WorkTimeOption?
+
+        var originalAvailableTime: WorkTimeOption {
+            WorkTimeOption(serverStartTime: availableStartTime)
+        }
+
+        var isAvailableTimeChanged: Bool {
+            guard let selected = selectedAvailableTime else { return false }
+            return selected != originalAvailableTime
+        }
 
         var isNicknameValid: Bool {
             let text = nicknameEditText
@@ -64,6 +81,14 @@ struct MyFeature {
         case appGoalEditConfirmed
         case withdrawButtonTapped
 
+        case editAvaliableTime
+        case editMinExerciseMinutes
+        case editPreferredExercises
+        case editLifestyleType
+
+        case availableTimeSelected(WorkTimeOption)
+        case availableTimeEditConfirmed
+
         case delegate(Delegate)
 
         enum Delegate {
@@ -97,6 +122,13 @@ struct MyFeature {
         }
     }
     
+    enum ListItem: String, CaseIterable {
+        case avaliableTime = "운동 가능 시간"
+        case minExerciseMinutes = "미션에 투자할 수 있는 시간"
+        case preferredExercises = "선호 운동"
+        case lifestyleType = "평소 생활 패턴"
+    }
+    
     @Dependency(\.networkManager) var networkManager
 
     var body: some ReducerOf<Self> {
@@ -104,9 +136,6 @@ struct MyFeature {
 
         Reduce { state, action in
             switch action {
-            case .binding:
-                return .none
-
             case .onAppear:
                 guard !state.hasLoaded else { return .none }
                 state.hasLoaded = true
@@ -128,7 +157,11 @@ struct MyFeature {
                 state.appGoalText = data.appGoalText
                 state.appGoalEditText = data.appGoalText
                 state.isNotificationOn = data.remindEnabled && data.checkinEnabled && data.reviewEnabled
-                return .none
+                state.availableStartTime = data.availableStartTime
+                state.availableEndTime = data.availableEndTime
+                state.minExerciseMinutes = data.minExerciseMinutes
+                state.preferredExercises = data.preferredExercises
+                state.lifestyleType = data.lifestyleType
 
             case .notificationToggled(let isOn):
                 state.isNotificationOn = isOn
@@ -156,7 +189,6 @@ struct MyFeature {
             case .nicknameEditSheetOpen:
                 state.nicknameEditText = state.nickname
                 state.nicknameEditSheetPresented = true
-                return .none
 
             case .nicknameEditConfirmed:
                 let newNickname = state.nicknameEditText
@@ -186,9 +218,33 @@ struct MyFeature {
                     print(error)
                 }
 
-            case .delegate:
-                return .none
+            case .availableTimeSelected(let option):
+                state.selectedAvailableTime = option
+
+            case .availableTimeEditConfirmed:
+                guard let selected = state.selectedAvailableTime else { return .none }
+                state.availableStartTime = selected.startTime
+                state.availableEndTime = selected.endTime
+                state.selectedAvailableTime = nil
+
+                return .run { [networkManager] _ in
+                    let requestDTO = UpdateAvailableTimeRequestDTO(
+                        availableStartTime: selected.startTime,
+                        availableEndTime: selected.endTime
+                    )
+                    _ = try await networkManager.requestNetwork(
+                        dto: OnboardingResponseDTO.self,
+                        router: OnboardingRouter.updateAvailableTime(requestDTO)
+                    )
+                } catch: { error, _ in
+                    print(error)
+                }
+
+            default:
+                break
             }
+            
+            return .none
         }
     }
 }
