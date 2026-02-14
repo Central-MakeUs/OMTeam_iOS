@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 enum ChatRouter: TargetType {
-    case fetchChat(cursor: Int? = nil, size: Int = 20)
+    case fetchChat(size: Int = 1000)
     case sendChat(MessageRequestDTO)
     case sendEmptyChat // 빈 요청으로 greeting message를 받기 위해 사용
 }
@@ -45,12 +45,8 @@ extension ChatRouter {
         switch self {
         case .sendChat, .sendEmptyChat:
             return nil
-        case .fetchChat(let cursor, let size):
-            var params: [String: Any] = ["size": size]
-            if let cursor = cursor {
-                params["cursor"] = cursor
-            }
-            return params
+        case .fetchChat(let size):
+            return ["size": size]
         }
     }
     
