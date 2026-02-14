@@ -37,7 +37,7 @@ struct TypeSuccessCountDTO: Decodable {
 
 struct FailureReasonDTO: Decodable {
     let rank: Int
-    let reason: String
+    let reason: String?
     let count: Int
 }
 
@@ -48,6 +48,6 @@ struct AIFeedbackDTO: Decodable {
 
 struct FailureReasonRankingDTO: Decodable {
     let rank: Int
-    let category: String
+    let category: String?
     let count: Int
 }

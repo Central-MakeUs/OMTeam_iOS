@@ -188,7 +188,7 @@ struct ReportFeature {
                 state.lastWeekSuccessRate = data.lastWeekSuccessRate
                 state.thisWeekSuccessRate = data.thisWeekSuccessRate
                 state.thisWeekSuccessCount = data.thisWeekSuccessCount
-                state.topDifficulties = data.aiFeedback.failureReasonRanking.map { $0.category }
+                state.topDifficulties = data.aiFeedback.failureReasonRanking.map { $0.category ?? "" }
                 state.weeklyFeedback = data.aiFeedback.weeklyFeedback ?? ""
 
                 let formatter = DateFormatter()
