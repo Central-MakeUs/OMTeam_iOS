@@ -79,6 +79,7 @@ extension HomeView {
                 VStack(spacing: 21) {
                     Text(store.encouragementMessage)
                         .typography(.sub_b4_2)
+                        .multilineTextAlignment(.center)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .foregroundStyle(.gray11)
