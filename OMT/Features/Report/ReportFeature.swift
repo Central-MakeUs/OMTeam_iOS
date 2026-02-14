@@ -28,6 +28,7 @@ struct ReportFeature {
         var topDifficulties: [String] = []
         var dailyResults: [DailyMission] = []
         var overallFeedback: String = ""
+        var weeklyFeedback: String = ""
 
         var dayOfWeekStats: [DayOfWeekStat] = []
         var monthlySummary: String = ""
@@ -174,7 +175,8 @@ struct ReportFeature {
                 state.lastWeekSuccessRate = data.lastWeekSuccessRate
                 state.thisWeekSuccessRate = data.thisWeekSuccessRate
                 state.thisWeekSuccessCount = data.thisWeekSuccessCount
-                state.topDifficulties = data.topFailureReasons.map { $0.reason }
+                state.topDifficulties = data.aiFeedback.failureReasonRanking.map { $0.category }
+                state.weeklyFeedback = data.aiFeedback.weeklyFeedback ?? ""
 
                 let formatter = DateFormatter()
                 formatter.dateFormat = "yyyy-MM-dd"

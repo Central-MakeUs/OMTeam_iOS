@@ -143,7 +143,7 @@ extension DetailReportView {
                     .frame(width: 28, height: 28)
             }
 
-            Text(store.overallFeedback)
+            Text(store.weeklyFeedback)
                 .typography(.sub_b2_3)
                 .foregroundStyle(.gray11)
                 .frame(maxWidth: .infinity, alignment: .leading)
