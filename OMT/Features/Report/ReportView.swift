@@ -24,7 +24,7 @@ struct ReportView: View {
                             weekNavigationHeader
                             Spacer()
                             Button {
-
+                                store.send(.fetchWeeklyReports)
                             } label: {
                                 Image("refresh")
                             }
@@ -42,7 +42,7 @@ struct ReportView: View {
                                     weekNavigationHeader
                                     Spacer()
                                     Button {
-
+                                        store.send(.fetchWeeklyReports)
                                     } label: {
                                         Image("refresh")
                                     }

@@ -77,12 +77,25 @@ struct ReportFeature {
     
     enum Action {
         case onAppear
+
+        // MARK: - 네트워크 요청 액션
+        // 리포트 화면은 3개의 서로 다른 API를 호출하여 데이터를 조합합니다.
+        // 각 API 응답의 데이터 구조가 다르기 때문에, 응답별로 별도의 Response 액션이 필요합니다.
+
+        /// 주간 리포트 요청 - 주간 성공률, 일별 미션 결과, AI 피드백을 가져옵니다
         case fetchWeeklyReports
+        /// 주간 리포트 응답 - 성공률, 일별 결과, 실패 원인 랭킹 등을 State에 반영합니다
         case fetchWeeklyReportsResponse(WeeklyReportsDataDTO)
+        /// 일일 피드백 응답 - 오늘의 AI 피드백 텍스트를 State에 반영합니다
         case fetchDailyFeedbackResponse(DailyFeedbackDataDTO)
+        /// 주간 리포트 요청 실패 - 데이터를 초기화하여 빈 화면을 표시합니다
         case fetchWeeklyReportsFailed
+        /// 월간 패턴 요청 - 요일별 성공 통계와 월간 AI 피드백을 가져옵니다 (DetailReportView에서 사용)
         case fetchMonthlyPattern
+        /// 월간 패턴 응답 - 요일별 통계와 월간 피드백을 State에 반영합니다
         case fetchMonthlyPatternResponse(MonthlyPatternDataDTO)
+
+        // MARK: - 사용자 인터랙션 액션
         case previousWeekTapped
         case nextWeekTapped
         case dateTapped
