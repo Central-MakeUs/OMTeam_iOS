@@ -13,19 +13,30 @@ struct OnboardingView: View {
     @FocusState private var isFocused: Bool
 
     var body: some View {
+        Group {
+            if store.showPrivacyConsent {
+                PrivacyConsentView(store: store)
+            } else {
+                onboardingContent
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: store.showPrivacyConsent)
+    }
+
+    private var onboardingContent: some View {
         VStack(spacing: 0) {
             headerView
-            
+
             VStack(alignment: .leading, spacing: 20) {
                 Text(store.currentStepData.title)
                     .typography(.h2_1)
                     .foregroundStyle(.gray11)
                     .lineLimit(nil)
-                
+
                 stepContent
             }
             .padding(.horizontal, 20)
-            
+
             Spacer()
 
             navigationButtons

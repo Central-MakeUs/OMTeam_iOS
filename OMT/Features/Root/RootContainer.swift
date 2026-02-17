@@ -171,10 +171,22 @@ struct RootContainer {
                     state.home = HomeFeature.State()
                     state.chat = ChatFeature.State()
                     state.report = ReportFeature.State()
+
+                case .privacyConsentDeclined:
+                    break
                 }
 
             case .withdrawCompleted:
                 state.alertType = .withdrawComplete
+
+            case .onboarding(.delegate(.privacyConsentWithdrawCompleted)):
+                KeychainManager.shared.deleteTokens()
+                state.currentView = .login
+                state.onboarding = nil
+                state.my = MyFeature.State()
+                state.home = HomeFeature.State()
+                state.chat = ChatFeature.State()
+                state.report = ReportFeature.State()
 
             case .splashAppeared:
                 let isLoggedIn = state.isLoggedIn

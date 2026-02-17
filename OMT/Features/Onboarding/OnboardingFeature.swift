@@ -16,11 +16,14 @@ struct OnboardingFeature {
         var currentStep = 0
         var totalSteps = 7
         var answers: [Int: String] = [:]
-        
+
         var customInputSheetPresented = false
         var customInputText = ""
         var customInputStepIndex: Int?
-        
+
+        var showPrivacyConsent = false
+        var privacyConsentAlertType: AlertType?
+
         var steps: [OnboardingStep] = OnboardingStep.steps
         var currentStepData: OnboardingStep {
             steps[currentStep]
@@ -94,10 +97,18 @@ struct OnboardingFeature {
         
         case submitToServer
         case submitResponse
+
+        case privacyConsentAgreed
+        case privacyConsentDeclined
+        case privacyConsentAlertCanceled
+        case privacyConsentAlertConfirmed
+        case privacyConsentWithdrawCompleted
+
         case delegate(Delegate)
-        
+
         enum Delegate {
             case onboardingCompleted
+            case privacyConsentWithdrawCompleted
         }
     }
     
@@ -217,10 +228,13 @@ struct OnboardingFeature {
                 }
                 
             case .completeTapped:
+                state.showPrivacyConsent = true
+
+            case .privacyConsentAgreed:
                 return .run { [state] send in
                     let requestDTO = state.toServerRequest()
                     let router: OnboardingRouter = .saveOnboarding(requestDTO)
-                
+
                     let response = try await networkManager.requestNetwork(
                         dto: OnboardingResponseDTO.self,
                         router: router
@@ -232,7 +246,29 @@ struct OnboardingFeature {
                 } catch: { error, send in
                     print(error, send)
                 }
-                
+
+            case .privacyConsentDeclined:
+                state.privacyConsentAlertType = .privacyConsentDeclined
+
+            case .privacyConsentAlertCanceled:
+                state.privacyConsentAlertType = nil
+
+            case .privacyConsentAlertConfirmed:
+                state.privacyConsentAlertType = nil
+                return .run { [networkManager] send in
+                    _ = try await networkManager.requestNetwork(
+                        dto: WithdrawResponseDTO.self,
+                        router: AuthRouter.withdraw
+                    )
+                    await send(.delegate(.privacyConsentWithdrawCompleted))
+                } catch: { error, send in
+                    print(error)
+                    await send(.delegate(.privacyConsentWithdrawCompleted))
+                }
+
+            case .privacyConsentWithdrawCompleted:
+                break
+
             case .skipTapped:
                 return .run { send in
                     await send(.delegate(.onboardingCompleted))
