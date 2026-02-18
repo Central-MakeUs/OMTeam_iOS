@@ -209,6 +209,8 @@ extension ReportView {
                 Text("OMT의 제안")
                     .typography(.h3)
                     .foregroundStyle(.gray11)
+
+                HealthSourceInfoButton()
             }
             
             Text(store.overallFeedback)

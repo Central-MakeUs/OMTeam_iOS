@@ -79,6 +79,7 @@ extension DetailReportView {
                 Text("이번주 미션, 한 번 살펴볼까요?")
                     .typography(.h3)
                     .foregroundStyle(.gray13)
+                HealthSourceInfoButton()
             }
             VStack(spacing: 20) {
                 VStack(spacing: 16) {
@@ -168,6 +169,7 @@ extension DetailReportView {
                 Text(store.monthlySummary)
                     .typography(.h3)
                     .foregroundStyle(.gray13)
+                HealthSourceInfoButton()
             }
             VStack(spacing: 20) {
                 barChart

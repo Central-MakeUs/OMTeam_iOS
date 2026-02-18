@@ -107,9 +107,12 @@ struct ChatView: View {
         }
         .customNavigationBar(
             centerView: {
-                Text("채팅하기")
-                    .typography(.h2_2)
-                    .foregroundStyle(.gray11)
+                HStack(spacing: 6) {
+                    Text("채팅하기")
+                        .typography(.h2_2)
+                        .foregroundStyle(.gray11)
+                    HealthSourceInfoButton()
+                }
             }
         )
     }
