@@ -33,4 +33,16 @@ struct MessageOption: Equatable {
     let label: String
     let value: String
     let actionType: String?
+    
+    var iconName: String? {
+        switch value {
+        case "SUCCESS": return "icon_success"
+        case "FAILURE": return "icon_fail"
+        case "LACK_OF_TIME": return "icon_calendar"
+        case "POOR_CONDITION": return "icon_tired"
+        case "LACK_OF_MOTIVATION": return "icon_cup"
+        case "OTHER": return "icon_pencil"
+        default: return nil
+        }
+    }
 }
