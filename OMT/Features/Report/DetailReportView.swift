@@ -32,6 +32,7 @@ struct DetailReportView: View {
                 Text("상세 분석 보기")
                     .typography(.h2_2)
                     .foregroundStyle(.gray11)
+                HealthSourceInfoButton()
             },
             leftView: {
                 Button {
@@ -79,7 +80,6 @@ extension DetailReportView {
                 Text("이번주 미션, 한 번 살펴볼까요?")
                     .typography(.h3)
                     .foregroundStyle(.gray13)
-                HealthSourceInfoButton()
             }
             VStack(spacing: 20) {
                 VStack(spacing: 16) {
@@ -169,7 +169,6 @@ extension DetailReportView {
                 Text(store.monthlySummary)
                     .typography(.h3)
                     .foregroundStyle(.gray13)
-                HealthSourceInfoButton()
             }
             VStack(spacing: 20) {
                 barChart
