@@ -30,7 +30,7 @@ struct MessageRow: View {
                             topTrailingRadius: 12
                         )
                     )
-                    .frame(maxWidth: 250, alignment: .trailing)
+                    .frame(maxWidth: 260, alignment: .trailing)
             } else {
                 VStack(alignment: .leading) {
                     HStack(spacing: 8) {
@@ -54,27 +54,34 @@ struct MessageRow: View {
                                 ForEach(options, id: \.value) { option in
                                     Button {
                                         if message.selectedOption == nil {
-                                            if option.label.contains("직접 입력") {
+                                            // 미션인증에서는 value가 OTHER로 잘 오는데 일반 AI응답은 안올때가 있어 두가지 조건 모두 추가
+                                            if option.value == "OTHER" || option.label.contains("직접 입력") {
                                                 store.send(.customInputOptionTapped)
                                             } else {
                                                 store.send(.optionSelected(label: option.label, value: option.value))
                                             }
                                         }
                                     } label: {
-                                        Text(option.label)
-                                            .typography(.btn2_enabled)
-                                            .lineLimit(nil)
-                                            .multilineTextAlignment(.center)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .padding(.horizontal, 20)
-                                            .padding(.vertical, 10)
-                                            .frame(maxWidth: .infinity)
-                                            .foregroundColor(.gray12)
-                                            .background(
-                                                Capsule()
-                                                    .strokeBorder(.primary3, lineWidth: 1)
-                                                    .background(Capsule().fill(.primary2))
-                                            )
+                                        HStack(spacing: 8) {
+                                            if let iconName = option.iconName,
+                                               (option.actionType == "COMPLETE_MISSION" || option.actionType == "MISSION_FAILURE_REASON") {
+                                                Image(iconName)
+                                            }
+                                            Text(option.label)
+                                                .typography(.btn2_enabled)
+                                                .lineLimit(nil)
+                                                .multilineTextAlignment(.center)
+                                                .fixedSize(horizontal: false, vertical: true)
+                                        }
+                                        .padding(.horizontal, 20)
+                                        .padding(.vertical, 10)
+                                        .frame(maxWidth: .infinity)
+                                        .foregroundColor(.gray12)
+                                        .background(
+                                            Capsule()
+                                                .strokeBorder(.primary3, lineWidth: 1)
+                                                .background(Capsule().fill(.primary2))
+                                        )
                                     }
                                     .allowsHitTesting(message.selectedOption == nil)
                                     .buttonStyle(PlainButtonStyle())
@@ -93,7 +100,7 @@ struct MessageRow: View {
                             topTrailingRadius: 12
                         )
                     )
-                    .frame(maxWidth: 250, alignment: .leading)
+                    .frame(maxWidth: 260, alignment: .leading)
                 }
             }
         }

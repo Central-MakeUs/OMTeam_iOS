@@ -18,7 +18,7 @@ struct ChatView: View {
     var body: some View {
         Group {
             if store.isLoading && store.messages.isEmpty {
-                ProgressView()
+                ChatSkeletonView()
             } else if store.messages.isEmpty && store.mode != .missionComplete {
                 EmptyChatView(store: store)
             } else {
@@ -45,7 +45,7 @@ struct ChatView: View {
                     ForEach(store.messages) { message in
                         MessageRow(store: store, message: message)
                             .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                            .listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
                             .listRowBackground(Color.clear)
                             .id(message.id)
                             .onAppear {
@@ -63,7 +63,7 @@ struct ChatView: View {
                     if store.isLoading {
                         TypingIndicatorRow()
                             .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                            .listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
                             .listRowBackground(Color.clear)
                             .id("typing-indicator")
                     }
@@ -72,6 +72,9 @@ struct ChatView: View {
                 .scrollContentBackground(.hidden)
                 .scrollIndicators(.hidden)
                 .safeAreaInset(edge: .top) {
+                    Color.clear.frame(height: 2)
+                }
+                .safeAreaInset(edge: .bottom) {
                     Color.clear.frame(height: 2)
                 }
                 .onTapGesture {
@@ -111,7 +114,6 @@ struct ChatView: View {
                     Text("채팅하기")
                         .typography(.h2_2)
                         .foregroundStyle(.gray11)
-                    HealthSourceInfoButton()
                 }
             }
         )
