@@ -43,9 +43,7 @@ struct ChatFeature {
         case customInputOptionTapped
 
         // Mission Complete Mode Actions
-        case enterMissionCompleteMode(RecommendDTO)
-        case sendCompleteMissionRequest
-        case sendCompleteMissionResponse(MessageDataDTO)
+        case sendCompleteMissionRequest(RecommendDTO)
 
         case delegate(Delegate)
 
@@ -165,18 +163,19 @@ struct ChatFeature {
                 let message = Message.from(data)
                 state.messages.append(message)
 
-                // If in mission complete mode and terminal, complete the flow
-                if state.mode == .missionComplete && data.terminal {
+            case .optionSelected(let label, let value):
+                if let index = state.messages.lastIndex(where: { $0.options != nil && $0.selectedOption == nil }) {
+                    state.messages[index].selectedOption = value
+                }
+
+                // API응답에 따라 수정 필요
+                if value == "GO_HOME" {
                     state.mode = .regular
                     state.currentMission = nil
                     state.currentActionType = nil
                     return .send(.delegate(.missionCompleted))
                 }
 
-            case .optionSelected(let label, let value):
-                if let index = state.messages.lastIndex(where: { $0.options != nil && $0.selectedOption == nil }) {
-                    state.messages[index].selectedOption = value
-                }
                 state.isLoading = true
 
                 let tempId = (state.messages.last?.id ?? 0) + 1
@@ -233,41 +232,33 @@ struct ChatFeature {
                 return .none
 
             // MARK: - Mission Complete Mode
-
-            case .enterMissionCompleteMode(let mission):
+            case .sendCompleteMissionRequest(let mission):
                 state.mode = .missionComplete
                 state.currentMission = mission
                 state.currentActionType = "COMPLETE_MISSION"
-                return .send(.sendCompleteMissionRequest)
-
-            case .sendCompleteMissionRequest:
                 state.isLoading = true
+                let hasFetched = state.hasFetched
                 return .run { [networkManager] send in
-                    let request = MessageRequestDTO(actionType: "COMPLETE_MISSION")
+                    if !hasFetched {
+                        let historyResponse = try await networkManager.requestNetwork(
+                            dto: ChatResponseDTO.self,
+                            router: ChatRouter.fetchChat()
+                        )
+                        if let data = historyResponse.data {
+                            await send(.fetchChatResponse(data))
+                        }
+                    }
 
+                    let request = MessageRequestDTO(actionType: "COMPLETE_MISSION")
                     let response = try await networkManager.requestNetwork(
                         dto: MessageResponseDTO.self,
                         router: ChatRouter.sendChat(request)
                     )
-
                     if let data = response.data {
-                        await send(.sendCompleteMissionResponse(data))
+                        await send(.sendMessageResponse(data))
                     }
                 } catch: { error, send in
                     print(error)
-                }
-
-            case .sendCompleteMissionResponse(let data):
-                state.isLoading = false
-                let message = Message.from(data)
-                state.messages.append(message)
-
-                // If terminal message, mission complete flow is done
-                if data.terminal {
-                    state.mode = .regular
-                    state.currentMission = nil
-                    state.currentActionType = nil
-                    return .send(.delegate(.missionCompleted))
                 }
 
             default:
