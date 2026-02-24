@@ -168,8 +168,7 @@ struct ChatFeature {
                     state.messages[index].selectedOption = value
                 }
 
-                // API응답에 따라 수정 필요
-                if value == "GO_HOME" {
+                if value == "HOME" {
                     state.mode = .regular
                     state.currentMission = nil
                     state.currentActionType = nil
