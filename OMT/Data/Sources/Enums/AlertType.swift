@@ -48,7 +48,7 @@ enum AlertType: Equatable {
         case .withdrawComplete:
             return "우리 다음에 또 봐요!"
         case .privacyConsentDeclined:
-            return "확인"
+            return "처음으로 돌아가기"
         }
     }
 
