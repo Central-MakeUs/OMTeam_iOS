@@ -12,28 +12,34 @@ struct MyView: View {
     @Bindable var store: StoreOf<MyFeature>
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Image("logo")
-                    .padding(.vertical, 12)
-                Spacer()
-            }
-            .padding(.bottom, 16)
+        Group {
+            if store.isLoading {
+                MySkeletonView()
+            } else {
+                VStack(spacing: 0) {
+                    HStack {
+                        Image("logo")
+                            .padding(.vertical, 12)
+                        Spacer()
+                    }
+                    .padding(.bottom, 16)
 
-            profile
-            goal
-            menuList
-            
-            Spacer()
+                    profile
+                    goal
+                    menuList
+
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .sheet(isPresented: $store.nicknameEditSheetPresented) {
+                    NicknameEditSheetView(store: store)
+                        .presentationDetents([.height(365)])
+                        .presentationCornerRadius(32)
+                }
+            }
         }
-        .padding(.horizontal, 20)
         .onAppear {
             store.send(.onAppear)
-        }
-        .sheet(isPresented: $store.nicknameEditSheetPresented) {
-            NicknameEditSheetView(store: store)
-                .presentationDetents([.height(365)])
-                .presentationCornerRadius(32)
         }
     }
 }

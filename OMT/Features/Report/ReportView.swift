@@ -13,60 +13,64 @@ struct ReportView: View {
 
     var body: some View {
         ZStack {
-            VStack(alignment: .leading, spacing: 12) {
-                Image("logo")
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
-                
-                if !store.hasReport {
-                    VStack {
-                        HStack {
-                            weekNavigationHeader
-                            Spacer()
-                            Button {
-                                store.send(.fetchWeeklyReports)
-                            } label: {
-                                Image("refresh")
-                            }
-                            .buttonStyle(.plain)
-                        }
+            if store.isLoading {
+                ReportSkeletonView()
+                    .background(.gray2)
+            } else {
+                VStack(alignment: .leading, spacing: 12) {
+                    Image("logo")
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
 
-                        Spacer()
-                    }
-                    .padding(.horizontal, 20)
-                } else {
-                    ScrollView(showsIndicators: false) {
-                        VStack(spacing: 28) {
-                            VStack(spacing: 20) {
-                                HStack {
-                                    weekNavigationHeader
-                                    Spacer()
-                                    Button {
-                                        store.send(.fetchWeeklyReports)
-                                    } label: {
-                                        Image("refresh")
-                                    }
-                                    .buttonStyle(.plain)
+                    if !store.hasReport {
+                        VStack {
+                            HStack {
+                                weekNavigationHeader
+                                Spacer()
+                                Button {
+                                    store.send(.fetchWeeklyReports)
+                                } label: {
+                                    Image("refresh")
                                 }
-
-                                successRateCard
-                                topDifficultiesCard
-                                recommendCard
+                                .buttonStyle(.plain)
                             }
-                            
-                            analysisDetailButton
+
+                            Spacer()
                         }
                         .padding(.horizontal, 20)
+                    } else {
+                        ScrollView(showsIndicators: false) {
+                            VStack(spacing: 0) {
+                                VStack(spacing: 20) {
+                                    HStack {
+                                        weekNavigationHeader
+                                        Spacer()
+                                        Button {
+                                            store.send(.fetchWeeklyReports)
+                                        } label: {
+                                            Image("refresh")
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+
+                                    successRateCard
+                                    topDifficultiesCard
+                                    recommendCard
+                                    analysisDetailButton
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                        }
                     }
                 }
+                .background(.gray2)
+
+                // 데이터 없을 때만 중앙에 표시
+                if !store.hasReport {
+                    emptyReport
+                }
             }
-            .background(.gray2)
-            
-            // 데이터 없을 때만 중앙에 표시
-            if !store.hasReport {
-                emptyReport
-            }
-            
+
             if store.isDatePickerPresented {
                 DatePickerModal(store: store)
             }
@@ -159,7 +163,7 @@ extension ReportView {
         .padding(.bottom, 8)
         .padding(.horizontal, 12)
         .background(.gray0)
-        .cornerRadius(16)
+        .cornerRadius(12)
     }
 }
 
@@ -193,7 +197,7 @@ extension ReportView {
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.gray0)
-        .cornerRadius(16)
+        .cornerRadius(12)
     }
 }
 
@@ -209,8 +213,6 @@ extension ReportView {
                 Text("OMT의 제안")
                     .typography(.h3)
                     .foregroundStyle(.gray11)
-
-                HealthSourceInfoButton()
             }
             
             Text(store.overallFeedback)
@@ -220,7 +222,7 @@ extension ReportView {
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.gray0)
-        .cornerRadius(16)
+        .cornerRadius(12)
     }
 }
 

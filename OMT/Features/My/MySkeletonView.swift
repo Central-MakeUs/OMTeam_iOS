@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MySkeletonView: View {
+    @State private var shimmerOffset: CGFloat = 0
+
     var body: some View {
         VStack(spacing: 0) {
             HStack {
@@ -17,13 +19,38 @@ struct MySkeletonView: View {
             }
             .padding(.bottom, 16)
 
-            profileSkeleton
-            goalSkeleton
-            menuListSkeleton
-            
+            skeletonShapes
+                .overlay(
+                    GeometryReader { geo in
+                        LinearGradient(
+                            colors: [.clear, .white.opacity(0.55), .clear],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        .frame(width: geo.size.width * 0.4)
+                        .offset(x: shimmerOffset)
+                        .onAppear {
+                            shimmerOffset = -(geo.size.width * 0.4)
+                            withAnimation(.linear(duration: 2.0).repeatForever(autoreverses: false)) {
+                                shimmerOffset = geo.size.width * 1.2
+                            }
+                        }
+                    }
+                    .clipped()
+                    .mask(skeletonShapes)
+                )
+
             Spacer()
         }
         .padding(.horizontal, 20)
+    }
+
+    private var skeletonShapes: some View {
+        VStack(spacing: 0) {
+            profileSkeleton
+            goalSkeleton
+            menuListSkeleton
+        }
     }
 }
 

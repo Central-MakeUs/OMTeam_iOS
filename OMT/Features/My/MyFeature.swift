@@ -13,6 +13,7 @@ struct MyFeature {
     @ObservableState
     struct State: Equatable {
         var hasLoaded = false
+        var isLoading = false
         var nickname: String = ""
         var appGoalText: String = ""
         var isNotificationOn = false
@@ -199,6 +200,7 @@ struct MyFeature {
             case .onAppear:
                 guard !state.hasLoaded else { return .none }
                 state.hasLoaded = true
+                state.isLoading = true
 
                 return .run { [networkManager] send in
                     let response = try await networkManager.requestNetwork(
@@ -213,6 +215,7 @@ struct MyFeature {
                 }
 
             case .fetchOnboardingResponse(let data):
+                state.isLoading = false
                 state.nickname = data.nickname
                 state.appGoalText = data.appGoalText
                 state.appGoalEditText = data.appGoalText

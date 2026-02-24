@@ -20,6 +20,7 @@ struct ReportFeature {
     struct State: Equatable {
         var currentDate: Date = Date()
         var isDatePickerPresented: Bool = false
+        var isLoading: Bool = false
 
         var hasReport: Bool = false
         var lastWeekSuccessRate: Double = 0.0
@@ -115,6 +116,7 @@ struct ReportFeature {
                 return .send(.fetchWeeklyReports)
 
             case .fetchWeeklyReports:
+                state.isLoading = true
                 let calendar = Calendar.mondayFirst
                 let (year, month, weekOfMonth) = calendar.weekInfoFromFirstMonday(for: state.currentDate)
 
@@ -124,11 +126,16 @@ struct ReportFeature {
 
                 return .merge(
                     .run { [networkManager] send in
-                        let response = try await networkManager.requestNetwork(
+                        async let minimumDelay: Void = Task.sleep(for: .milliseconds(200))
+                        async let response = networkManager.requestNetwork(
                             dto: WeeklyReportsResponseDTO.self,
                             router: ReportRouter.fetchWeeklyReports(year: year, month: month, weekOfMonth: weekOfMonth)
                         )
-                        if let data = response.data {
+
+                        let result = try await response
+                        _ = try? await minimumDelay
+
+                        if let data = result.data {
                             await send(.fetchWeeklyReportsResponse(data))
                         }
                     } catch: { error, send in
@@ -149,6 +156,7 @@ struct ReportFeature {
                 )
 
             case .fetchWeeklyReportsFailed:
+                state.isLoading = false
                 state.hasReport = false
                 state.dailyResults = []
                 state.lastWeekSuccessRate = 0.0
@@ -184,6 +192,7 @@ struct ReportFeature {
                 return .none
 
             case .fetchWeeklyReportsResponse(let data):
+                state.isLoading = false
                 state.hasReport = data.dailyResults.contains { $0.status != .notPerformed }
                 state.lastWeekSuccessRate = data.lastWeekSuccessRate
                 state.thisWeekSuccessRate = data.thisWeekSuccessRate
