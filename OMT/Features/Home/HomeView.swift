@@ -31,7 +31,7 @@ struct HomeView: View {
                         .padding(.bottom, 28)
 
                     analysisSummary
-                        .padding(.bottom, 56)
+                        .padding(.bottom, 28)
                 }
             }
         }

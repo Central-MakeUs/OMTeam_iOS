@@ -47,6 +47,9 @@ struct MissionRecommendSheetView: View {
                 }
             }
             .padding(.horizontal, 20)
+            .safeAreaInset(edge: .bottom) {
+                Color.clear.frame(height: 2)
+            }
 
             VStack(spacing: 0) {
                 Rectangle()
