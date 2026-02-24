@@ -131,11 +131,14 @@ struct MyFeature {
         case editPreferredExercises
         case editLifestyleType
 
+        case appGoalEditDismissed
         case availableTimeSelected(WorkTimeOption)
         case availableTimeEditConfirmed
+        case availableTimeEditDismissed
 
         case lifestyleTypeSelected(LifestyleType)
         case lifestyleTypeEditConfirmed
+        case lifestyleTypeEditDismissed
 
         case minExerciseMinutesEditConfirmed
 
@@ -261,6 +264,9 @@ struct MyFeature {
                     print(error)
                 }
 
+            case .appGoalEditDismissed:
+                state.appGoalEditText = state.appGoalText
+
             case .appGoalEditConfirmed:
                 let newAppGoal = state.appGoalEditText
                 state.appGoalText = newAppGoal
@@ -277,6 +283,9 @@ struct MyFeature {
 
             case .availableTimeSelected(let option):
                 state.selectedAvailableTime = option
+
+            case .availableTimeEditDismissed:
+                state.selectedAvailableTime = nil
 
             case .availableTimeEditConfirmed:
                 guard let selected = state.selectedAvailableTime else { return .none }
@@ -299,6 +308,9 @@ struct MyFeature {
 
             case .lifestyleTypeSelected(let type):
                 state.selectedLifestyleType = type
+
+            case .lifestyleTypeEditDismissed:
+                state.selectedLifestyleType = nil
 
             case .lifestyleTypeEditConfirmed:
                 guard let selected = state.selectedLifestyleType else { return .none }

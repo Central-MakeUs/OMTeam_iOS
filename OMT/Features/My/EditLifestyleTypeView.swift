@@ -20,6 +20,9 @@ struct EditLifestyleTypeView: View {
         }
         .padding(.top, 16)
         .padding(.horizontal, 20)
+        .onDisappear {
+            store.send(.lifestyleTypeEditDismissed)
+        }
         .customNavigationBar(
             centerView: {
                 Text("내 정보 수정하기")

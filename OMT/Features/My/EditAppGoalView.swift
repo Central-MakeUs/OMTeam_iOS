@@ -76,6 +76,9 @@ struct EditAppGoalView: View {
         .padding(.horizontal, 20)
         .padding(.bottom, 28)
         .contentShape(Rectangle())
+        .onDisappear {
+            store.send(.appGoalEditDismissed)
+        }
         .onTapGesture {
             isFocused = false
         }

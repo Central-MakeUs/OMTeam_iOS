@@ -20,6 +20,9 @@ struct EditAvailableTimeView: View {
         }
         .padding(.top, 16)
         .padding(.horizontal, 20)
+        .onDisappear {
+            store.send(.availableTimeEditDismissed)
+        }
         .customNavigationBar(
             centerView: {
                 Text("내 정보 수정하기")
@@ -105,7 +108,7 @@ extension EditAvailableTimeView {
                 }
             }
         }
-        .padding(.horizontal, 12)  
+        .padding(.horizontal, 12)
     }
 }
 
