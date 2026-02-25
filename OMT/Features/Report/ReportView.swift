@@ -13,7 +13,7 @@ struct ReportView: View {
 
     var body: some View {
         ZStack {
-            if store.isLoading {
+            if store.showSkeleton {
                 ReportSkeletonView()
                     .background(.gray2)
             } else {

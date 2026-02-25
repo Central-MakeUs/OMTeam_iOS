@@ -21,6 +21,8 @@ struct ReportFeature {
         var currentDate: Date = Date()
         var isDatePickerPresented: Bool = false
         var isLoading: Bool = false
+        var showSkeleton: Bool = false
+        var isInitialLoad: Bool = true
 
         var hasReport: Bool = false
         var lastWeekSuccessRate: Double = 0.0
@@ -105,18 +107,26 @@ struct ReportFeature {
         case monthInputChanged(String)
         case weekInputChanged(String)
         case confirmDateSelection
+        case showSkeletonDelayed
     }
     
     @Dependency(\.networkManager) var networkManager
-    
+
+    private enum CancelID { case skeletonDelay }
+
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .onAppear:
+                guard state.isInitialLoad else { return .none }
                 return .send(.fetchWeeklyReports)
 
             case .fetchWeeklyReports:
                 state.isLoading = true
+                if state.isInitialLoad {
+                    state.showSkeleton = true
+                }
+                let isInitialLoad = state.isInitialLoad
                 let calendar = Calendar.mondayFirst
                 let (year, month, weekOfMonth) = calendar.weekInfoFromFirstMonday(for: state.currentDate)
 
@@ -126,17 +136,26 @@ struct ReportFeature {
 
                 return .merge(
                     .run { [networkManager] send in
-                        async let minimumDelay: Void = Task.sleep(for: .milliseconds(200))
-                        async let response = networkManager.requestNetwork(
-                            dto: WeeklyReportsResponseDTO.self,
-                            router: ReportRouter.fetchWeeklyReports(year: year, month: month, weekOfMonth: weekOfMonth)
-                        )
-
-                        let result = try await response
-                        _ = try? await minimumDelay
-
-                        if let data = result.data {
-                            await send(.fetchWeeklyReportsResponse(data))
+                        if isInitialLoad {
+                            // 최초 진입: fetch와 300ms 최소 지연을 동시에 시작, 둘 다 완료돼야 skeleton 해제
+                            async let fetchTask = networkManager.requestNetwork(
+                                dto: WeeklyReportsResponseDTO.self,
+                                router: ReportRouter.fetchWeeklyReports(year: year, month: month, weekOfMonth: weekOfMonth)
+                            )
+                            async let minimumDelay: Void = Task.sleep(for: .milliseconds(300))
+                            let result = try await fetchTask
+                            _ = try? await minimumDelay
+                            if let data = result.data {
+                                await send(.fetchWeeklyReportsResponse(data))
+                            }
+                        } else {
+                            let result = try await networkManager.requestNetwork(
+                                dto: WeeklyReportsResponseDTO.self,
+                                router: ReportRouter.fetchWeeklyReports(year: year, month: month, weekOfMonth: weekOfMonth)
+                            )
+                            if let data = result.data {
+                                await send(.fetchWeeklyReportsResponse(data))
+                            }
                         }
                     } catch: { error, send in
                         print(error)
@@ -152,11 +171,24 @@ struct ReportFeature {
                         }
                     } catch: { error, send in
                         print(error)
+                    },
+                    .run { send in
+                        try await Task.sleep(for: .milliseconds(500))
+                        await send(.showSkeletonDelayed)
                     }
+                    .cancellable(id: CancelID.skeletonDelay, cancelInFlight: true)
                 )
+
+            case .showSkeletonDelayed:
+                if state.isLoading {
+                    state.showSkeleton = true
+                }
+                return .none
 
             case .fetchWeeklyReportsFailed:
                 state.isLoading = false
+                state.showSkeleton = false
+                state.isInitialLoad = false
                 state.hasReport = false
                 state.dailyResults = []
                 state.lastWeekSuccessRate = 0.0
@@ -164,7 +196,7 @@ struct ReportFeature {
                 state.thisWeekSuccessCount = 0
                 state.topDifficulties = []
                 state.overallFeedback = ""
-                return .none
+                return .cancel(id: CancelID.skeletonDelay)
 
             case .fetchMonthlyPattern:
                 return .run { [networkManager] send in
@@ -193,6 +225,8 @@ struct ReportFeature {
 
             case .fetchWeeklyReportsResponse(let data):
                 state.isLoading = false
+                state.showSkeleton = false
+                state.isInitialLoad = false
                 state.hasReport = data.dailyResults.contains { $0.status != .notPerformed }
                 state.lastWeekSuccessRate = data.lastWeekSuccessRate
                 state.thisWeekSuccessRate = data.thisWeekSuccessRate
@@ -225,7 +259,7 @@ struct ReportFeature {
 
                     state.dailyResults = missions
                 }
-                return .none
+                return .cancel(id: CancelID.skeletonDelay)
 
             case .previousWeekTapped:
                 if let newDate = Calendar.mondayFirst.date(

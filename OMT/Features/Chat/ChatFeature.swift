@@ -63,7 +63,7 @@ struct ChatFeature {
                 guard !state.hasFetched else { return .none }
                 state.isLoading = true
                 return .run { send in
-                    async let minimumDelay: Void = Task.sleep(for: .milliseconds(200))
+                    async let minimumDelay: Void = Task.sleep(for: .milliseconds(300))
                     async let response = networkManager.requestNetwork(
                         dto: ChatResponseDTO.self,
                         router: ChatRouter.fetchChat()
