@@ -12,6 +12,7 @@
 		C236D3482F12BAEB0020B9F5 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = C236D3472F12BAEB0020B9F5 /* KakaoSDKUser */; };
 		C239394C2F12AB6600CFE870 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = C239394B2F12AB6600CFE870 /* ComposableArchitecture */; };
 		C28D797E2F12C88100D6288B /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C28D797D2F12C88100D6288B /* GoogleSignIn */; };
+		C2F8627A2F4F1D1A001E4ADC /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C2F862792F4F1D1A001E4ADC /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2F8627A2F4F1D1A001E4ADC /* FirebaseMessaging in Frameworks */,
 				C28D797E2F12C88100D6288B /* GoogleSignIn in Frameworks */,
 				C236D3482F12BAEB0020B9F5 /* KakaoSDKUser in Frameworks */,
 				C239394C2F12AB6600CFE870 /* ComposableArchitecture in Frameworks */,
@@ -96,6 +98,7 @@
 				C236D3452F12BAEB0020B9F5 /* KakaoSDKCommon */,
 				C236D3472F12BAEB0020B9F5 /* KakaoSDKUser */,
 				C28D797D2F12C88100D6288B /* GoogleSignIn */,
+				C2F862792F4F1D1A001E4ADC /* FirebaseMessaging */,
 			);
 			productName = OMT;
 			productReference = C2F67B4F2EFECBAA00EB6CE0 /* OMT.app */;
@@ -130,6 +133,7 @@
 				C239394A2F12AB6600CFE870 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				C236D3422F12BAEB0020B9F5 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 				C28D797C2F12C88100D6288B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				C2F862782F4F1D1A001E4ADC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C2F67B502EFECBAA00EB6CE0 /* Products */;
@@ -310,7 +314,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omteam.omt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -349,7 +353,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omteam.omt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -413,6 +417,14 @@
 				minimumVersion = 9.1.0;
 			};
 		};
+		C2F862782F4F1D1A001E4ADC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.9.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -440,6 +452,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C28D797C2F12C88100D6288B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
+		};
+		C2F862792F4F1D1A001E4ADC /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C2F862782F4F1D1A001E4ADC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

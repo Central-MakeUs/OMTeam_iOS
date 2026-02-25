@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
+import UserNotifications
 
 struct CustomTabView: View {
     // 자식
@@ -67,6 +68,9 @@ struct CustomTabView: View {
                         .tabBarDivider()
                 }
             }
+        }
+        .onAppear {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { _, _ in }
         }
         .overlay {
             if store.home.isLoadingRecommendations {

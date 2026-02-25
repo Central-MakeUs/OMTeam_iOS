@@ -12,6 +12,7 @@ import KakaoSDKAuth
 
 @main
 struct OMTApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     static let store = Store(initialState: RootContainer.State()) {
         RootContainer()
     }
