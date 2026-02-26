@@ -241,6 +241,7 @@ struct OnboardingFeature {
                     )
                     
                     if response.success {
+                        UserDefaults.standard.set(requestDTO.remindEnabled, forKey: "isNotificationOn")
                         await send(.delegate(.onboardingCompleted))
                     }
                 } catch: { error, send in

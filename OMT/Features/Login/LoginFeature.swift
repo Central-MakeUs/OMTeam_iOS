@@ -7,6 +7,7 @@
 
 import Foundation
 import ComposableArchitecture
+import Firebase
 
 @Reducer
 struct LoginFeature {
@@ -92,6 +93,29 @@ struct LoginFeature {
                         )
 
                         if data.onboardingCompleted {
+                            let isNotificationOn: Bool
+
+                            if UserDefaults.standard.object(forKey: "isNotificationOn") == nil {
+                                // 재설치 또는 로그아웃 후 재로그인 시 서버에서 알림 설정 1회 fetch
+                                let onboarding = try? await networkManager.requestNetwork(
+                                    dto: OnboardingResponseDTO.self,
+                                    router: OnboardingRouter.fetchOnboarding
+                                )
+                                let fetchedIsOn = onboarding?.data.map {
+                                    $0.remindEnabled && $0.checkinEnabled && $0.reviewEnabled
+                                } ?? false
+                                UserDefaults.standard.set(fetchedIsOn, forKey: "isNotificationOn")
+                                isNotificationOn = fetchedIsOn
+                            } else {
+                                isNotificationOn = UserDefaults.standard.bool(forKey: "isNotificationOn")
+                            }
+
+                            if isNotificationOn, let fcmToken = try? await Messaging.messaging().token() {
+                                _ = try? await networkManager.requestNetwork(
+                                    dto: APIResponse<String>.self,
+                                    router: NotificationRouter.saveFCMToken(FCMTokenRequestDTO(fcmToken: fcmToken))
+                                )
+                            }
                             await send(.delegate(.moveToHome))
                         } else {
                             await send(.delegate(.moveToLoginSuccess))

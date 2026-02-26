@@ -7,6 +7,7 @@
 
 import Foundation
 import ComposableArchitecture
+import Firebase
 
 @Reducer
 struct MyFeature {
@@ -228,6 +229,7 @@ struct MyFeature {
 
             case .notificationToggled(let isOn):
                 state.isNotificationOn = isOn
+                UserDefaults.standard.set(isOn, forKey: "isNotificationOn")
                 
                 return .run { [networkManager] _ in
                     let requestDTO = UpdateAlertRequestDTO(
@@ -239,6 +241,21 @@ struct MyFeature {
                         dto: OnboardingResponseDTO.self,
                         router: OnboardingRouter.updateAlert(requestDTO)
                     )
+
+                    // 알림 토글 ON/OFF 시 FCM 토큰 처리
+                    if isOn {
+                        if let fcmToken = try? await Messaging.messaging().token() {
+                            _ = try? await networkManager.requestNetwork(
+                                dto: APIResponse<String>.self,
+                                router: NotificationRouter.saveFCMToken(FCMTokenRequestDTO(fcmToken: fcmToken))
+                            )
+                        }
+                    } else {
+                        _ = try? await networkManager.requestNetwork(
+                            dto: APIResponse<String>.self,
+                            router: NotificationRouter.deleteFCMToken
+                        )
+                    }
                 } catch: { error, _ in
                     print(error)
                 }

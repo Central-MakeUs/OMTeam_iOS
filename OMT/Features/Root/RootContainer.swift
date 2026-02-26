@@ -7,6 +7,7 @@
 
 import Foundation
 import ComposableArchitecture
+import Firebase
 
 @Reducer
 struct RootContainer {
@@ -49,6 +50,7 @@ struct RootContainer {
         case alertCanceled
         case alertConfirmed
         case withdrawCompleted
+        case logoutCompleted
         case splashAppeared
         case splashCompleted
         case splashDataFetched(CharacterDataDTO?, WeeklyReportsDataDTO?, MissionStatusDataDTO?)
@@ -107,6 +109,19 @@ struct RootContainer {
                 state.selectedTab = .home
                 state.onboarding = nil
 
+                //  온보딩 완료 후 알림 ON이면 FCM 토큰 저장
+                let isNotificationOn = UserDefaults.standard.bool(forKey: "isNotificationOn")
+                if isNotificationOn {
+                    return .run { [networkManager] _ in
+                        if let fcmToken = try? await Messaging.messaging().token() {
+                            _ = try? await networkManager.requestNetwork(
+                                dto: APIResponse<String>.self,
+                                router: NotificationRouter.saveFCMToken(FCMTokenRequestDTO(fcmToken: fcmToken))
+                            )
+                        }
+                    }
+                }
+
             case let .tabSelected(tab):
                 state.selectedTab = tab
 
@@ -138,12 +153,14 @@ struct RootContainer {
 
                 switch alertType {
                 case .logout:
-                    KeychainManager.shared.deleteTokens()
-                    state.currentView = .login
-                    state.my = MyFeature.State()
-                    state.home = HomeFeature.State()
-                    state.chat = ChatFeature.State()
-                    state.report = ReportFeature.State()
+                    return .run { [networkManager] send in
+                        // 로그아웃 시 FCM 토큰 삭제
+                         _ = try? await networkManager.requestNetwork(
+                            dto: APIResponse<String>.self,
+                            router: NotificationRouter.deleteFCMToken
+                        )
+                        await send(.logoutCompleted)
+                    }
                     
                 case .withdraw:
                     return .run { [networkManager] send in
@@ -158,6 +175,7 @@ struct RootContainer {
                     
                 case .withdrawComplete:
                     KeychainManager.shared.deleteTokens()
+                    UserDefaults.standard.removeObject(forKey: "isNotificationOn")
                     state.currentView = .login
                     state.my = MyFeature.State()
                     state.home = HomeFeature.State()
@@ -168,11 +186,21 @@ struct RootContainer {
                     break
                 }
 
+            case .logoutCompleted:
+                KeychainManager.shared.deleteTokens()
+                UserDefaults.standard.removeObject(forKey: "isNotificationOn")
+                state.currentView = .login
+                state.my = MyFeature.State()
+                state.home = HomeFeature.State()
+                state.chat = ChatFeature.State()
+                state.report = ReportFeature.State()
+
             case .withdrawCompleted:
                 state.alertType = .withdrawComplete
 
             case .onboarding(.delegate(.privacyConsentWithdrawCompleted)):
                 KeychainManager.shared.deleteTokens()
+                UserDefaults.standard.removeObject(forKey: "isNotificationOn")
                 state.currentView = .login
                 state.onboarding = nil
                 state.my = MyFeature.State()
@@ -190,21 +218,61 @@ struct RootContainer {
                         let today = Date()
                         let (year, month, weekOfMonth) = calendar.weekInfoFromFirstMonday(for: today)
 
-                        async let characterResponse = try? networkManager.requestNetwork(
-                            dto: CharacterResponseDTO.self,
-                            router: CharacterRouter.fetchCharacter
-                        )
-                        async let weeklyResponse = try? networkManager.requestNetwork(
-                            dto: WeeklyReportsResponseDTO.self,
-                            router: ReportRouter.fetchWeeklyReports(year: year, month: month, weekOfMonth: weekOfMonth)
-                        )
-                        async let missionResponse = try? networkManager.requestNetwork(
-                            dto: MissionStatusResponseDTO.self,
-                            router: MissionRouter.dailyMissionStatus
-                        )
+                        let isNotificationOn: Bool
 
-                        let (character, weekly, mission) = await (characterResponse, weeklyResponse, missionResponse)
-                        await send(.splashDataFetched(character?.data, weekly?.data, mission?.data))
+                        if UserDefaults.standard.object(forKey: "isNotificationOn") == nil {
+                            // 재설치 케이스: onboarding fetch를 기존 호출들과 병렬로 실행
+                            async let onboardingResponse = try? networkManager.requestNetwork(
+                                dto: OnboardingResponseDTO.self,
+                                router: OnboardingRouter.fetchOnboarding
+                            )
+                            async let characterResponse = try? networkManager.requestNetwork(
+                                dto: CharacterResponseDTO.self,
+                                router: CharacterRouter.fetchCharacter
+                            )
+                            async let weeklyResponse = try? networkManager.requestNetwork(
+                                dto: WeeklyReportsResponseDTO.self,
+                                router: ReportRouter.fetchWeeklyReports(year: year, month: month, weekOfMonth: weekOfMonth)
+                            )
+                            async let missionResponse = try? networkManager.requestNetwork(
+                                dto: MissionStatusResponseDTO.self,
+                                router: MissionRouter.dailyMissionStatus
+                            )
+                            let (onboarding, character, weekly, mission) = await (onboardingResponse, characterResponse, weeklyResponse, missionResponse)
+
+                            let fetchedIsOn = onboarding?.data.map {
+                                $0.remindEnabled && $0.checkinEnabled && $0.reviewEnabled
+                            } ?? false
+                            UserDefaults.standard.set(fetchedIsOn, forKey: "isNotificationOn")
+                            isNotificationOn = fetchedIsOn
+
+                            await send(.splashDataFetched(character?.data, weekly?.data, mission?.data))
+                        } else {
+                            async let characterResponse = try? networkManager.requestNetwork(
+                                dto: CharacterResponseDTO.self,
+                                router: CharacterRouter.fetchCharacter
+                            )
+                            async let weeklyResponse = try? networkManager.requestNetwork(
+                                dto: WeeklyReportsResponseDTO.self,
+                                router: ReportRouter.fetchWeeklyReports(year: year, month: month, weekOfMonth: weekOfMonth)
+                            )
+                            async let missionResponse = try? networkManager.requestNetwork(
+                                dto: MissionStatusResponseDTO.self,
+                                router: MissionRouter.dailyMissionStatus
+                            )
+                            let (character, weekly, mission) = await (characterResponse, weeklyResponse, missionResponse)
+
+                            isNotificationOn = UserDefaults.standard.bool(forKey: "isNotificationOn")
+
+                            await send(.splashDataFetched(character?.data, weekly?.data, mission?.data))
+                        }
+
+                        if isNotificationOn, let fcmToken = try? await Messaging.messaging().token() {
+                            _ = try? await networkManager.requestNetwork(
+                                dto: APIResponse<String>.self,
+                                router: NotificationRouter.saveFCMToken(FCMTokenRequestDTO(fcmToken: fcmToken))
+                            )
+                        }
                     }
 
                     let elapsed = Date().timeIntervalSince(startTime)
