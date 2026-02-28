@@ -10,40 +10,57 @@ import ComposableArchitecture
 
 struct OnboardingView: View {
     @Bindable var store: StoreOf<OnboardingFeature>
-    
+    @FocusState private var isFocused: Bool
+
     var body: some View {
+        Group {
+            if store.showPrivacyConsent {
+                PrivacyConsentView(store: store)
+            } else {
+                onboardingContent
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: store.showPrivacyConsent)
+    }
+
+    private var onboardingContent: some View {
         VStack(spacing: 0) {
             headerView
-            
+
             VStack(alignment: .leading, spacing: 20) {
                 Text(store.currentStepData.title)
                     .typography(.h2_1)
                     .foregroundStyle(.gray11)
                     .lineLimit(nil)
-                
+
                 stepContent
             }
             .padding(.horizontal, 20)
-            
+
             Spacer()
-            
+
             navigationButtons
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            isFocused = false
         }
         .sheet(isPresented: $store.customInputSheetPresented.sending(\.customInputSheetPresentedChanged)) {
             customInputSheet
                 .presentationDetents([.height(260)])
+                .presentationCornerRadius(32)
         }
     }
 }
 
 extension OnboardingView {
     private var headerView: some View {
-        VStack(alignment: .trailing, spacing: 28) {
-            skipButton
+        VStack {
+//            skipButton
             progressView
         }
-        .padding(.top, 12)
-        .padding(.bottom, 36)
+        .padding(.top, 48)
+        .padding(.bottom, 40)
     }
     
     private var skipButton: some View {
@@ -58,13 +75,11 @@ extension OnboardingView {
                     .foregroundColor(.greenGray6)
                     .background(
                         Capsule()
-                            .fill(.greenGray2)
-                    )
-                    .overlay(
-                        Capsule()
-                            .stroke(.greenGray5, lineWidth: 1)
+                            .strokeBorder(.greenGray5, lineWidth: 1)
+                            .background(Capsule().fill(.greenGray2))
                     )
             }
+            .buttonStyle(.plain)
         }
         .padding(.trailing, 20)
     }
@@ -115,25 +130,27 @@ extension OnboardingView {
                 } label: {
                     Text("이전")
                         .frame(maxWidth: .infinity)
-                        .frame(height: 56)
+                        .frame(height: 60)
                         .typography( .btn2_disabled)
                         .foregroundColor(.gray7)
                         .background(.gray3)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
+                .buttonStyle(.plain)
                 .frame(width: 126)
-                
+
                 Button {
                     store.send(.nextTapped)
                 } label: {
                     Text("다음")
                         .frame(maxWidth: .infinity)
-                        .frame(height: 56)
+                        .frame(height: 60)
                         .typography(store.canProceed ? .btn2_enabled : .btn2_disabled)
                         .foregroundColor(store.canProceed ? .gray12 : .gray9)
                         .background(store.canProceed ? .primary7 : .primary4)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
+                .buttonStyle(.plain)
                 .frame(maxWidth: .infinity)
                 .disabled(!store.canProceed)
             } else {
@@ -142,12 +159,13 @@ extension OnboardingView {
                 } label: {
                     Text("다음")
                         .frame(maxWidth: .infinity)
-                        .frame(height: 56)
+                        .frame(height: 60)
                         .typography(store.canProceed ? .btn2_enabled : .btn2_disabled)
                         .foregroundColor(store.canProceed ? .gray12 : .gray9)
                         .background(store.canProceed ? .primary7 : .primary4)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
+                .buttonStyle(.plain)
                 .disabled(!store.canProceed)
             }
         }
@@ -173,14 +191,14 @@ extension OnboardingView {
             .padding()
             .typography(.sub_btn2_enabled)
             .foregroundStyle(.gray10)
-            .background(.greenGray2)
-            .cornerRadius(10)
-            .overlay(
+            .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(.greenGray4, lineWidth: 1)
+                    .fill(.greenGray2)
+                    .strokeBorder(.greenGray4, lineWidth: 1)
             )
             .autocorrectionDisabled()
-            
+            .focused($isFocused)
+
             let text = store.answers[store.currentStep] ?? ""
             let hasSpecialChar = text.range(of: "[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]", options: .regularExpression) != nil
             var errorMessage: String? {
@@ -212,30 +230,62 @@ extension OnboardingView {
                 } else {
                     OptionButton(
                         title: option,
-                        selected: store.answers[store.currentStep] == option,
+                        selected: isOptionSelected(option),
                         action: { store.send(.optionTapped(option)) }
                     )
                 }
             }
         }
     }
+
+    private func isOptionSelected(_ option: String) -> Bool {
+        guard let answer = store.answers[store.currentStep] else { return false }
+        if store.currentStepData.maxSelections > 1 {
+            return answer.components(separatedBy: ", ").contains(option)
+        }
+        return answer == option
+    }
     
     private var customInputButton: some View {
-        let currentAnswer = store.answers[store.currentStep]
-        let isCustomAnswer = currentAnswer != nil && !store.currentStepData.options.dropLast().contains(currentAnswer!)
-        let displayText = isCustomAnswer ? currentAnswer! : "직접 입력하기"
-        
-        return OptionButton(
-            title: displayText,
-            selected: isCustomAnswer,
-            action: {
-                if isCustomAnswer {
-                    store.send(.customInputButtonTapped)
-                } else {
-                    store.send(.optionTapped("직접 입력하기"))
-                }
+        VStack {
+            if store.currentStepData.maxSelections > 1 {
+                let predefinedOptions = Set(store.currentStepData.options.filter { $0 != "직접 입력하기" })
+                let selections = (store.answers[store.currentStep] ?? "")
+                    .components(separatedBy: ", ")
+                    .filter { !$0.isEmpty }
+                let customValue = selections.first { !predefinedOptions.contains($0) }
+                let isCustomAnswer = customValue != nil
+                let displayText = customValue ?? "직접 입력하기"
+
+                OptionButton(
+                    title: displayText,
+                    selected: isCustomAnswer,
+                    action: {
+                        if isCustomAnswer {
+                            store.send(.customInputButtonTapped)
+                        } else {
+                            store.send(.optionTapped("직접 입력하기"))
+                        }
+                    }
+                )
+            } else {
+                let currentAnswer = store.answers[store.currentStep]
+                let isCustomAnswer = currentAnswer != nil && !store.currentStepData.options.dropLast().contains(currentAnswer!)
+                let displayText = isCustomAnswer ? currentAnswer! : "직접 입력하기"
+                
+                OptionButton(
+                    title: displayText,
+                    selected: isCustomAnswer,
+                    action: {
+                        if isCustomAnswer {
+                            store.send(.customInputButtonTapped)
+                        } else {
+                            store.send(.optionTapped("직접 입력하기"))
+                        }
+                    }
+                )
             }
-        )
+        }
     }
 }
 
@@ -255,13 +305,13 @@ extension OnboardingView {
             .padding()
             .typography(.sub_btn2_enabled)
             .foregroundStyle(.gray10)
-            .background(.greenGray2)
-            .cornerRadius(10)
-            .overlay(
+            .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(.greenGray4, lineWidth: 1)
+                    .fill(.greenGray2)
+                    .strokeBorder(.greenGray4, lineWidth: 1)
             )
             .autocorrectionDisabled()
+            .focused($isFocused)
             .keyboardType(store.currentStepData.customInputKeyboardType)
             .onChange(of: store.customInputText) { oldValue, newValue in
                 if store.currentStepData.customInputKeyboardType == .numberPad {
@@ -286,10 +336,15 @@ extension OnboardingView {
                     .background(isDisabled ? .primary4 : .primary7)
                     .cornerRadius(12)
             }
+            .buttonStyle(.plain)
             .disabled(isDisabled)
         }
         .padding(.horizontal, 20)
         .padding(.top, 24)
         .padding(.bottom, 20)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            isFocused = false
+        }
     }
 }

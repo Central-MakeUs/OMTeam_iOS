@@ -14,19 +14,22 @@ struct OnboardingStep: Equatable {
     let type: StepType
     let options: [String]
     let customInputKeyboardType: UIKeyboardType
-    
+    let maxSelections: Int
+
     init(
         title: String,
         subtitle: String? = nil,
         type: StepType,
         options: [String],
-        customInputKeyboardType: UIKeyboardType = .default
+        customInputKeyboardType: UIKeyboardType = .default,
+        maxSelections: Int = 1
     ) {
         self.title = title
         self.subtitle = subtitle
         self.type = type
         self.options = options
         self.customInputKeyboardType = customInputKeyboardType
+        self.maxSelections = maxSelections
     }
     
     enum StepType: Equatable {
@@ -51,7 +54,7 @@ extension OnboardingStep {
         OnboardingStep(
             title: "하루 중 운동할 수 있는\n시간을 알려주세요.",
             type: .choice,
-            options: ["18:00 이전", "18:00 이후 부터", "19:00 이후 부터", "20:00 이후 부터"]
+            options: ["18:00 이전", "18:00 이후부터", "19:00 이후부터", "20:00 이후부터"]
         ),
         OnboardingStep(
             title: "OMT와 함께 미션 수행에 투자할 수 있는 시간을 알려주세요!",
@@ -61,10 +64,11 @@ extension OnboardingStep {
             customInputKeyboardType: .numberPad
         ),
         OnboardingStep(
-            title: "평소 선호하시는 운동을 선택해주세요.\n(중복 선택 가능)",
+            title: "평소 선호하시는 운동을 선택해주세요.\n(최대 3개까지 선택 가능)",
             subtitle: "선호하는 운동을 입력해주세요.",
             type: .choice,
-            options: ["걷기", "스트레칭/요가", "홈 트레이닝(맨몸 운동)", "헬스", "생활 속 운동", "직접 입력하기"]
+            options: ["걷기", "스트레칭/요가", "홈 트레이닝(맨몸 운동)", "헬스", "생활 속 운동", "직접 입력하기"],
+            maxSelections: 3
         ),
         OnboardingStep(
             title: "최근 한 달 간의 생활패턴과\n가장 유사한 것을 선택해주세요.",

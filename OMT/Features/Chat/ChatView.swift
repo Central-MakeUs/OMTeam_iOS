@@ -14,18 +14,38 @@ struct ChatView: View {
     @FocusState private var isInputFocused: Bool
     @State private var isAtBottom: Bool = true
     @StateObject private var keyboard = KeyboardResponder()
-    
+
     var body: some View {
+        Group {
+            if store.isLoading && store.messages.isEmpty {
+                ChatSkeletonView()
+            } else if store.messages.isEmpty && store.mode != .missionComplete {
+                EmptyChatView(store: store)
+            } else {
+                chatContent
+            }
+        }
+        .onAppear {
+            if store.mode == .regular {
+                store.send(.onAppear)
+            }
+        }
+        .onChange(of: store.shouldFocusInput) { _, newValue in
+            if newValue {
+                isInputFocused = true
+                store.shouldFocusInput = false
+            }
+        }
+    }
+
+    private var chatContent: some View {
         VStack(spacing: 0) {
-            Text("채팅하기")
-                .padding(.bottom, 10)
-            
             ScrollViewReader { proxy in
                 List {
                     ForEach(store.messages) { message in
                         MessageRow(store: store, message: message)
                             .listRowSeparator(.hidden)
-                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                            .listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
                             .listRowBackground(Color.clear)
                             .id(message.id)
                             .onAppear {
@@ -39,9 +59,24 @@ struct ChatView: View {
                                 }
                             }
                     }
+
+                    if store.isLoading {
+                        TypingIndicatorRow()
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
+                            .listRowBackground(Color.clear)
+                            .id("typing-indicator")
+                    }
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
+                .scrollIndicators(.hidden)
+                .safeAreaInset(edge: .top) {
+                    Color.clear.frame(height: 2)
+                }
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear.frame(height: 2)
+                }
                 .onTapGesture {
                     isInputFocused = false
                 }
@@ -52,10 +87,17 @@ struct ChatView: View {
                     isAtBottom = true
                 }
                 .onChange(of: store.messages.count) { _, _ in
-                    if let lastMessage = store.messages.last {
+                    if store.isLoading {
+                        proxy.scrollTo("typing-indicator", anchor: .bottom)
+                    } else if let lastMessage = store.messages.last {
                         proxy.scrollTo(lastMessage.id, anchor: .bottom)
                     }
                     isAtBottom = true
+                }
+                .onChange(of: store.isLoading) { _, newValue in
+                    if newValue {
+                        proxy.scrollTo("typing-indicator", anchor: .bottom)
+                    }
                 }
                 .onChange(of: keyboard.currentHeight) { oldHeight, newHeight in
                     if newHeight > oldHeight && isAtBottom {
@@ -66,6 +108,15 @@ struct ChatView: View {
             
             messageInput
         }
+        .customNavigationBar(
+            centerView: {
+                HStack(spacing: 6) {
+                    Text("채팅하기")
+                        .typography(.h2_2)
+                        .foregroundStyle(.gray11)
+                }
+            }
+        )
     }
 }
 

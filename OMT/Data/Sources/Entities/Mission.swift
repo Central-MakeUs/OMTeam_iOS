@@ -7,34 +7,57 @@
 
 import SwiftUI
 
-struct WeeklyMission: Hashable {
-    enum Status: Hashable {
-        case success
-        case fail
-        case pending
-        
-        var imageName: String {
-            switch self {
-            case .success: return "apple_success"
-            case .fail: return "apple_fail"
-            case .pending: return "apple_pending"
-            }
-        }
-        
-        var font: Typography {
-            switch self {
-            case .success, .fail: return .sub_b4_1
-            case .pending: return .sub_b4_2
-            }
-        }
-        
-        var textColor: Color {
-            switch self {
-            case .success: return .gray11
-            case .fail: return .gray9
-            case .pending: return .gray8
-            }
+enum MissionStatus: String, Decodable {
+    case success = "SUCCESS"
+    case fail = "FAILURE"
+    case notPerformed = "NOT_PERFORMED"
+    
+    var imageName: String {
+        switch self {
+        case .success: return "apple_success"
+        case .fail: return "apple_fail"
+        case .notPerformed: return "apple_pending"
         }
     }
-    let status: Status
+
+    var font: Typography {
+        switch self {
+        case .success, .fail: return .sub_b4_1
+        case .notPerformed: return .sub_b4_2
+        }
+    }
+
+    var textColor: Color {
+        switch self {
+        case .success: return .gray11
+        case .fail: return .gray9
+        case .notPerformed: return .gray8
+        }
+    }
+}
+
+struct DailyMission: Equatable {
+    let date: Date
+    let result: MissionStatus
+    let missionType: MissionType?
+}
+
+extension DailyMission {
+    static func from(_ dto: DailyResultDTO) -> DailyMission {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let date = formatter.date(from: dto.date) ?? Date()
+
+        let result: MissionStatus = switch dto.status {
+        case .success: .success
+        case .fail: .fail
+        case .notPerformed: .notPerformed
+        }
+
+        return DailyMission(date: date, result: result, missionType: dto.missionType)
+    }
+
+    static func notPerformed(date: Date) -> DailyMission {
+        DailyMission(date: date, result: .notPerformed, missionType: nil)
+    }
 }

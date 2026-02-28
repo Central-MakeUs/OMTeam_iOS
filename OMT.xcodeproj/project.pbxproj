@@ -12,6 +12,7 @@
 		C236D3482F12BAEB0020B9F5 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = C236D3472F12BAEB0020B9F5 /* KakaoSDKUser */; };
 		C239394C2F12AB6600CFE870 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = C239394B2F12AB6600CFE870 /* ComposableArchitecture */; };
 		C28D797E2F12C88100D6288B /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = C28D797D2F12C88100D6288B /* GoogleSignIn */; };
+		C2F8627A2F4F1D1A001E4ADC /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C2F862792F4F1D1A001E4ADC /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2F8627A2F4F1D1A001E4ADC /* FirebaseMessaging in Frameworks */,
 				C28D797E2F12C88100D6288B /* GoogleSignIn in Frameworks */,
 				C236D3482F12BAEB0020B9F5 /* KakaoSDKUser in Frameworks */,
 				C239394C2F12AB6600CFE870 /* ComposableArchitecture in Frameworks */,
@@ -96,6 +98,7 @@
 				C236D3452F12BAEB0020B9F5 /* KakaoSDKCommon */,
 				C236D3472F12BAEB0020B9F5 /* KakaoSDKUser */,
 				C28D797D2F12C88100D6288B /* GoogleSignIn */,
+				C2F862792F4F1D1A001E4ADC /* FirebaseMessaging */,
 			);
 			productName = OMT;
 			productReference = C2F67B4F2EFECBAA00EB6CE0 /* OMT.app */;
@@ -117,11 +120,12 @@
 				};
 			};
 			buildConfigurationList = C2F67B4A2EFECBAA00EB6CE0 /* Build configuration list for PBXProject "OMT" */;
-			developmentRegion = en;
+			developmentRegion = ko;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = C2F67B462EFECBAA00EB6CE0;
 			minimizedProjectReferenceProxies = 1;
@@ -129,6 +133,7 @@
 				C239394A2F12AB6600CFE870 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				C236D3422F12BAEB0020B9F5 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 				C28D797C2F12C88100D6288B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				C2F862782F4F1D1A001E4ADC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C2F67B502EFECBAA00EB6CE0 /* Products */;
@@ -229,6 +234,8 @@
 		};
 		C2F67B592EFECBAD00EB6CE0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = C2F67B512EFECBAA00EB6CE0 /* OMT */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -296,27 +303,30 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = OMT/Info.plist;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "걸음 수, 이동 거리, 소모 칼로리 데이터를 분석하여 맞춤 운동을 추천합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omteam.omt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -332,27 +342,30 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = OMT/Info.plist;
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "걸음 수, 이동 거리, 소모 칼로리 데이터를 분석하여 맞춤 운동을 추천합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.omteam.omt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -404,6 +417,14 @@
 				minimumVersion = 9.1.0;
 			};
 		};
+		C2F862782F4F1D1A001E4ADC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.9.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -431,6 +452,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C28D797C2F12C88100D6288B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
+		};
+		C2F862792F4F1D1A001E4ADC /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C2F862782F4F1D1A001E4ADC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -16,8 +16,8 @@ struct OnboardingDataDTO: Decodable {
     let availableStartTime: String
     let availableEndTime: String
     let minExerciseMinutes: Int
-    let preferredExerciseText: String
-    let lifestyleType: String
+    let preferredExercises: [String]
+    let lifestyleType: LifestyleType
     let remindEnabled: Bool
     let checkinEnabled: Bool
     let reviewEnabled: Bool

@@ -32,10 +32,7 @@
 	<key>NATIVE_APP_KEY</key>
 	<string>$(NATIVE_APP_KEY)</string>
 	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
+	<dict/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Pretendard-Black.otf</string>
@@ -56,6 +53,10 @@
 		<string>Paperlogy-7Bold.ttf</string>
 		<string>Paperlogy-8ExtraBold.ttf</string>
 		<string>Paperlogy-9Black.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
 	</array>
 	<key>UIDesignRequiresCompatibility</key>
 	<true/>

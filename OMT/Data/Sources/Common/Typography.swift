@@ -18,6 +18,7 @@ enum Typography {
     case btn1_enabled, btn1_disabled
     case btn2_enabled, btn2_disabled
     case btn3_enabled, btn3_disabled
+    case btn4_enabled, btn4_disabled
     
     // MARK: - Pretendard (Sub) - Body
     case sub_b1
@@ -47,6 +48,8 @@ enum Typography {
         case .btn2_disabled: return .paperlogyMedium(size: 18)
         case .btn3_enabled: return .paperlogySemiBold(size: 16)
         case .btn3_disabled: return .paperlogyRegular(size: 16)
+        case .btn4_enabled: return .paperlogySemiBold(size: 14)
+        case .btn4_disabled: return .paperlogyRegular(size: 14)
             
         case .sub_b1: return .pretendardRegular(size: 18)
         case .sub_b2_1, .sub_b2_2, .sub_b2_4: return .pretendardMedium(size: 16)

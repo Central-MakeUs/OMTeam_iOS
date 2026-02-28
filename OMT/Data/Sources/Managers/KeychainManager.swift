@@ -98,5 +98,10 @@ class KeychainManager {
         KeychainManager.shared.delete(key: "refreshToken")
         KeychainManager.shared.create(key: "refreshToken", token: refreshToken)
     }
+    
+    func deleteTokens() {
+        delete(key: "accessToken")
+        delete(key: "refreshToken")
+    }
 }
 

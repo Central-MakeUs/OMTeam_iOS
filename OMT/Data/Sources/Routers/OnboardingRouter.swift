@@ -10,6 +10,14 @@ import Alamofire
 
 enum OnboardingRouter: TargetType {
     case saveOnboarding(OnboardingRequestDTO)
+    case fetchOnboarding
+    case updateNickname(UpdateNicknameRequestDTO)
+    case updateAppGoal(UpdateAppGoalRequestDTO)
+    case updateAlert(UpdateAlertRequestDTO)
+    case updateAvailableTime(UpdateAvailableTimeRequestDTO)
+    case updateMinExerciseMinutes(UpdateMinExerciseMinutesRequestDTO)
+    case updateLifestyle(UpdateLifestyleRequestDTO)
+    case updatePreferredExercise(UpdatePreferredExerciseRequestDTO)
 }
 
 extension OnboardingRouter {
@@ -17,13 +25,31 @@ extension OnboardingRouter {
         switch self {
         case .saveOnboarding:
             return .post
+        case .fetchOnboarding:
+            return .get
+        case .updateNickname, .updateAppGoal, .updateAlert, .updateAvailableTime, .updateMinExerciseMinutes, .updateLifestyle, .updatePreferredExercise:
+            return .patch
         }
     }
     
     var path: String {
         switch self {
-        case .saveOnboarding:
+        case .saveOnboarding, .fetchOnboarding:
             return "/api/onboarding"
+        case .updateNickname:
+            return "/api/onboarding/nickname"
+        case .updateAppGoal:
+            return "/api/onboarding/app-goal"
+        case .updateAlert:
+            return "/api/onboarding/notification"
+        case .updateAvailableTime:
+            return "/api/onboarding/available-time"
+        case .updateMinExerciseMinutes:
+            return "/api/onboarding/min-exercise-minutes"
+        case .updateLifestyle:
+            return "/api/onboarding/lifestyle"
+        case .updatePreferredExercise:
+            return "/api/onboarding/preferred-exercise"
         }
     }
     
@@ -40,18 +66,36 @@ extension OnboardingRouter {
     }
     
     var body: Data? {
-        var encoder = JSONEncoder()
+        let encoder = JSONEncoder()
         
         switch self {
-        case .saveOnboarding(let OnboardingRequestDTO):
-            return try? encoder.encode(OnboardingRequestDTO)
+        case .saveOnboarding(let request):
+            return try? encoder.encode(request)
+        case .fetchOnboarding:
+            return nil
+        case .updateNickname(let request):
+            return try? encoder.encode(request)
+        case .updateAppGoal(let request):
+            return try? encoder.encode(request)
+        case .updateAlert(let request):
+            return try? encoder.encode(request)
+        case .updateAvailableTime(let request):
+            return try? encoder.encode(request)
+        case .updateMinExerciseMinutes(let request):
+            return try? encoder.encode(request)
+        case .updateLifestyle(let request):
+            return try? encoder.encode(request)
+        case .updatePreferredExercise(let request):
+            return try? encoder.encode(request)
         }
     }
     
     var encodingType: EncodingType {
         switch self {
-        case .saveOnboarding:
+        case .saveOnboarding, .updateNickname, .updateAppGoal, .updateAlert, .updateAvailableTime, .updateLifestyle, .updateMinExerciseMinutes, .updatePreferredExercise:
             return .json
+        case .fetchOnboarding:
+            return .url
         }
     }
 }

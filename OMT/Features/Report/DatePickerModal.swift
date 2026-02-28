@@ -10,14 +10,15 @@ import ComposableArchitecture
 
 struct DatePickerModal: View {
     @Bindable var store: StoreOf<ReportFeature>
-    
+    @FocusState private var isFocused: Bool
+
     var body: some View {
         ZStack {
-            Color.black.opacity(0.4)
+            Color.black.opacity(0.25)
                 .ignoresSafeArea()
-//                .onTapGesture {
-//                    store.send(.closeDatePicker)
-//                }
+                .onTapGesture {
+                    store.send(.closeDatePicker)
+                }
             
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
@@ -25,7 +26,7 @@ struct DatePickerModal: View {
                     Button {
                         store.send(.closeDatePicker)
                     } label: {
-                        Image(systemName: "xmark")
+                        Image("arrow_close")
                     }
                 }
                 .padding(.bottom, 10)
@@ -46,58 +47,87 @@ struct DatePickerModal: View {
                         .foregroundStyle(.gray11)
                     
                     HStack(spacing: 11) {
-                        HStack(spacing: 4) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("년")
+                                .typography(.sub_btn3_disabled)
+                                .foregroundStyle(.gray9)
+                            
                             TextField("",
-                                      text: $store.monthInput.sending(\.monthInputChanged),
-                                      prompt: Text("1-12를 입력하세요")
+                                      text: $store.yearInput.sending(\.yearInputChanged),
+                                      prompt: Text("YY")
                                 .typography(.sub_btn3_disabled)
                                 .foregroundStyle(.gray7)
                             )
+                            .focused($isFocused)
                             .keyboardType(.numberPad)
+                            .multilineTextAlignment(.center)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 13)
                             .typography(.sub_btn3_enabled)
                             .foregroundStyle(.gray11)
                             .background(.gray1)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .onChange(of: store.monthInput) { oldValue, newValue in
-                                if let month = Int(newValue), month < 1 || month > 12 {
-                                    store.send(.monthInputChanged(oldValue))
-                                }
-                            }
-                            
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 4) {
                             Text("월")
                                 .typography(.sub_btn3_disabled)
                                 .foregroundStyle(.gray9)
-                        }
-                        
-                        HStack(spacing: 4) {
+                            
                             TextField("",
-                                      text: $store.weekInput.sending(\.weekInputChanged),
-                                      prompt: Text("1-5를 입력하세요")
+                                      text: $store.monthInput.sending(\.monthInputChanged),
+                                      prompt: Text("MM")
                                 .typography(.sub_btn3_disabled)
                                 .foregroundStyle(.gray7)
                             )
+                            .focused($isFocused)
                             .keyboardType(.numberPad)
+                            .multilineTextAlignment(.center)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 13)
                             .typography(.sub_btn3_enabled)
                             .foregroundStyle(.gray11)
                             .background(.gray1)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .onChange(of: store.weekInput) { oldValue, newValue in
-                                if let week = Int(newValue), week < 1 || week > 5 {
-                                    store.send(.weekInputChanged(oldValue))
-                                }
-                            }
-                            
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 4) {
                             Text("주")
                                 .typography(.sub_btn3_disabled)
                                 .foregroundStyle(.gray9)
+                            
+                            TextField("",
+                                      text: $store.weekInput.sending(\.weekInputChanged),
+                                      prompt: Text("WW")
+                                .typography(.sub_btn3_disabled)
+                                .foregroundStyle(.gray7)
+                            )
+                            .focused($isFocused)
+                            .keyboardType(.numberPad)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 13)
+                            .typography(.sub_btn3_enabled)
+                            .foregroundStyle(.gray11)
+                            .background(.gray1)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                     }
                 }
-                .padding(.bottom, 64)
+                
+                if let errorMessage = store.errorMessage {
+                    HStack(spacing: 4) {
+                        Image("error_icon")
+                        Text(errorMessage)
+                            .typography(.sub_btn3_disabled)
+                            .foregroundStyle(.error)
+                    }
+                    .padding(.top, 12)
+                    .padding(.bottom, 28)
+                } else {
+                    Spacer()
+                        .frame(height: 28)
+                }
                 
                 Button {
                     store.send(.confirmDateSelection)
@@ -110,14 +140,18 @@ struct DatePickerModal: View {
                         .background(store.isConfirmButtonEnabled ? .primary7 : .primary4)
                         .cornerRadius(12)
                 }
+                .buttonStyle(.plain)
                 .disabled(!store.isConfirmButtonEnabled)
             }
             .padding(20)
-            .background(.white)
+            .background(.gray0)
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .frame(maxWidth: .infinity)
             .padding()
-            .offset(y: -50)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                isFocused = false
+            }
         }
     }
 }

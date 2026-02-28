@@ -13,7 +13,7 @@ struct CustomProgressBar: View {
     let height: CGFloat = 20
     
     var body: some View {
-        HStack {
+        HStack(spacing: 27) {
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: height / 2)
@@ -25,9 +25,8 @@ struct CustomProgressBar: View {
                         .frame(width: geometry.size.width * progress, height: height)
                 }
             }
-            .frame(width: width, height: height)
-            
-            Spacer()
+            .frame(height: height)
+            .frame(maxWidth: .infinity)
             
             Text("\(Int(progress * 100))%")
                 .typography(.sub_btn3_enabled)

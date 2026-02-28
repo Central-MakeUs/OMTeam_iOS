@@ -7,9 +7,11 @@
 
 import SwiftUI
 import ComposableArchitecture
+import UserNotifications
 
 struct CustomTabView: View {
-    let store: StoreOf<RootContainer>
+    // 자식
+    @Bindable var store: StoreOf<RootContainer>
     
     init(store: StoreOf<RootContainer>) {
         self.store = store
@@ -37,16 +39,13 @@ struct CustomTabView: View {
     
     var body: some View {
         NavigationStack {
-            TabView(selection: Binding(
-                get: { store.selectedTab },
-                set: { store.send(.tabSelected($0)) }
-            )
-            ) {
+            
+            TabView(selection: $store.selectedTab.sending(\.tabSelected))  {
                 Tab("HOME",
                     image: store.selectedTab == .home ? "home_enabled" : "home_disabled",
                     value: RootContainer.Tab.home) {
                     HomeView(store: store.scope(state: \.home, action: \.home))
-                    //                    .tabBarDivider()
+                        .tabBarDivider()
                 }
                 
                 Tab("CHAT",
@@ -59,15 +58,50 @@ struct CustomTabView: View {
                     image: store.selectedTab == .analysis ? "chart_enabled" : "chart_disabled",
                     value: RootContainer.Tab.analysis) {
                     ReportView(store: store.scope(state: \.report, action: \.report))
-                    //                    .tabBarDivider()
+                        .tabBarDivider()
                 }
                 
                 Tab("MY PAGE",
                     image: store.selectedTab == .myPage ? "my_enabled" : "my_disabled",
                     value: RootContainer.Tab.myPage) {
-                    Text("마이")
-                    //                    .tabBarDivider()
+                    MyView(store: store.scope(state: \.my, action: \.my))
+                        .tabBarDivider()
                 }
+            }
+        }
+        .onAppear {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { _, _ in }
+        }
+        .overlay {
+            if store.home.isLoadingRecommendations {
+                Color.black.opacity(0.25)
+                    .ignoresSafeArea()
+                    .overlay {
+                        VStack(spacing: 16) {
+                            ProgressView()
+                                .scaleEffect(1.5)
+                                .tint(.gray0)
+
+                            Text("오늘의 추천 미션 가져오는 중..")
+                                .typography(.sub_b2_2)
+                                .foregroundStyle(.gray0)
+                        }
+                    }
+            }
+        }
+        .overlay {
+            if let alertType = store.alertType {
+                CustomAlertView(
+                    alertType: alertType,
+                    onCancel: {
+                        store.send(.alertCanceled)
+                    },
+                    onConfirm: {
+                        store.send(.alertConfirmed)
+                    }
+                )
+                .transition(.opacity)
+                .animation(.easeInOut(duration: 0.2), value: store.alertType)
             }
         }
     }
