@@ -12,7 +12,7 @@ enum ReportRouter: TargetType {
     
     case fetchWeeklyReports(year: Int, month: Int, weekOfMonth: Int)
     case dailyFeedback(String)
-    case monthlyPattern
+    case monthlyPattern(year: Int, month: Int, weekOfMonth: Int)
 }
 
 extension ReportRouter {
@@ -48,8 +48,8 @@ extension ReportRouter {
             return ["year": year, "month": month, "weekOfMonth": weekOfMonth]
         case .dailyFeedback(let date):
             return ["date": date]
-        case .monthlyPattern:
-            return nil
+        case .monthlyPattern(let year, let month, let weekOfMonth):
+            return ["year": year, "month": month, "weekOfMonth": weekOfMonth]
         }
     }
     

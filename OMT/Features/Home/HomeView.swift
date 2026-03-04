@@ -327,7 +327,6 @@ extension HomeView {
                 Text("분석 요약")
                     .typography(.h2_1)
                     .foregroundStyle(.gray13)
-                HealthSourceInfoButton()
             }
             
             if store.totalSuccessCount > 0 {
