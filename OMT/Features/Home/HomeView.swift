@@ -50,7 +50,7 @@ struct HomeView: View {
 
 extension HomeView {
     private var topCalendar: some View {
-        HStack(spacing: 18) {
+        HStack(spacing: 0) {
             ForEach(store.dailyResults.indices, id: \.self) { index in
                 VStack {
                     let mission = store.dailyResults[index]
@@ -60,6 +60,7 @@ extension HomeView {
                         .typography(mission.result.font)
                         .foregroundStyle(mission.result.textColor)
                 }
+                .frame(maxWidth: .infinity)
             }
         }
         .frame(maxWidth: .infinity)
@@ -69,50 +70,50 @@ extension HomeView {
     }
     
     private var progressSection: some View {
-        ZStack {
+        VStack(spacing: 0) {
+            VStack(spacing: 21) {
+                Text(store.encouragementMessage)
+                    .typography(.sub_b4_2)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .foregroundStyle(.gray11)
+                    .background(
+                        Capsule()
+                            .fill(.gray0)
+                    )
+
+                Image(store.characterImage.imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(
+                        width: store.characterImage.size.width,
+                        height: store.characterImage.size.height
+                    )
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("LEVEL \(String(format: "%02d", store.characterLevel))")
+                    .typography(.sub_b4_1)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 6)
+                    .foregroundStyle(.gray10)
+                    .background(.secondary1)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+
+                CustomProgressBar(progress: Double(store.experiencePercent) / 100.0)
+            }
+            .padding(.horizontal, 8)
+            .padding(.top, -6)
+            .padding(.bottom, 6)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 31)
+        .padding(.bottom, 12)
+        .background(
             Image("background")
                 .resizable()
-                .scaledToFill()
-                .frame(height: 280)
-            
-            VStack(spacing: 0) {
-                VStack(spacing: 21) {
-                    Text(store.encouragementMessage)
-                        .typography(.sub_b4_2)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .foregroundStyle(.gray11)
-                        .background(
-                            Capsule()
-                                .fill(.gray0)
-                        )
-                    
-                    Image(store.characterImage.imageName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(
-                            width: store.characterImage.size.width,
-                            height: store.characterImage.size.height
-                        )
-                }
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("LEVEL \(String(format: "%02d", store.characterLevel))")
-                        .typography(.sub_b4_1)
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 6)
-                        .foregroundStyle(.gray10)
-                        .background(.secondary1)
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-
-                    CustomProgressBar(progress: Double(store.experiencePercent) / 100.0)
-                }
-                .padding(.horizontal, 8)
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 12)
-        }
+        )
     }
     
     private func dayString(from date: Date) -> String {
@@ -327,7 +328,6 @@ extension HomeView {
                 Text("분석 요약")
                     .typography(.h2_1)
                     .foregroundStyle(.gray13)
-                HealthSourceInfoButton()
             }
             
             if store.totalSuccessCount > 0 {

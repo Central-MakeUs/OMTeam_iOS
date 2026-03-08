@@ -141,7 +141,7 @@ extension ReportView {
             .padding(.leading, 7.5)
             .frame(maxWidth: .infinity, alignment: .leading)
             
-            HStack(spacing: 12) {
+            HStack(spacing: 0) {
                 ForEach(store.dailyResults, id: \.date) { mission in
                     let weekday = Calendar.mondayFirst.component(.weekday, from: mission.date)
                     let dayName = Calendar.mondayFirst.shortWeekdaySymbols[weekday - 1]
@@ -154,8 +154,10 @@ extension ReportView {
                             .scaledToFit()
                             .frame(width: 32, height: 32)
                     }
+                    .frame(maxWidth: .infinity)
                 }
             }
+            .padding(.horizontal, 7.5)
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
         }

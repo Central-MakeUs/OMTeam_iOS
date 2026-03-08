@@ -199,10 +199,13 @@ struct ReportFeature {
                 return .cancel(id: CancelID.skeletonDelay)
 
             case .fetchMonthlyPattern:
+                let calendar = Calendar.mondayFirst
+                let (year, month, weekOfMonth) = calendar.weekInfoFromFirstMonday(for: state.currentDate)
+                
                 return .run { [networkManager] send in
                     let response = try await networkManager.requestNetwork(
                         dto: MonthlyPatternResponseDTO.self,
-                        router: ReportRouter.monthlyPattern
+                        router: ReportRouter.monthlyPattern(year: year, month: month, weekOfMonth: weekOfMonth)
                     )
                     if let data = response.data {
                         await send(.fetchMonthlyPatternResponse(data))
