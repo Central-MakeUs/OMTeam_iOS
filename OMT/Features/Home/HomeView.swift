@@ -50,7 +50,7 @@ struct HomeView: View {
 
 extension HomeView {
     private var topCalendar: some View {
-        HStack(spacing: 18) {
+        HStack(spacing: 0) {
             ForEach(store.dailyResults.indices, id: \.self) { index in
                 VStack {
                     let mission = store.dailyResults[index]
@@ -60,6 +60,7 @@ extension HomeView {
                         .typography(mission.result.font)
                         .foregroundStyle(mission.result.textColor)
                 }
+                .frame(maxWidth: .infinity)
             }
         }
         .frame(maxWidth: .infinity)
