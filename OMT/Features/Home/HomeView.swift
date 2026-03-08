@@ -69,50 +69,50 @@ extension HomeView {
     }
     
     private var progressSection: some View {
-        ZStack {
+        VStack(spacing: 0) {
+            VStack(spacing: 21) {
+                Text(store.encouragementMessage)
+                    .typography(.sub_b4_2)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .foregroundStyle(.gray11)
+                    .background(
+                        Capsule()
+                            .fill(.gray0)
+                    )
+
+                Image(store.characterImage.imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(
+                        width: store.characterImage.size.width,
+                        height: store.characterImage.size.height
+                    )
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("LEVEL \(String(format: "%02d", store.characterLevel))")
+                    .typography(.sub_b4_1)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 6)
+                    .foregroundStyle(.gray10)
+                    .background(.secondary1)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+
+                CustomProgressBar(progress: Double(store.experiencePercent) / 100.0)
+            }
+            .padding(.horizontal, 8)
+            .padding(.top, -6)
+            .padding(.bottom, 6)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 31)
+        .padding(.bottom, 12)
+        .background(
             Image("background")
                 .resizable()
-                .scaledToFill()
-                .frame(height: 280)
-            
-            VStack(spacing: 0) {
-                VStack(spacing: 21) {
-                    Text(store.encouragementMessage)
-                        .typography(.sub_b4_2)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .foregroundStyle(.gray11)
-                        .background(
-                            Capsule()
-                                .fill(.gray0)
-                        )
-                    
-                    Image(store.characterImage.imageName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(
-                            width: store.characterImage.size.width,
-                            height: store.characterImage.size.height
-                        )
-                }
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("LEVEL \(String(format: "%02d", store.characterLevel))")
-                        .typography(.sub_b4_1)
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 6)
-                        .foregroundStyle(.gray10)
-                        .background(.secondary1)
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-
-                    CustomProgressBar(progress: Double(store.experiencePercent) / 100.0)
-                }
-                .padding(.horizontal, 8)
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 12)
-        }
+        )
     }
     
     private func dayString(from date: Date) -> String {
