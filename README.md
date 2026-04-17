@@ -25,16 +25,16 @@ OMT는 거창하고 힘든 운동 계획 대신, 오늘 내 컨디션에 딱 맞
 </table>
 
 🎯 맞춤 미션 추천
-매일 나의 상황과 난이도에 딱 맞는 운동 및 식단 미션을 추천받아 부담 없이 시작할 수 있어요.
+- 매일 나의 상황과 난이도에 딱 맞는 운동 및 식단 미션을 추천받아 부담 없이 시작할 수 있어요.
 
 💬 AI 챗봇 인증
-단순한 체크박스 클릭이 아닌, 나만의 메이트(캐릭터)와 채팅을 주고받으며 자연스럽게 미션을 인증해요.
+- 단순한 체크박스 클릭이 아닌, 나만의 메이트(캐릭터)와 채팅을 주고받으며 자연스럽게 미션을 인증해요.
 
 🐹 다이내믹 캐릭터 리액션
-미션 성공 여부와 진행도에 따라 캐릭터의 표정과 리액션이 다채롭게 변화하여 확실한 성취감을 줘요.
+- 미션 성공 여부와 진행도에 따라 캐릭터의 표정과 리액션이 다채롭게 변화하여 확실한 성취감을 줘요.
 
 📊 스마트 주간 리포트
-1주일간의 미션 달성률(🍏)을 한눈에 확인하고, 실패 요인 분석을 통한 다음 주 맞춤 솔루션을 제안받아요.
+- 1주일간의 미션 달성률(🍏)을 한눈에 확인하고, 실패 요인 분석을 통한 다음 주 맞춤 솔루션을 제안받아요.
 
 ## 🛠️ Stack
 <img src="https://img.shields.io/badge/swift-F05138?style=for-the-badge&logo=swift&logoColor=white"> <img src="https://img.shields.io/badge/xcode-147EFB?style=for-the-badge&logo=xcode&logoColor=white"> <img src="https://img.shields.io/badge/discord-5865F2?style=for-the-badge&logo=discord&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white">
